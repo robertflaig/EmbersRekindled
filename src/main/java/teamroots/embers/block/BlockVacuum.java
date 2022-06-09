@@ -12,6 +12,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityItemVacuum;
 
+import PropertyDirection;
+
 public class BlockVacuum extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

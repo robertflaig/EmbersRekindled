@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import PropertyInteger;
+
 public class BlockStoneEdge extends BlockBase {
 	public static final PropertyInteger state = PropertyInteger.create("state", 0, 9);
 	

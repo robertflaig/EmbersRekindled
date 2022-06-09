@@ -13,6 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityItemTransfer;
 
+import PropertyDirection;
+
 public class BlockItemTransfer extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	public static final PropertyBool filter = PropertyBool.create("filter");

@@ -8,6 +8,9 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.awt.*;
 
+import Entity;
+import Vec3d;
+
 public interface IProjectilePreset {
     Vec3d getPos();
 

@@ -11,6 +11,8 @@ import teamroots.embers.util.Bezier;
 import java.util.ArrayList;
 import java.util.List;
 
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public class Mortar extends MagmaWormPhase {
     private static final double RANGE_ATTACK = 36;
 

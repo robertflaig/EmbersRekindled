@@ -5,6 +5,8 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import NonNullList;
+
 public class BaublesUtil {
 	public static NonNullList<ItemStack> getBaubles(IBaublesItemHandler items, BaubleType type){
 		NonNullList<ItemStack> stacks = NonNullList.create();

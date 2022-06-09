@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.DoubleFunction;
 
+import Vec3d;
+
 public class Spline {
     static class Point {
         public double index;

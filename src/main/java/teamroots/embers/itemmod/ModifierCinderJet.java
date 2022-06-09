@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierCinderJet extends ModifierBase {
 
 	public ModifierCinderJet() {

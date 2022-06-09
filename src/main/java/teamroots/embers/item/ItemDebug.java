@@ -10,6 +10,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import EnumActionResult;
+
 public class ItemDebug extends ItemBase {
 	public ItemDebug() {
 		super("debug", false);

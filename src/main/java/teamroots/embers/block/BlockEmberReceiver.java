@@ -15,6 +15,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityReceiver;
 
+import PropertyDirection;
+
 public class BlockEmberReceiver extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

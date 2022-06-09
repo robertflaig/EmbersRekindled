@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierResonatingBell extends ModifierBase {
 
     public ModifierResonatingBell() {

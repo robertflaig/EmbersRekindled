@@ -20,6 +20,8 @@ import teamroots.embers.util.EmberInventoryUtil;
 import java.util.HashMap;
 import java.util.UUID;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierCasterOrb extends ModifierBase {
 
 	public ModifierCasterOrb() {

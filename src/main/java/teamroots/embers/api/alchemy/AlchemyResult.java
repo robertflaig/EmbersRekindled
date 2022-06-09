@@ -1,7 +1,8 @@
 package teamroots.embers.api.alchemy;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import teamroots.embers.item.ItemAlchemicWaste;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class AlchemyResult {
 
     public boolean areAllPresent() { return allPresent; }
 
-    public static AlchemyResult create(AspectList list, AspectList.AspectRangeList range, World world)
+    public static AlchemyResult create(AspectList list, AspectList.AspectRangeList range, Level world)
     {
         AlchemyResult result = new AlchemyResult();
         double totalDelta = 0;

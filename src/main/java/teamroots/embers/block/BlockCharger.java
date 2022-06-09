@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityCharger;
 import teamroots.embers.util.Misc;
 
+import PropertyDirection;
+
 public class BlockCharger extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

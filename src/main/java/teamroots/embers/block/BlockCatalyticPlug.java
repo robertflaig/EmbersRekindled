@@ -17,6 +17,8 @@ import teamroots.embers.tileentity.TileEntityCatalyticPlug;
 
 import javax.annotation.Nullable;
 
+import PropertyDirection;
+
 public class BlockCatalyticPlug extends BlockTEBase {
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 

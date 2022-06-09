@@ -9,6 +9,8 @@ import teamroots.embers.api.EmbersAPI;
 import teamroots.embers.api.itemmod.ItemModUtil;
 import teamroots.embers.api.itemmod.ModifierBase;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierEldritchInsignia extends ModifierBase {
 
 	public ModifierEldritchInsignia() {

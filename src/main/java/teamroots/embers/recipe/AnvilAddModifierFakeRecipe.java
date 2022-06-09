@@ -11,6 +11,8 @@ import teamroots.embers.util.IngredientSpecial;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ItemStack;
+
 public class AnvilAddModifierFakeRecipe extends DawnstoneAnvilRecipe implements IFocusRecipe {
     ItemStack modifier;
 

@@ -39,6 +39,8 @@ import teamroots.embers.util.RenderUtil;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import ResourceLocation;
+
 public class ModifierWindingGears extends ModifierBase {
     public static final ResourceLocation TEXTURE_HUD = new ResourceLocation("embers:textures/gui/icons.png");
     public static final int BAR_U = 0;

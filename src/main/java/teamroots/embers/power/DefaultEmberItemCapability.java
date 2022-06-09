@@ -11,6 +11,8 @@ import teamroots.embers.api.capabilities.EmbersCapabilities;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ItemStack;
+
 public class DefaultEmberItemCapability implements ICapabilityProvider, teamroots.embers.api.power.IEmberCapability {
     @Nonnull
     private ItemStack stack;

@@ -9,6 +9,8 @@ import teamroots.embers.util.FluidColorHelper;
 import java.awt.*;
 import java.util.Random;
 
+import NBTTagCompound;
+
 public abstract class TileEntityOpenTank extends TileFluidHandler {
     FluidStack lastEscaped = null;
     long lastEscapedTickServer;

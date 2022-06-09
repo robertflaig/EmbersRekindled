@@ -12,6 +12,8 @@ import teamroots.embers.compat.jei.EmbersJEIPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import IDrawable;
+
 public class EngineRecipeWrapper extends FluidRecipeWrapper {
     public static final int GEAR_X = 102;
     public static final int GEAR_Y = 6;

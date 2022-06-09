@@ -10,6 +10,8 @@ import teamroots.embers.api.item.IInfoGoggles;
 import teamroots.embers.api.itemmod.ItemModUtil;
 import teamroots.embers.api.itemmod.ModifierBase;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierTinkerLens extends ModifierBase {
     boolean inverted;
 

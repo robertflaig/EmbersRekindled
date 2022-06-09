@@ -22,6 +22,8 @@ import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
 import java.util.ArrayList;
 import java.util.List;
 
+import AxisAlignedBB;
+
 public class BlockAlchemyPedestal extends BlockTEBase {
 	public static AxisAlignedBB AABB_FULL = new AxisAlignedBB(0,0,0,1,1,1);
 	public static AxisAlignedBB AABB_HALF = new AxisAlignedBB(0,0,0,1,0.5,1);

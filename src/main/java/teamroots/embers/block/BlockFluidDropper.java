@@ -11,6 +11,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityFluidDropper;
 
+import AxisAlignedBB;
+
 public class BlockFluidDropper extends BlockTEBase {
 	public static AxisAlignedBB AABB_BASE = new AxisAlignedBB(0.25,0.625,0.25,0.75,1.0,0.75);
 

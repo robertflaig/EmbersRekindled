@@ -4,6 +4,9 @@ import net.minecraft.util.math.Vec3d;
 import teamroots.embers.entity.EntityMagmaWorm;
 import teamroots.embers.entity.MagmaWormPhase;
 
+import Vec3d;
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public class Up extends Jump {
 
     public Up(PhaseSupplier supplier) {

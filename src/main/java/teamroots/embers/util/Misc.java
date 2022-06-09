@@ -46,6 +46,8 @@ import java.util.Random;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
+import EntityEquipmentSlot;
+
 public class Misc {
     public static final double LOG_E = Math.log10(Math.exp(1));
     public static Random random = new Random();

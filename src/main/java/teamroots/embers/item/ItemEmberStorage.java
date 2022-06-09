@@ -19,6 +19,8 @@ import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import ItemStack;
+
 public abstract class ItemEmberStorage extends ItemBase {
 	public ItemEmberStorage(String name, boolean addToTab) {
 		super(name, addToTab);

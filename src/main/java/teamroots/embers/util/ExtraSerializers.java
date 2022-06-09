@@ -7,6 +7,8 @@ import net.minecraft.network.datasync.DataSerializers;
 
 import java.io.IOException;
 
+import DataSerializer;
+
 public class ExtraSerializers {
     public static final DataSerializer<float[]> FLOAT_ARRAY = new DataSerializer<float[]>() {
         @Override

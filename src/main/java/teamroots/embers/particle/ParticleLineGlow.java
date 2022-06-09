@@ -8,6 +8,8 @@ import net.minecraft.world.World;
 import teamroots.embers.ConfigManager;
 import teamroots.embers.util.Misc;
 
+import ResourceLocation;
+
 public class ParticleLineGlow extends Particle implements IEmberParticle{
 	public float colorR = 0;
 	public float colorG = 0;

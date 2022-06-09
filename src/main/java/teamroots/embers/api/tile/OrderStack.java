@@ -9,6 +9,8 @@ import net.minecraftforge.items.IItemHandler;
 import teamroots.embers.api.filter.IFilter;
 import teamroots.embers.util.FilterUtil;
 
+import BlockPos;
+
 public class OrderStack {
     private BlockPos pos;
     private IFilter filter;

@@ -18,6 +18,8 @@ import teamroots.embers.tileentity.TileEntityEmberFunnel;
 
 import javax.annotation.Nullable;
 
+import PropertyDirection;
+
 public class BlockEmberFunnel extends BlockTEBase {
     public static final PropertyDirection facing = PropertyDirection.create("facing");
 

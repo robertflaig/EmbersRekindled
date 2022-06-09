@@ -20,6 +20,8 @@ import teamroots.embers.tileentity.TileEntityFieldChart;
 import java.util.ArrayList;
 import java.util.List;
 
+import PropertyInteger;
+
 public class BlockFieldChart extends BlockTEBase {
 	public static final PropertyInteger state = PropertyInteger.create("state", 0, 9);
 	

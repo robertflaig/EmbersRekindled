@@ -12,6 +12,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityStamper;
 
+import PropertyDirection;
+
 public class BlockStamper extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

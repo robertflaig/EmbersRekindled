@@ -1,15 +1,15 @@
 package teamroots.embers.api.event;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class UpgradeEvent {
-    TileEntity tile;
+    BlockEntity tile;
 
-    public UpgradeEvent(TileEntity tile) {
+    public UpgradeEvent(BlockEntity tile) {
         this.tile = tile;
     }
 
-    public TileEntity getTile() {
+    public BlockEntity getTile() {
         return tile;
     }
 }

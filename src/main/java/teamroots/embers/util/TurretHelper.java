@@ -5,6 +5,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.util.vector.Quaternion;
 
+import Quaternion;
+
 public class TurretHelper {
     Quaternion angleStart = new Quaternion(0, 1, 0, 0);
     Quaternion angleEnd = new Quaternion(0, 1, 0, 0);

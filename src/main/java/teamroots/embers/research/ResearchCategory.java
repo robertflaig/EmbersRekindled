@@ -10,6 +10,8 @@ import teamroots.embers.util.Vec2i;
 
 import java.util.*;
 
+import ResourceLocation;
+
 public class ResearchCategory {
 	public static final ArrayList<ResearchBase> NO_PREREQUISITES = Lists.newArrayList();
 

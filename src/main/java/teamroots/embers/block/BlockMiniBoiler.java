@@ -12,6 +12,8 @@ import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityMiniBoiler;
 import teamroots.embers.util.Misc;
 
+import PropertyDirection;
+
 public class BlockMiniBoiler extends BlockTEBase {
     public static final PropertyDirection facing = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 

@@ -5,6 +5,8 @@ import net.minecraft.item.crafting.Ingredient;
 
 import java.awt.*;
 
+import Ingredient;
+
 public class CTUtil {
     public static Ingredient toIngredient(IIngredient ingredient) {
         if(ingredient == null)
