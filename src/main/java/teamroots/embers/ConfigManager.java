@@ -17,6 +17,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import Configuration;
+
 public class ConfigManager {
 
 	public static Configuration config;

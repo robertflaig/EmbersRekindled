@@ -9,6 +9,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityReactor;
 
+import AxisAlignedBB;
+
 public class BlockReactor extends BlockTEBase {
 	public static AxisAlignedBB AABB_BASE = new AxisAlignedBB(0.125,0.0,0.125,0.875,1.0,0.875);
 	

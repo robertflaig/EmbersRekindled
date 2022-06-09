@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import AxisAlignedBB;
+
 public class BlockGlow extends BlockBase {
 	public static AxisAlignedBB AABB_BASE = new AxisAlignedBB(0.25,0.25,0.25,0.75,0.75,0.75);
 	

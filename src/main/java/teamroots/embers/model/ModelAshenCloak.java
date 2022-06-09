@@ -2,6 +2,8 @@ package teamroots.embers.model;
 
 import net.minecraft.inventory.EntityEquipmentSlot;
 
+import EntityEquipmentSlot;
+
 public class ModelAshenCloak extends ModelArmorBase {
 	
 	public EntityEquipmentSlot slot;

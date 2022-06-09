@@ -6,6 +6,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import teamroots.embers.Embers;
 import teamroots.embers.network.message.*;
 
+import SimpleNetworkWrapper;
+
 public class PacketHandler {
 	public static SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Embers.MODID);
 

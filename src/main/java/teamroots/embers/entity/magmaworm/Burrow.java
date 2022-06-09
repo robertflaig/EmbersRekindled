@@ -8,6 +8,8 @@ import teamroots.embers.util.Bezier;
 import java.util.ArrayList;
 import java.util.List;
 
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public class Burrow extends MagmaWormPhase {
     private int digCooldown;
     private int undigCooldown;

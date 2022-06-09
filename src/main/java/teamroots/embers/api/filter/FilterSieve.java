@@ -8,6 +8,8 @@ import teamroots.embers.util.FilterUtil;
 import java.util.List;
 import java.util.Objects;
 
+import ResourceLocation;
+
 public class FilterSieve implements IFilter {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation("embers", "sieve");
 

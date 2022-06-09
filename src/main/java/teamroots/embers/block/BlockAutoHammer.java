@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityAutoHammer;
 import teamroots.embers.util.Misc;
 
+import PropertyDirection;
+
 public class BlockAutoHammer extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

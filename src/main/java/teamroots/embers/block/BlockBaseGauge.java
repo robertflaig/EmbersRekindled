@@ -20,6 +20,8 @@ import teamroots.embers.tileentity.TileEntityBaseGauge;
 import java.util.ArrayList;
 import java.util.List;
 
+import PropertyDirection;
+
 public abstract class BlockBaseGauge extends BlockTEBase implements teamroots.embers.api.block.IDial {
     public static final PropertyDirection facing = PropertyDirection.create("facing");
 

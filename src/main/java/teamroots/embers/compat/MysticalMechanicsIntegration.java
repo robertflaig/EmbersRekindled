@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
+import ResourceLocation;
+
 public class MysticalMechanicsIntegration {
     public static final ResourceLocation IRON_GEAR_BEHAVIOR = new ResourceLocation("mysticalmechanics", "gear_iron");
     public static final ResourceLocation GOLD_GEAR_BEHAVIOR = new ResourceLocation("mysticalmechanics", "gear_gold");

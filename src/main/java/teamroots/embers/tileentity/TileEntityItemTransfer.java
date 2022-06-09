@@ -23,6 +23,8 @@ import teamroots.embers.util.Misc;
 
 import java.util.Random;
 
+import ItemStack;
+
 public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     public static final int PRIORITY_TRANSFER = -10;
     double angle = 0;

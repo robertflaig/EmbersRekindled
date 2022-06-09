@@ -9,6 +9,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import PropertyDirection;
+
 public abstract class BlockNodeBase extends BlockTEBase {
     public static final PropertyDirection facing = PropertyDirection.create("facing");
 

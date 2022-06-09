@@ -1,16 +1,16 @@
 package teamroots.embers.api.event;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundEvent;
+//import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraft.world.entity.EntityEvent;
 
 import java.awt.*;
-
 public class ItemVisualEvent extends Event {
-    private EntityLivingBase entity;
-    private EntityEquipmentSlot slot;
+    private LivingEntity entity;
+    private EquipmentSlot slot;
     private ItemStack item;
     private Color color;
     private SoundEvent sound;
@@ -18,11 +18,11 @@ public class ItemVisualEvent extends Event {
     private float volume;
     private String state;
 
-    public EntityLivingBase getEntity() {
+    public LivingEntity getEntity() {
         return entity;
     }
 
-    public EntityEquipmentSlot getSlot() {
+    public EquipmentSlot getSlot() {
         return slot;
     }
 
@@ -86,7 +86,7 @@ public class ItemVisualEvent extends Event {
         return color.getAlpha() > 0;
     }
 
-    public ItemVisualEvent(EntityLivingBase entity, EntityEquipmentSlot slot, ItemStack item, Color color, SoundEvent sound, float pitch, float volume, String state) {
+    public ItemVisualEvent(LivingEntity entity, EquipmentSlot slot, ItemStack item, Color color, SoundEvent sound, float pitch, float volume, String state) {
         this.entity = entity;
         this.slot = slot;
         this.item = item;

@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 import teamroots.embers.RegistryManager;
 import teamroots.embers.tileentity.ITileEntityBase;
 
+import PropertyInteger;
+
 public class BlockAdvancedEdge extends BlockBase {
 	public static final PropertyInteger state = PropertyInteger.create("state", 0, 9);
 	

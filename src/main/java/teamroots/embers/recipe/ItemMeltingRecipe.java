@@ -9,6 +9,8 @@ import teamroots.embers.util.IHasSize;
 
 import java.util.List;
 
+import ItemStack;
+
 public class ItemMeltingRecipe {
 	@Deprecated
 	private ItemStack stack = ItemStack.EMPTY;

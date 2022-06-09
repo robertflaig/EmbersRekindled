@@ -25,6 +25,8 @@ import teamroots.embers.tileentity.TileEntityCombustor;
 import java.util.ArrayList;
 import java.util.List;
 
+import AxisAlignedBB;
+
 public class BlockCombustor extends BlockTEBase {
 	public static AxisAlignedBB AABB_BASE = new AxisAlignedBB(0,0,0,1,1,1);
 	public static AxisAlignedBB AABB_TOP = new AxisAlignedBB(0.125,0,0.125,0.875,0.75,0.875);

@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import PropertyDirection;
+
 public class BlockItemRequisition extends BlockTEBase implements IDial {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 

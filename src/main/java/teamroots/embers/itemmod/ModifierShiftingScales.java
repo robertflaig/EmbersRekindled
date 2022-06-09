@@ -33,6 +33,8 @@ import teamroots.embers.util.RenderUtil;
 
 import java.util.*;
 
+import ResourceLocation;
+
 public class ModifierShiftingScales extends ModifierBase {
     private static class ShardParticle {
         double x;

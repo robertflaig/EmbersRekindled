@@ -1,8 +1,10 @@
 package teamroots.embers.api.event;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import teamroots.embers.api.alchemy.AlchemyResult;
+
+//import ItemStack;
 
 public class AlchemyResultEvent extends UpgradeEvent {
     AlchemyResult result;
@@ -10,7 +12,7 @@ public class AlchemyResultEvent extends UpgradeEvent {
     boolean isFailure;
     ItemStack failureStack;
 
-    public AlchemyResultEvent(TileEntity tile, AlchemyResult result, boolean consumeIngredients, boolean isFailure, ItemStack failureStack) {
+    public AlchemyResultEvent(BlockEntity tile, AlchemyResult result, boolean consumeIngredients, boolean isFailure, ItemStack failureStack) {
         super(tile);
         this.result = result;
         this.consumeIngredients = consumeIngredients;

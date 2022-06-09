@@ -15,6 +15,8 @@ import teamroots.embers.network.PacketHandler;
 import teamroots.embers.network.message.MessageFlameShieldFX;
 import teamroots.embers.util.EmberInventoryUtil;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierFlameBarrier extends ModifierBase {
 
 	public ModifierFlameBarrier() {

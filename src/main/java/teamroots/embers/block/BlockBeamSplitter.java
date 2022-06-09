@@ -13,6 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityBeamSplitter;
 
+import AxisAlignedBB;
+
 public class BlockBeamSplitter extends BlockTEBase {
 	public static AxisAlignedBB AABB_UP = new AxisAlignedBB(0.1875,0.1875,0.1875,0.8125,1.0,0.8125);
 	public static AxisAlignedBB AABB_DOWN = new AxisAlignedBB(0.1875,0.0,0.1875,0.8125,0.8125,0.8125);

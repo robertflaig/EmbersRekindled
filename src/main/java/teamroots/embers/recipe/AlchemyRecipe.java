@@ -1,10 +1,10 @@
 package teamroots.embers.recipe;
 
 import com.google.common.collect.Lists;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level;
 import teamroots.embers.api.alchemy.AlchemyResult;
 import teamroots.embers.api.alchemy.AspectList;
 import teamroots.embers.api.alchemy.AspectList.AspectRangeList;
@@ -46,33 +46,33 @@ public class AlchemyRecipe implements IHasAspects {
 				AspectList.createStandard(ironMin,dawnstoneMin,copperMin,silverMin,leadMin),
 				AspectList.createStandard(ironMax,dawnstoneMax,copperMax,silverMax,leadMax)
 		);
-		this.centerIngredient = Ingredient.fromStacks(center);
-		this.outsideIngredients = Lists.newArrayList(Ingredient.fromStacks(east),Ingredient.fromStacks(north),Ingredient.fromStacks(west),Ingredient.fromStacks(south));
+		this.centerIngredient = Ingredient.of(center);
+		this.outsideIngredients = Lists.newArrayList(Ingredient.of(east),Ingredient.of(north),Ingredient.of(west),Ingredient.of(south));
 		this.result = result;
 	}
 
 	@Deprecated
-	public int getIron(World world){
+	public int getIron(Level world){
 		return aspectRange.getExact("iron",world);
 	}
 
 	@Deprecated
-	public int getDawnstone(World world){
+	public int getDawnstone(Level world){
 		return aspectRange.getExact("dawnstone",world);
 	}
 
 	@Deprecated
-	public int getCopper(World world){
+	public int getCopper(Level world){
 		return aspectRange.getExact("copper",world);
 	}
 
 	@Deprecated
-	public int getSilver(World world){
+	public int getSilver(Level world){
 		return aspectRange.getExact("silver",world);
 	}
 
 	@Deprecated
-	public int getLead(World world){
+	public int getLead(Level world){
 		return aspectRange.getExact("lead",world);
 	}
 
@@ -81,12 +81,12 @@ public class AlchemyRecipe implements IHasAspects {
 		return aspectRange;
 	}
 
-	public AlchemyResult matchAshes(AspectList list, World world) {
+	public AlchemyResult matchAshes(AspectList list, Level world) {
 		return AlchemyResult.create(list, aspectRange, world);
 	}
 
 	public boolean matches(ItemStack center, List<ItemStack> test) {
-		if (!centerIngredient.apply(center))
+		if (!centerIngredient.test(center))
 			return false;
 
 		ArrayList<Ingredient> ingredients = new ArrayList<>(outsideIngredients);
@@ -94,7 +94,7 @@ public class AlchemyRecipe implements IHasAspects {
 			ingredients.add(Ingredient.EMPTY);
 		}
 		for (ItemStack stack : test) {
-			Optional<Ingredient> found = ingredients.stream().filter(x -> x.apply(stack)).findFirst();
+			Optional<Ingredient> found = ingredients.stream().filter(x -> x.test(stack)).findFirst();
 			if (found.isPresent())
 				ingredients.remove(found.get());
 			else
@@ -108,23 +108,23 @@ public class AlchemyRecipe implements IHasAspects {
 		return result.getAccuracy() != 1.0;
 	}
 
-	public ItemStack getResult(TileEntity tile) {
+	public ItemStack getResult(BlockEntity tile) {
 		return this.result.copy();
 	}
 
-	public final ItemStack getResult(TileEntity tile, AspectList aspects) {
-		World world = tile.getWorld();
+	public final ItemStack getResult(BlockEntity tile, AspectList aspects) {
+		Level world = tile.getLevel();
 		return getResultInternal(world, tile, aspects);
 	}
 
 	@Deprecated
-	public final ItemStack getResult(World world, int iron, int dawnstone, int copper, int silver, int lead){
+	public final ItemStack getResult(Level world, int iron, int dawnstone, int copper, int silver, int lead){
 		AspectList inputAspects = AspectList.createStandard(iron, dawnstone, copper, silver, lead);
 		return getResultInternal(world, null, inputAspects);
 	}
 
 	//Inline after removal of the old getResult method.
-	private ItemStack getResultInternal(World world, TileEntity tile, AspectList inputAspects) {
+	private ItemStack getResultInternal(Level world, BlockEntity tile, AspectList inputAspects) {
 		AlchemyResult result = matchAshes(inputAspects, world);
 		if (isFailure(result))
 			return getResult(tile);

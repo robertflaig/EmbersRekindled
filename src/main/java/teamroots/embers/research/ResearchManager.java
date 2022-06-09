@@ -34,6 +34,8 @@ import java.util.*;
 
 import static teamroots.embers.research.subtypes.ResearchShowItem.*;
 
+import ResourceLocation;
+
 public class ResearchManager {
     public static final ResourceLocation PLAYER_RESEARCH = new ResourceLocation(Embers.MODID, "research");
     public static final ResourceLocation PAGE_ICONS = new ResourceLocation(Embers.MODID, "textures/gui/codex_pageicons.png");

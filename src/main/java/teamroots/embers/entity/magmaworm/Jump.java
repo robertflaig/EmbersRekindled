@@ -6,6 +6,9 @@ import teamroots.embers.entity.EntityMagmaWorm;
 import teamroots.embers.entity.MagmaWormPhase;
 import teamroots.embers.util.Bezier;
 
+import Vec3d;
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public abstract class Jump extends MagmaWormPhase {
 
     public Jump(PhaseSupplier supplier) {

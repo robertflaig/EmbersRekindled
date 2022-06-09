@@ -19,6 +19,8 @@ import teamroots.embers.util.EmberInventoryUtil;
 
 import java.util.List;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierSuperheater extends ModifierBase {
 
 	public ModifierSuperheater() {

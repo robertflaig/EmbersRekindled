@@ -9,6 +9,9 @@ import teamroots.embers.api.alchemy.AspectList.AspectRangeList;
 
 import java.util.ArrayList;
 
+import IGuiHelper;
+import ResourceLocation;
+
 public class AspectRenderUtil {
     private IGuiHelper helper;
     private int aspectbarsX;

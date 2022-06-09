@@ -17,6 +17,8 @@ import teamroots.embers.tileentity.ITileEntityBase;
 
 import java.util.ArrayList;
 
+import PropertyInteger;
+
 public class BlockMechEdge extends BlockBase {
 	public static final PropertyInteger state = PropertyInteger.create("state", 0, 7);
 	

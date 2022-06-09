@@ -7,6 +7,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import ResourceLocation;
+
 public class FilterExisting implements IFilter {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation("embers", "existing");
 

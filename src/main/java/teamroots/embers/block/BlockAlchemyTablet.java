@@ -9,6 +9,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityAlchemyTablet;
 
+import AxisAlignedBB;
+
 public class BlockAlchemyTablet extends BlockTEBase {
 	public static AxisAlignedBB AABB_PARTIAL = new AxisAlignedBB(0,0,0,1,0.875,1);
 	

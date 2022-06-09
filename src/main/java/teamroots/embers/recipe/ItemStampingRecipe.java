@@ -10,6 +10,8 @@ import teamroots.embers.util.IHasSize;
 
 import java.util.List;
 
+import ItemStack;
+
 public class ItemStampingRecipe {
 	@Deprecated
 	protected ItemStack stack = ItemStack.EMPTY;

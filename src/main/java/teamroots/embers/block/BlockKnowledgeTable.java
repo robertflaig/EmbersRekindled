@@ -11,6 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityKnowledgeTable;
 
+import PropertyDirection;
+
 public class BlockKnowledgeTable extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

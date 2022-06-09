@@ -11,6 +11,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import PropertyInteger;
+
 public class BlockStructureMarker extends BlockBase {
 	public static final PropertyInteger marker_value = PropertyInteger.create("marker_value", 0, 15);
 	public BlockStructureMarker() {

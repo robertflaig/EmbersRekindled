@@ -9,6 +9,9 @@ import teamroots.embers.entity.MagmaWormPhase;
 
 import java.util.List;
 
+import Vec3d;
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public class DownSeism extends Down {
     private static final double RANGE_ATTACK = 36;
 

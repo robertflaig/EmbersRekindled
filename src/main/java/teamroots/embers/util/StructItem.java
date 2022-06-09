@@ -2,6 +2,8 @@ package teamroots.embers.util;
 
 import net.minecraft.item.Item;
 
+import Item;
+
 public class StructItem {
 	private Item item = null;
 	private int meta = 0;

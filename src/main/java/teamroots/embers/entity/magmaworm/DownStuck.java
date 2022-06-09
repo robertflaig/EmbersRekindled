@@ -4,6 +4,9 @@ import net.minecraft.util.math.Vec3d;
 import teamroots.embers.entity.EntityMagmaWorm;
 import teamroots.embers.entity.MagmaWormPhase;
 
+import Vec3d;
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public class DownStuck extends Jump {
     private boolean stuck;
     private double stuckTimer;

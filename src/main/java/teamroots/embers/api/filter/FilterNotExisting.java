@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 
+import ResourceLocation;
+
 public class FilterNotExisting extends FilterExisting {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation("embers", "not_existing");
 

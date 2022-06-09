@@ -10,6 +10,8 @@ import teamroots.embers.api.itemmod.ItemModUtil;
 import teamroots.embers.api.itemmod.ModifierBase;
 import teamroots.embers.util.EmberInventoryUtil;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierIntelligentApparatus extends ModifierBase {
 
     public ModifierIntelligentApparatus() {

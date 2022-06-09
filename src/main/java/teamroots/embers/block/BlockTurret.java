@@ -17,6 +17,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import teamroots.embers.tileentity.TileEntityFluidTransfer;
 import teamroots.embers.tileentity.TileEntityTurret;
 
+import PropertyDirection;
+
 public class BlockTurret extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 

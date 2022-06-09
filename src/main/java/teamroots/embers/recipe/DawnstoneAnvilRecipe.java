@@ -8,6 +8,8 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import Ingredient;
+
 public class DawnstoneAnvilRecipe {
     public Ingredient bottom = Ingredient.EMPTY;
     public Ingredient top = Ingredient.EMPTY;

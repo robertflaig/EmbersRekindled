@@ -25,6 +25,8 @@ import teamroots.embers.util.Misc;
 import java.util.ArrayList;
 import java.util.List;
 
+import PropertyBool;
+
 public class BlockPump extends BlockTEBase {
 	public static final PropertyBool isTop = PropertyBool.create("top");
 	public static final PropertyDirection facing = PropertyDirection.create("facing");

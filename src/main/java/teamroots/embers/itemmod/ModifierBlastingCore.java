@@ -24,6 +24,8 @@ import teamroots.embers.util.Misc;
 
 import java.util.*;
 
+import teamroots.embers.api.itemmod.ModifierBase.EnumType;
+
 public class ModifierBlastingCore extends ModifierBase {
 
 	public ModifierBlastingCore() {

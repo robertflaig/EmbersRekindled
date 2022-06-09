@@ -8,6 +8,8 @@ import teamroots.embers.util.IHasSize;
 
 import java.util.List;
 
+import Ingredient;
+
 public class HeatCoilRecipe {
     Ingredient input = Ingredient.EMPTY;
     ItemStack output = ItemStack.EMPTY;

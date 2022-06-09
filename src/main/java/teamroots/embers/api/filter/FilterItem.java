@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
+import ResourceLocation;
+
 public class FilterItem implements IFilter {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation("embers", "item");
 

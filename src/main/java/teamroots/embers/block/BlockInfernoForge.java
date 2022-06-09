@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import AxisAlignedBB;
+
 public class BlockInfernoForge extends BlockTEBase {
 	public static final AxisAlignedBB AABB_BASE = new AxisAlignedBB(0,0,0,1,0.75,1);
 	public static final AxisAlignedBB AABB_TOP = new AxisAlignedBB(0,0.5,0,1,0.75,1);

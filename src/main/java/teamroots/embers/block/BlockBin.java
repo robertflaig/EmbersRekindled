@@ -12,6 +12,8 @@ import teamroots.embers.tileentity.TileEntityBin;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import AxisAlignedBB;
+
 public class BlockBin extends BlockTEBase {
 	public static AxisAlignedBB AABB_BASE = new AxisAlignedBB(0,0,0,1,0.125,1);
 	public static AxisAlignedBB AABB_SIDE_WEST = new AxisAlignedBB(0,0,0,0.125,1.0,1.0);

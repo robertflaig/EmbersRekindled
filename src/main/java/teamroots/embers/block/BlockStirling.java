@@ -17,6 +17,8 @@ import teamroots.embers.tileentity.TileEntityStirling;
 
 import javax.annotation.Nullable;
 
+import PropertyDirection;
+
 public class BlockStirling extends BlockTEBase {
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 

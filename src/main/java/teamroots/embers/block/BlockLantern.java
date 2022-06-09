@@ -10,6 +10,8 @@ import teamroots.embers.particle.ParticleUtil;
 
 import java.util.Random;
 
+import AxisAlignedBB;
+
 public class BlockLantern extends BlockBase {
 	public static AxisAlignedBB AABB_BASE = new AxisAlignedBB(0.25,0,0.25,0.75,13.0/16.0,0.75);
 	

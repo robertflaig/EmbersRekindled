@@ -5,6 +5,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 
+import ResourceLocation;
+
 public interface IFilter {
     ResourceLocation getType();
 

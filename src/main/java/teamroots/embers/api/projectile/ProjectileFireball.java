@@ -10,6 +10,9 @@ import teamroots.embers.entity.EntityEmberProjectile;
 import javax.annotation.Nullable;
 import java.awt.*;
 
+import Entity;
+import Vec3d;
+
 public class ProjectileFireball implements IProjectilePreset {
     Vec3d pos;
     Vec3d velocity;

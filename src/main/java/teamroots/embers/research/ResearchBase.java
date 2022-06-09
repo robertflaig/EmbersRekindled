@@ -14,6 +14,8 @@ import teamroots.embers.util.Vec2i;
 
 import java.util.*;
 
+import ItemStack;
+
 public class ResearchBase {
 	public String name = "";
 	public double u = 0.75;

@@ -9,6 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import teamroots.embers.util.OreTransmutationUtil;
 
+import EnumActionResult;
+
 public class ItemMetallurgicDust extends ItemBase {
     public ItemMetallurgicDust(String name, boolean addToTab) {
         super(name, addToTab);

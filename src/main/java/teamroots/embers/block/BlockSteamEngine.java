@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntitySteamEngine;
 import teamroots.embers.util.Misc;
 
+import PropertyDirection;
+
 public class BlockSteamEngine extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

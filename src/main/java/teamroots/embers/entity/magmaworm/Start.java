@@ -4,6 +4,8 @@ import net.minecraft.util.math.Vec3d;
 import teamroots.embers.entity.EntityMagmaWorm;
 import teamroots.embers.entity.MagmaWormPhase;
 
+import teamroots.embers.entity.MagmaWormPhase.PhaseSupplier;
+
 public class Start extends MagmaWormPhase {
 
     public Start(PhaseSupplier supplier) {

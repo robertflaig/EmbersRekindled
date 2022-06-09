@@ -12,6 +12,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityEmberInjector;
 
+import PropertyDirection;
+
 public class BlockEmberInjector extends BlockTEBase {
 	public static final PropertyDirection facing = PropertyDirection.create("facing");
 	

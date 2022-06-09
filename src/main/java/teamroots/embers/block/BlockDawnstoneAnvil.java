@@ -16,6 +16,8 @@ import teamroots.embers.tileentity.TileEntityDawnstoneAnvil;
 
 import java.util.Arrays;
 
+import AxisAlignedBB;
+
 public class BlockDawnstoneAnvil extends BlockTEBase {
 	public static AxisAlignedBB AABB_Z = new AxisAlignedBB(0, 0, 0.25, 1, 1, 0.75);
 	public static AxisAlignedBB AABB_X = new AxisAlignedBB(0.25, 0, 0, 0.75, 1, 1);
