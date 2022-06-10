@@ -2,6 +2,8 @@ package teamroots.embers.api.alchemy;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
 import teamroots.embers.util.AlchemyUtil;
