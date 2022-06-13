@@ -1,7 +1,7 @@
 package thaumcraft.api.research;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -22,7 +22,7 @@ public class ScanBlock implements IScanThing {
 	}		
 	
 	@Override
-	public boolean checkThing(EntityPlayer player, Object obj) {		
+	public boolean checkThing(PlayerEntity player, Object obj) {
 		if (obj!=null && obj instanceof BlockPos) {
 			for (Block block:blocks) 
 				if (player.world.getBlockState((BlockPos) obj).getBlock()==block) 
@@ -32,7 +32,7 @@ public class ScanBlock implements IScanThing {
 	}
 	
 	@Override
-	public String getResearchKey(EntityPlayer player, Object object) {		
+	public String getResearchKey(PlayerEntity player, Object object) {
 		return research;
 	}
 }

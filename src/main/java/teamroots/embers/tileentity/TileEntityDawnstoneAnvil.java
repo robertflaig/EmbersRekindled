@@ -1,16 +1,16 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,38 +56,38 @@ public class TileEntityDawnstoneAnvil extends TileEntity implements ITileEntityB
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
 		tag.setTag("inventory", inventory.serializeNBT());
 		tag.setInteger("progress", progress);
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
+	public void read(CompoundNBT tag){
+		super.read(tag);
 		inventory.deserializeNBT(tag.getCompoundTag("inventory"));
 		progress = tag.getInteger("progress");
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return true;
 		}
@@ -95,7 +95,7 @@ public class TileEntityDawnstoneAnvil extends TileEntity implements ITileEntityB
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return (T)this.inventory;
 		}
@@ -103,10 +103,10 @@ public class TileEntityDawnstoneAnvil extends TileEntity implements ITileEntityB
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = player.getHeldItem(hand);
-		if (heldItem.isEmpty() && hand == EnumHand.MAIN_HAND) {
+		if (heldItem.isEmpty() && hand == Hand.MAIN_HAND) {
 			boolean doContinue = true;
 			for (int i = 1; i >= 0 && doContinue; i --){
 				if (!inventory.getStackInSlot(i).isEmpty() && !world.isRemote){
@@ -123,7 +123,7 @@ public class TileEntityDawnstoneAnvil extends TileEntity implements ITileEntityB
 			onHit();
 			return true;
 		}
-		else if (!heldItem.isEmpty() && hand == EnumHand.MAIN_HAND){
+		else if (!heldItem.isEmpty() && hand == Hand.MAIN_HAND){
 			ItemStack stack = heldItem.copy();
 			ItemStack stack2 = heldItem.copy();
 			stack2.setCount(1);
@@ -146,8 +146,8 @@ public class TileEntityDawnstoneAnvil extends TileEntity implements ITileEntityB
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		Misc.spawnInventoryInWorld(world, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, inventory);
 		world.setTileEntity(pos, null);
 	}

@@ -1,6 +1,6 @@
 package teamroots.embers.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -16,7 +16,7 @@ public class ItemCodex extends ItemBase {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand){
 		world.playSound(null,player.posX, player.posY, player.posZ, SoundManager.CODEX_OPEN, SoundCategory.MASTER, 1.0f, 1.0f);
 		player.openGui(Embers.instance, GuiHandler.CODEX, world, player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
 		return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));

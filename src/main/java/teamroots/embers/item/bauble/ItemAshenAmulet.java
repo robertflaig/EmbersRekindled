@@ -4,7 +4,7 @@ import baubles.api.BaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
@@ -36,7 +36,7 @@ public class ItemAshenAmulet extends ItemBaubleBase {
         else if (source.getTrueSource() instanceof EntityLivingBase)
             killer = (EntityLivingBase) source.getTrueSource();
 
-        if (killer != null && !(entity instanceof EntityPlayer) && killer.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)) {
+        if (killer != null && !(entity instanceof PlayerEntity) && killer.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)) {
             NonNullList<ItemStack> stacks = BaublesUtil.getBaubles(killer.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null), BaubleType.AMULET);
             if (stacks.get(0).getItem() == this) {
                 event.getDrops().forEach(itemEntity -> itemEntity.setItem(new ItemStack(RegistryManager.dust_ash, itemEntity.getItem().getCount())));
@@ -48,7 +48,7 @@ public class ItemAshenAmulet extends ItemBaubleBase {
 
     @SubscribeEvent
     public void onBlockDrop(BlockEvent.HarvestDropsEvent event) {
-        EntityPlayer harvester = event.getHarvester();
+        PlayerEntity harvester = event.getHarvester();
         BlockPos pos = event.getPos();
 
         if (harvester != null && harvester.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)) {

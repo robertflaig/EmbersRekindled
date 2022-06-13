@@ -29,7 +29,7 @@ public class TileEntityGeoSeparatorRenderer extends TileEntitySpecialRenderer<Ti
 			int capacity = tile.getCapacity();
 			if (fluidStack != null){
 				Fluid fluid = fluidStack.getFluid();
-				int amount = fluidStack.amount;
+				int amount = fluidStack.getAmount();
 				int c = fluid.getColor(fluidStack);
 	            blue = c & 0xFF;
 	            green = (c >> 8) & 0xFF;

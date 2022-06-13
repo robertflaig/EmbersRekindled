@@ -1,6 +1,6 @@
 package teamroots.embers.power;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -23,12 +23,12 @@ public class EmberCapabilityProvider implements ICapabilityProvider {
 	public static final Capability<IEmberCapability> emberCapability = null;
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, Direction facing) {
 		return capability == EmbersCapabilities.EMBER_CAPABILITY;
 	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, Direction facing) {
     	if (EmbersCapabilities.EMBER_CAPABILITY != null && capability == EmbersCapabilities.EMBER_CAPABILITY) return
 				EmbersCapabilities.EMBER_CAPABILITY.cast(this.capability);
     	return null;

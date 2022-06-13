@@ -6,10 +6,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -43,7 +43,7 @@ public class EntityAncientGolem extends EntityMob {
         this.tasks.addTask(2, new EntityAIAttackMelee(this, 0.46D, true));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.46D));
         this.tasks.addTask(7, new EntityAIWander(this, 0.46D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(8, new EntityAIWatchClosest(this, PlayerEntity.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.applyEntityAI();
     }
@@ -60,14 +60,14 @@ public class EntityAncientGolem extends EntityMob {
 
     protected void applyEntityAI()
     {
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, PlayerEntity.class, true));
     }
 
     @Override
     protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
         super.dropLoot(wasRecentlyHit, lootingModifier, source);
 
-        if(world.getTotalWorldTime() - lastPickaxeHit < 400 || isPickaxeHit(source)) {
+        if(world.getDayTime() - lastPickaxeHit < 400 || isPickaxeHit(source)) {
             dropItem(RegistryManager.golems_eye,1);
         }
     }
@@ -93,7 +93,7 @@ public class EntityAncientGolem extends EntityMob {
     public boolean attackEntityFrom(DamageSource source, float amount) {
         boolean result = super.attackEntityFrom(source, amount);
         if (result && isPickaxeHit(source))
-            lastPickaxeHit = world.getTotalWorldTime();
+            lastPickaxeHit = world.getDayTime();
         return result;
     }
 
@@ -141,13 +141,13 @@ public class EntityAncientGolem extends EntityMob {
 	}
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound compound) {
+    public void writeEntityToNBT(CompoundNBT compound) {
         super.writeEntityToNBT(compound);
-        compound.setLong("lastPickaxeHit",lastPickaxeHit);
+        compound.putLong("lastPickaxeHit",lastPickaxeHit);
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound compound) {
+    public void readEntityFromNBT(CompoundNBT compound) {
         super.readEntityFromNBT(compound);
         lastPickaxeHit = compound.getLong("lastPickaxeHit");
     }

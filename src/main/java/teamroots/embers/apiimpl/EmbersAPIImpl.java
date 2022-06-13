@@ -2,11 +2,11 @@ package teamroots.embers.apiimpl;
 
 import com.google.common.collect.Lists;
 import mysticalmechanics.api.MysticalMechanicsAPI;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -327,7 +327,7 @@ public class EmbersAPIImpl implements IEmbersAPI {
 
             @Override
             public double getPower(FluidStack stack) {
-                return power * stack.amount;
+                return power * stack.getAmount();
             }
 
             @Override
@@ -361,17 +361,17 @@ public class EmbersAPIImpl implements IEmbersAPI {
     }
 
     @Override
-    public double getEmberTotal(EntityPlayer player) {
+    public double getEmberTotal(PlayerEntity player) {
         return EmberInventoryUtil.getEmberTotal(player);
     }
 
     @Override
-    public double getEmberCapacityTotal(EntityPlayer player) {
+    public double getEmberCapacityTotal(PlayerEntity player) {
         return EmberInventoryUtil.getEmberCapacityTotal(player);
     }
 
     @Override
-    public void removeEmber(EntityPlayer player, double amount) {
+    public void removeEmber(PlayerEntity player, double amount) {
         EmberInventoryUtil.removeEmber(player, amount);
     }
 

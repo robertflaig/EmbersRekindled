@@ -4,11 +4,11 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -48,17 +48,17 @@ public class BlockSeed extends BlockBase implements ITileEntityProvider, IModele
     }
 	
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos){
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
 		return AABB_BASE;
 	}
 
 	@Override
-	public boolean canSilkHarvest(World p_canSilkHarvest_1_, BlockPos p_canSilkHarvest_2_, IBlockState p_canSilkHarvest_3_, EntityPlayer p_canSilkHarvest_4_) {
+	public boolean canSilkHarvest(World p_canSilkHarvest_1_, BlockPos p_canSilkHarvest_2_, IBlockState p_canSilkHarvest_3_, PlayerEntity p_canSilkHarvest_4_) {
 		return false;
 	}
 
 	@Override
-	public Item getItemDropped(IBlockState state, Random random, int fortune) {
+	public Item getItemDropped(BlockState state, Random random, int fortune) {
 		if(state.getBlock() == this) //I swear to god this will trip at least once in the lifetime of this mod.
 			switch(state.getValue(type))
 			{
@@ -118,13 +118,13 @@ public class BlockSeed extends BlockBase implements ITileEntityProvider, IModele
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ){
 		return ((ITileEntityBase)world.getTileEntity(pos)).activate(world,pos,state,player,hand,side,hitX,hitY,hitZ);
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
-		((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world,pos,state,player);
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
+		((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world,pos,state,player);
 	}
 	
 	@Override

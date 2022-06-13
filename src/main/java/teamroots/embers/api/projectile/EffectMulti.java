@@ -1,7 +1,7 @@
 package teamroots.embers.api.projectile;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -40,7 +40,7 @@ public class EffectMulti implements IProjectileEffect {
     }
 
     @Override
-    public void onBlockImpact(World world, BlockPos pos, EnumFacing side, IProjectilePreset projectile) {
+    public void onBlockImpact(World world, BlockPos pos, Direction side, IProjectilePreset projectile) {
         for (IProjectileEffect effect : effects) {
             effect.onBlockImpact(world, pos, side, projectile);
         }

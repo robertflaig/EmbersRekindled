@@ -1,7 +1,7 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.BlockStairs;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -13,7 +13,7 @@ public class BlockStairsBase extends BlockStairs implements IModeledBlock, IBloc
 	public boolean isOpaqueCube = true, isFullCube = true;
 	public BlockRenderLayer layer = BlockRenderLayer.SOLID;
 	public Item itemBlock = null;
-	public BlockStairsBase(IBlockState state, String name, boolean addToTab){
+	public BlockStairsBase(BlockState state, String name, boolean addToTab){
 		super(state);
 		this.useNeighborBrightness = true;
 		setUnlocalizedName(name);

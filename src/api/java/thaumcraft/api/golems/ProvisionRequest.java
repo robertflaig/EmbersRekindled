@@ -2,7 +2,7 @@ package thaumcraft.api.golems;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import thaumcraft.api.golems.seals.ISealEntity;
 import thaumcraft.api.golems.tasks.Task;
@@ -11,7 +11,7 @@ public class ProvisionRequest {
 	private ISealEntity seal;
 	private Entity entity;
 	private BlockPos pos;
-	private EnumFacing side;
+	private Direction side;
 	private ItemStack stack;
 	private int id;
 	private Task linkedTask;
@@ -25,7 +25,7 @@ public class ProvisionRequest {
 		this.id = s.hashCode();
 	}
 	
-	ProvisionRequest(BlockPos pos, EnumFacing side, ItemStack stack) {
+	ProvisionRequest(BlockPos pos, Direction side, ItemStack stack) {
 		this.pos = pos;
 		this.side = side;
 		this.stack = stack.copy();
@@ -70,11 +70,11 @@ public class ProvisionRequest {
 		this.pos = pos;
 	}
 	
-	public EnumFacing getSide() {
+	public Direction getSide() {
 		return side;
 	}
 
-	public void setSide(EnumFacing side) {
+	public void setSide(Direction side) {
 		this.side = side;
 	}
 

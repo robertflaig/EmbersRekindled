@@ -3,7 +3,7 @@ package teamroots.embers.entity;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -112,23 +112,23 @@ public class EntityEmberProjectile extends Entity/* implements ILightProvider*/ 
     }
 
     @Override
-    protected void readEntityFromNBT(NBTTagCompound compound) {
+    protected void readEntityFromNBT(CompoundNBT compound) {
         getDataManager().set(EntityEmberProjectile.value, compound.getFloat("value"));
         getDataManager().setDirty(EntityEmberProjectile.value);
         getDataManager().set(EntityEmberProjectile.color, compound.getInteger("color"));
         getDataManager().setDirty(EntityEmberProjectile.color);
-        /*if (compound.hasKey("UUIDmost")){
+        /*if (compound.contains("UUIDmost")){
 			id = new UUID(compound.getLong("UUIDmost"),compound.getLong("UUIDleast"));
 		}*/
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound compound) {
+    protected void writeEntityToNBT(CompoundNBT compound) {
         compound.setFloat("value", getDataManager().get(value));
         compound.setInteger("color",getDataManager().get(color));
 		/*if (id != null){
-			compound.setLong("UUIDmost", id.getMostSignificantBits());
-			compound.setLong("UUIDleast", id.getLeastSignificantBits());
+			compound.putLong("UUIDmost", id.getMostSignificantBits());
+			compound.putLong("UUIDleast", id.getLeastSignificantBits());
 		}*/
     }
 
@@ -252,7 +252,7 @@ public class EntityEmberProjectile extends Entity/* implements ILightProvider*/ 
             Entity target = raytraceresult.entityHit;
             DamageSource source = new EntityDamageSourceIndirect("ember", this, shootingEntity).setMagicDamage();
             if (target.attackEntityFrom(source, getDataManager().get(value))) {
-                if (shootingEntity instanceof EntityPlayer) {
+                if (shootingEntity instanceof PlayerEntity) {
                     target.setFire(1);
                     if (target instanceof EntityLivingBase) {
                         EntityLivingBase livingTarget = (EntityLivingBase) target;

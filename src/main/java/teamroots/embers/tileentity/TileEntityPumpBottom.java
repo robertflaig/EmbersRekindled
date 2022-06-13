@@ -2,13 +2,13 @@ package teamroots.embers.tileentity;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStaticLiquid;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -36,13 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase, ITickable, IMechanicallyPowered, IExtraDialInformation {
+public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase, ITickableTileEntity, IMechanicallyPowered, IExtraDialInformation {
 	public static final double EMBER_COST = 0.5;
 
 	int ticksExisted = 0;
 	int progress;
 	int totalProgress, lastProgress;
-	EnumFacing front = EnumFacing.UP;
+	Direction front = Direction.UP;
 	public IEmberCapability capability = new DefaultEmberCapability();
 	private List<IUpgradeProvider> upgrades = new ArrayList<>();
 
@@ -52,39 +52,39 @@ public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase,
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
-		capability.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
+		capability.write(tag);
 		tag.setInteger("progress", progress);
 		tag.setInteger("front", front.getIndex());
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
-		capability.readFromNBT(tag);
-		front = EnumFacing.getFront(tag.getInteger("front"));
+	public void read(CompoundNBT tag){
+		super.read(tag);
+		capability.read(tag);
+		front = Direction.getFront(tag.getInteger("front"));
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY && facing != null){
 			return facing.getAxis() == front.getAxis();
 		}
@@ -92,7 +92,7 @@ public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase,
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY && facing != null && facing.getAxis() == front.getAxis()){
 			return (T)this.capability;
 		}
@@ -106,14 +106,14 @@ public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 	
@@ -131,7 +131,7 @@ public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase,
 						}
 						t.markDirty();
 						world.setBlockToAir(pos);
-						for(EnumFacing facing : EnumFacing.HORIZONTALS) {
+						for(Direction facing : Direction.HORIZONTALS) {
 							updateWater(pos.offset(facing));
 						}
 						return false;
@@ -152,9 +152,9 @@ public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		IBlockState state = world.getBlockState(getPos());
-		upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.HORIZONTALS);
+		upgrades = UpgradeUtil.getUpgrades(world, pos, Direction.HORIZONTALS);
 		UpgradeUtil.verifyUpgrades(this, upgrades);
 		if (UpgradeUtil.doTick(this, upgrades))
 			return;
@@ -226,7 +226,7 @@ public class TileEntityPumpBottom extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
+	public void addDialInformation(Direction facing, List<String> information, String dialType) {
 		UpgradeUtil.throwEvent(this,new DialInformationEvent(this,information,dialType),upgrades);
 	}
 }

@@ -1,13 +1,13 @@
 package thaumcraft.api.research.theorycraft;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 
 public class CardRethink extends TheorycraftCard {
 	
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) {
+	public boolean initialize(PlayerEntity player, ResearchTableData data) {
 		int a=0;
 		for (String category:data.categoryTotals.keySet()) {
 			a+=data.getTotal(category);
@@ -31,7 +31,7 @@ public class CardRethink extends TheorycraftCard {
 	}
 
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		if (!initialize(player,data)) return false;
 		int a=0;
 		for (String category:data.categoryTotals.keySet()) {

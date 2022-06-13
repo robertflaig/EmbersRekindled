@@ -5,12 +5,12 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -35,7 +35,7 @@ public class BlockMechActuator extends BlockTEBase implements ITileEntityProvide
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(facing,EnumFacing.getFront(meta));
+		return getDefaultState().withProperty(facing,Direction.getFront(meta));
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class BlockMechActuator extends BlockTEBase implements ITileEntityProvide
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+	public IBlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, Hand hand) {
 		//if(placer != null && placer.isSneaking())
 		//	facing = facing.getOpposite();
 		return getDefaultState().withProperty(BlockMechActuator.facing, facing);
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, BlockState state, PlayerEntity playerIn, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
 		/*ItemStack heldItem = playerIn.getHeldItem(hand);
 		if (heldItem.getItem() instanceof ItemTinkerHammer && !playerIn.isSneaking() && state.getBlock() == this){
 			worldIn.setBlockState(pos,state.cycleProperty(BlockMechActuator.facing));
@@ -61,13 +61,13 @@ public class BlockMechActuator extends BlockTEBase implements ITileEntityProvide
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		TileEntityMechActuator tile = (TileEntityMechActuator)world.getTileEntity(pos);
 		tile.updateNeighbors();
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side){
 		return side != state.getValue(facing);
 	}
 }

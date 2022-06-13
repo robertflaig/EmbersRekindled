@@ -1,13 +1,13 @@
 package teamroots.embers.item;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 import net.minecraft.world.World;
 import teamroots.embers.entity.EntityEmberLight;
 
@@ -22,7 +22,7 @@ public class ItemGlimmerLamp extends ItemBase {
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
 		if (!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
+			stack.setTagCompound(new CompoundNBT());
 			stack.getTagCompound().setInteger("light", 1200);
 		}
 		else {
@@ -35,15 +35,15 @@ public class ItemGlimmerLamp extends ItemBase {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		if (stack.hasTagCompound()){
 			if (stack.getTagCompound().getInteger("light") >= 10){
 				stack.getTagCompound().setInteger("light",stack.getTagCompound().getInteger("light")-10);
 				if (!world.isRemote){
 					EntityEmberLight light = (new EntityEmberLight(world));
-					double handmod = player.getActiveHand() == EnumHand.MAIN_HAND ? 1.0 : -1.0;
-					handmod *= player.getPrimaryHand() == EnumHandSide.RIGHT ? 1.0 : -1.0;
+					double handmod = player.getActiveHand() == Hand.MAIN_HAND ? 1.0 : -1.0;
+					handmod *= player.getPrimaryHand() == HandSide.RIGHT ? 1.0 : -1.0;
 					double posX = player.posX + player.getLookVec().x + handmod * (player.width / 2.0) * Math.sin(Math.toRadians(-player.rotationYaw - 90));
 					double posY = player.posY + player.getEyeHeight() - 0.2 + player.getLookVec().y;
 					double posZ = player.posZ + player.getLookVec().z + handmod * (player.width / 2.0) * Math.cos(Math.toRadians(-player.rotationYaw - 90));

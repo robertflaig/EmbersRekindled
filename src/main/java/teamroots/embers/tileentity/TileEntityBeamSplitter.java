@@ -1,14 +1,14 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,7 +25,7 @@ import teamroots.embers.util.Misc;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBase, ITickable, IEmberPacketProducer, IEmberPacketReceiver {
+public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBase, ITickableTileEntity, IEmberPacketProducer, IEmberPacketReceiver {
 	public IEmberCapability capability = new DefaultEmberCapability() {
 		@Override
 		public boolean acceptsVolatile() {
@@ -42,9 +42,9 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
-		capability.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
+		capability.write(tag);
 		if (targetLeft != null){
 			tag.setInteger("targetLeftX", targetLeft.getX());
 			tag.setInteger("targetLeftY", targetLeft.getY());
@@ -59,47 +59,47 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
-		capability.readFromNBT(tag);
-		if (tag.hasKey("targetLeftX")){
+	public void read(CompoundNBT tag){
+		super.read(tag);
+		capability.read(tag);
+		if (tag.contains("targetLeftX")){
 			targetLeft = new BlockPos(tag.getInteger("targetLeftX"), tag.getInteger("targetLeftY"), tag.getInteger("targetLeftZ"));
 		}
-		if (tag.hasKey("targetRightX")){
+		if (tag.contains("targetRightX")){
 			targetRight = new BlockPos(tag.getInteger("targetRightX"), tag.getInteger("targetRightY"), tag.getInteger("targetRightZ"));
 		}
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return true;
 		}
@@ -107,7 +107,7 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return (T)this.capability;
 		}
@@ -115,7 +115,7 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		this.ticksExisted ++;
 		if (ticksExisted % 20 == 0 && !getWorld().isRemote && this.capability.getEmber() > 0) {
 			TileEntity tileLeft = targetLeft != null ? getWorld().getTileEntity(targetLeft) : null;
@@ -168,26 +168,26 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 	}
 
 	@Override
-	public void setTargetPosition(BlockPos pos, EnumFacing side) {
+	public void setTargetPosition(BlockPos pos, Direction side) {
 		if(pos.equals(getPos()))
 			return;
 		IBlockState state = getWorld().getBlockState(getPos());
 		if (state.getValue(BlockBeamSplitter.isXAligned)){
-			if (side == EnumFacing.NORTH){
+			if (side == Direction.NORTH){
 				targetLeft = pos;
 				markDirty();
 			}
-			if (side == EnumFacing.SOUTH){
+			if (side == Direction.SOUTH){
 				targetRight = pos;
 				markDirty();
 			}
 		}
 		else {
-			if (side == EnumFacing.WEST){
+			if (side == Direction.WEST){
 				targetLeft = pos;
 				markDirty();
 			}
-			if (side == EnumFacing.EAST){
+			if (side == Direction.EAST){
 				targetRight = pos;
 				markDirty();
 			}

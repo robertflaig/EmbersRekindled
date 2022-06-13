@@ -1,7 +1,7 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 public interface IEmberPipePriority {
-    int getPriority(EnumFacing facing);
+    int getPriority(Direction facing);
 }

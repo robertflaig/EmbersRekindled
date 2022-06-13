@@ -2,7 +2,7 @@ package teamroots.embers.util;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import teamroots.embers.api.filter.ComparatorMatch;
 import teamroots.embers.api.filter.EnumFilterSetting;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class FilterUtil {
     static List<IFilterComparator> comparators = new ArrayList<>();
     static Map<String, IFilterComparator> comparatorMap = new HashMap<>();
-    static Map<ResourceLocation, Function<NBTTagCompound, IFilter>> filterRegistry = new LinkedHashMap<>();
+    static Map<ResourceLocation, Function<CompoundNBT, IFilter>> filterRegistry = new LinkedHashMap<>();
 
     public static IFilterComparator ANY = new ComparatorMatch("any",999999) {
         @Override
@@ -42,7 +42,7 @@ public class FilterUtil {
         comparators.sort(Comparator.comparingInt(IFilterComparator::getPriority).reversed());
     }
 
-    public static void registerFilter(ResourceLocation resLoc, Function<NBTTagCompound, IFilter> generator) {
+    public static void registerFilter(ResourceLocation resLoc, Function<CompoundNBT, IFilter> generator) {
         filterRegistry.put(resLoc, generator);
     }
 
@@ -50,9 +50,9 @@ public class FilterUtil {
         registerFilter(filter.getType(), tag -> filter);
     }
 
-    public static IFilter deserializeFilter(NBTTagCompound tag) {
+    public static IFilter deserializeFilter(CompoundNBT tag) {
         ResourceLocation resLoc = new ResourceLocation(tag.getString("type"));
-        Function<NBTTagCompound, IFilter> generator = filterRegistry.get(resLoc);
+        Function<CompoundNBT, IFilter> generator = filterRegistry.get(resLoc);
         if(generator != null)
             return generator.apply(tag);
         return FILTER_ANY;

@@ -1,6 +1,6 @@
 package teamroots.embers.heat;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public interface IHeatCapability {
 	public double getHeat();
@@ -9,6 +9,6 @@ public interface IHeatCapability {
 	public void setHeatCapacity(double value);
 	public double addAmount(double value, boolean doAdd);
 	public double removeAmount(double value, boolean doRemove);
-	public void writeToNBT(NBTTagCompound tag);
-	public void readFromNBT(NBTTagCompound tag);
+	public void write(CompoundNBT tag);
+	public void read(CompoundNBT tag);
 }

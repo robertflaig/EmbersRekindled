@@ -1,9 +1,7 @@
 package teamroots.embers.api.alchemy;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.TileEntityAlchemyPedestal;
 import teamroots.embers.util.AlchemyUtil;
@@ -72,16 +70,16 @@ public class AspectList {
         }
     }
 
-    public void deserializeNBT(NBTTagCompound compound)
+    public void deserializeNBT(CompoundNBT compound)
     {
-        compound.getKeySet().stream().filter(key -> compound.hasKey(key, 99)).forEach(key -> aspectList.put(key, compound.getInteger(key)));
+        compound.keySet().stream().filter(key -> compound.contains(key, 99)).forEach(key -> aspectList.put(key, compound.getInt(key)));
     }
 
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        CompoundNBT compound = new CompoundNBT();
         for (Map.Entry<String, Integer> entry : aspectList.entrySet()) {
-            compound.setInteger(entry.getKey(),entry.getValue());
+            compound.putInt(entry.getKey(),entry.getValue());
         }
         return compound;
     }

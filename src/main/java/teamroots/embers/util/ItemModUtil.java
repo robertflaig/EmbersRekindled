@@ -1,10 +1,10 @@
 package teamroots.embers.util;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import teamroots.embers.api.itemmod.IItemModUtil;
@@ -79,10 +79,10 @@ public class ItemModUtil {
 	
 	public static void checkForTag(ItemStack stack){
 		if (!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
+			stack.setTagCompound(new CompoundNBT());
 		}
-		if (!stack.getTagCompound().hasKey(HEAT_TAG)){
-			stack.getTagCompound().setTag(HEAT_TAG, new NBTTagCompound());
+		if (!stack.getTagCompound().contains(HEAT_TAG)){
+			stack.getTagCompound().setTag(HEAT_TAG, new CompoundNBT());
 			stack.getTagCompound().getCompoundTag(HEAT_TAG).setInteger("heat_level", 0);
 			stack.getTagCompound().getCompoundTag(HEAT_TAG).setFloat("heat", 0);
 			stack.getTagCompound().getCompoundTag(HEAT_TAG).setTag("modifiers", new NBTTagList());
@@ -99,8 +99,8 @@ public class ItemModUtil {
 		if (hasHeat(stack)){
 			NBTTagList list = stack.getTagCompound().getCompoundTag(HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i ++){
-				NBTTagCompound compound = list.getCompoundTagAt(i);
-				if (compound.hasKey("name")){
+				CompoundNBT compound = list.getCompoundTagAt(i);
+				if (compound.contains("name")){
 					if (compound.getString("name").compareTo(name) == 0){
 						return true;
 					}
@@ -115,9 +115,9 @@ public class ItemModUtil {
 		NBTTagList list = stack.getTagCompound().getCompoundTag(HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
 		ModifierBase modifier = modifierRegistry.get(mod.getItem());
 		if (getModifierLevel(stack, modifier.name) == 0){
-			NBTTagCompound modifierCompound = new NBTTagCompound();
+			CompoundNBT modifierCompound = new CompoundNBT();
 			modifierCompound.setString("name", modifier.name);
-			modifierCompound.setTag("item", mod.writeToNBT(new NBTTagCompound()));
+			modifiercompound.put("item", mod.write(new CompoundNBT()));
 			modifierCompound.setInteger("level", 1);
 			list.appendTag(modifierCompound);
 		}
@@ -131,8 +131,8 @@ public class ItemModUtil {
 		if (hasHeat(stack)){
 			NBTTagList list = stack.getTagCompound().getCompoundTag(HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i ++){
-				NBTTagCompound compound = list.getCompoundTagAt(i);
-				if (compound.hasKey("name")){
+				CompoundNBT compound = list.getCompoundTagAt(i);
+				if (compound.contains("name")){
 					if (compound.getString("name").compareTo(name) == 0){
 						compound.setInteger("level", compound.getInteger("level")+1);
 					}
@@ -147,7 +147,7 @@ public class ItemModUtil {
 		if (hasHeat(stack)){
 			NBTTagList list = stack.getTagCompound().getCompoundTag(HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i ++){
-				NBTTagCompound compound = list.getCompoundTagAt(i);
+				CompoundNBT compound = list.getCompoundTagAt(i);
 				ItemStack s = new ItemStack(compound.getCompoundTag("item"));
 				if (modifierRegistry.get(s.getItem()).countTowardsTotalLevel){
 					total += compound.getInteger("level");
@@ -161,8 +161,8 @@ public class ItemModUtil {
 		if (hasHeat(stack)){
 			NBTTagList list = stack.getTagCompound().getCompoundTag(HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i ++){
-				NBTTagCompound compound = list.getCompoundTagAt(i);
-				if (compound.hasKey("name")){
+				CompoundNBT compound = list.getCompoundTagAt(i);
+				if (compound.contains("name")){
 					if (compound.getString("name").compareTo(name) == 0){
 						compound.setInteger("level", level);
 					}
@@ -175,8 +175,8 @@ public class ItemModUtil {
 		if (hasHeat(stack)){
 			NBTTagList list = stack.getTagCompound().getCompoundTag(HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i ++){
-				NBTTagCompound compound = list.getCompoundTagAt(i);
-				if (compound.hasKey("name")){
+				CompoundNBT compound = list.getCompoundTagAt(i);
+				if (compound.contains("name")){
 					if (compound.getString("name").compareTo(name) == 0){
 						return compound.getInteger("level");
 					}
@@ -188,7 +188,7 @@ public class ItemModUtil {
 	
 	public static float getMaxHeat(ItemStack stack){
 		if (stack.hasTagCompound()){
-			if (stack.getTagCompound().hasKey(HEAT_TAG)){
+			if (stack.getTagCompound().contains(HEAT_TAG)){
 				return 500f + 250f*stack.getTagCompound().getCompoundTag(HEAT_TAG).getFloat("heat_level");
 			}
 		}
@@ -197,7 +197,7 @@ public class ItemModUtil {
 	
 	public static float getHeat(ItemStack stack){
 		if (stack.hasTagCompound()){
-			if (stack.getTagCompound().hasKey(HEAT_TAG)){
+			if (stack.getTagCompound().contains(HEAT_TAG)){
 				return stack.getTagCompound().getCompoundTag(HEAT_TAG).getFloat("heat");
 			}
 		}
@@ -227,7 +227,7 @@ public class ItemModUtil {
 	public static boolean hasHeat(ItemStack stack){
 		if (!stack.isEmpty()){
 			if (stack.hasTagCompound()){
-				if (stack.getTagCompound().hasKey(HEAT_TAG)){
+				if (stack.getTagCompound().contains(HEAT_TAG)){
 					return true;
 				}
 			}

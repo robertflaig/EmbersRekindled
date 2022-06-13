@@ -1,8 +1,8 @@
 package teamroots.embers.power;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import teamroots.embers.Embers;
@@ -20,7 +20,7 @@ public class DefaultEmberItemCapability implements ICapabilityProvider, teamroot
     public DefaultEmberItemCapability(@Nonnull ItemStack stack, double capacity) {
         this.stack = stack;
         if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
+            stack.setTagCompound(new CompoundNBT());
             setEmber(0);
             setEmberCapacity(capacity);
         } else {
@@ -29,13 +29,13 @@ public class DefaultEmberItemCapability implements ICapabilityProvider, teamroot
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing) {
         return capability == EmbersCapabilities.EMBER_CAPABILITY;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.EMBER_CAPABILITY)
             return EmbersCapabilities.EMBER_CAPABILITY.cast(this);
         return null;
@@ -93,12 +93,12 @@ public class DefaultEmberItemCapability implements ICapabilityProvider, teamroot
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
+    public void write(CompoundNBT tag) {
         //NOOP
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         //NOOP
     }
 
@@ -109,12 +109,12 @@ public class DefaultEmberItemCapability implements ICapabilityProvider, teamroot
 
     public void migrateLegacy() {
         if (stack.hasTagCompound()) {
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound.hasKey(Embers.MODID + ":ember")) {
+            CompoundNBT compound = stack.getTagCompound();
+            if (compound.contains(Embers.MODID + ":ember")) {
                 compound.setDouble("ember", compound.getDouble(Embers.MODID + ":ember"));
                 compound.removeTag(Embers.MODID + ":ember");
             }
-            if (compound.hasKey(Embers.MODID + ":emberCapacity")) {
+            if (compound.contains(Embers.MODID + ":emberCapacity")) {
                 compound.setDouble("emberCapacity", compound.getDouble(Embers.MODID + ":emberCapacity"));
                 compound.removeTag(Embers.MODID + ":emberCapacity");
             }

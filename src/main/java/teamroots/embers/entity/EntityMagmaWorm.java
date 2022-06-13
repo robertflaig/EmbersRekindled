@@ -1,11 +1,11 @@
 package teamroots.embers.entity;
 
 import net.minecraft.entity.*;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -199,7 +199,7 @@ public class EntityMagmaWorm extends EntityFlying implements IEntityMultiPart {/
     }
 
     public List<Entity> getAttackTargets(AxisAlignedBB aabb) {
-        return world.getEntitiesWithinAABB(EntityPlayer.class,aabb);
+        return world.getEntitiesWithinAABB(PlayerEntity.class,aabb);
         //return world.getEntitiesWithinAABB(EntityLivingBase.class,aabb,x -> x != this);
     }
 
@@ -291,7 +291,7 @@ public class EntityMagmaWorm extends EntityFlying implements IEntityMultiPart {/
         }*/
 
         if (this.ticksExisted % 20 == 20) {
-            List<EntityPlayer> playersValid = Misc.getNonCreativePlayers(world, new AxisAlignedBB(posX - RANGE_ATTACK, posY - RANGE_ATTACK, posZ - RANGE_ATTACK, posX + RANGE_ATTACK, posY + RANGE_ATTACK, posZ + RANGE_ATTACK));
+            List<PlayerEntity> playersValid = Misc.getNonCreativePlayers(world, new AxisAlignedBB(posX - RANGE_ATTACK, posY - RANGE_ATTACK, posZ - RANGE_ATTACK, posX + RANGE_ATTACK, posY + RANGE_ATTACK, posZ + RANGE_ATTACK));
             boolean foundPrevious = false;
             if (this.getAttackTarget() != null) {
                 for (int i = 0; i < playersValid.size(); i++) {
@@ -477,8 +477,8 @@ public class EntityMagmaWorm extends EntityFlying implements IEntityMultiPart {/
             getDataManager().set(pacified, true);
             getDataManager().setDirty(pacified);
             getDataManager().set(fadeTimer, 200);
-            if (source.getTrueSource() instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer) source.getTrueSource();
+            if (source.getTrueSource() instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) source.getTrueSource();
                 //        if (!player.hasAchievement(RegistryManager.achieveGuardianBoss)) {
                 //          PlayerManager.addAchievement(player, RegistryManager.achieveGuardianBoss);
                 //        }
@@ -533,7 +533,7 @@ public class EntityMagmaWorm extends EntityFlying implements IEntityMultiPart {/
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound compound) {
+    public void readEntityFromNBT(CompoundNBT compound) {
         super.readEntityFromNBT(compound);
         getDataManager().set(targetDirectionX, compound.getFloat("targetDirectionX"));
         getDataManager().set(targetDirectionY, compound.getFloat("targetDirectionY"));
@@ -549,7 +549,7 @@ public class EntityMagmaWorm extends EntityFlying implements IEntityMultiPart {/
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound compound) {
+    public void writeEntityToNBT(CompoundNBT compound) {
         super.writeEntityToNBT(compound);
         compound.setFloat("targetDirectionX", getDataManager().get(targetDirectionX));
         compound.setFloat("targetDirectionY", getDataManager().get(targetDirectionY));
@@ -567,13 +567,13 @@ public class EntityMagmaWorm extends EntityFlying implements IEntityMultiPart {/
     }
 
     @Override
-    public void addTrackingPlayer(EntityPlayerMP player) {
+    public void addTrackingPlayer(PlayerEntityMP player) {
         super.addTrackingPlayer(player);
         bossInfo.addPlayer(player);
     }
 
     @Override
-    public void removeTrackingPlayer(EntityPlayerMP player) {
+    public void removeTrackingPlayer(PlayerEntityMP player) {
         super.removeTrackingPlayer(player);
         bossInfo.removePlayer(player);
     }

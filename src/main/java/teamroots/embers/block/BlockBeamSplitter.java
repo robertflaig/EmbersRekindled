@@ -3,10 +3,10 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -27,7 +27,7 @@ public class BlockBeamSplitter extends BlockTEBase {
 	}
 
     @Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess worldIn, BlockPos pos)
     {
         if (state.getValue(isConnectedUp)){
         	return AABB_UP;
@@ -55,20 +55,20 @@ public class BlockBeamSplitter extends BlockTEBase {
 	}
 	
 	@Override
-	public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side){
-		return side == EnumFacing.UP || side == EnumFacing.DOWN;
+	public boolean canPlaceBlockOnSide(World world, BlockPos pos, Direction side){
+		return side == Direction.UP || side == Direction.DOWN;
 	}
 	
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
+	public IBlockState getStateForPlacement(World world, BlockPos pos, Direction face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
 		IBlockState state = getDefaultState();
-		if (placer.getHorizontalFacing() == EnumFacing.EAST || placer.getHorizontalFacing() == EnumFacing.WEST){
+		if (placer.getHorizontalFacing() == Direction.EAST || placer.getHorizontalFacing() == Direction.WEST){
 			state = state.withProperty(isXAligned, true);
 		}
 		else {
 			state = state.withProperty(isXAligned, false);
 		}
-		if (face == EnumFacing.DOWN){
+		if (face == Direction.DOWN){
 			state = state.withProperty(isConnectedUp, true);
 		}
 		else {

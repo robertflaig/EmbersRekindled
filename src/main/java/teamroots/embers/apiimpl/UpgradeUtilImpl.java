@@ -2,7 +2,7 @@ package teamroots.embers.apiimpl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -15,10 +15,10 @@ import teamroots.embers.api.upgrades.IUpgradeUtil;
 import java.util.*;
 
 public class UpgradeUtilImpl implements IUpgradeUtil {
-    public List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, EnumFacing[] facings)
+    public List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, Direction[] facings)
     {
         LinkedList<IUpgradeProvider> upgrades = new LinkedList<>();
-        /*for (EnumFacing facing: facings) {
+        /*for (Direction facing: facings) {
             TileEntity te = world.getTileEntity(pos.offset(facing));
             if(te != null && te.hasCapability(EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY,facing.getOpposite()))
             {
@@ -30,23 +30,23 @@ public class UpgradeUtilImpl implements IUpgradeUtil {
     }
 
     @Deprecated
-    public List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, EnumFacing[] facings)
+    public List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, Direction[] facings)
     {
         /*LinkedList<IUpgradeProvider> upgrades = new LinkedList<>();
-        for (EnumFacing facing: facings) {
+        for (Direction facing: facings) {
             TileEntity te = world.getTileEntity(pos.offset(facing));
             if(te instanceof TileEntityMechCore)
             {
-                upgrades.addAll(getUpgrades(world,pos.offset(facing),EnumFacing.VALUES));
+                upgrades.addAll(getUpgrades(world,pos.offset(facing),Direction.VALUES));
             }
         }
         return upgrades;*/
         return getUpgrades(world,pos,facings);
     }
 
-    public void getUpgrades(World world, BlockPos pos, EnumFacing[] facings, List<IUpgradeProvider> upgrades)
+    public void getUpgrades(World world, BlockPos pos, Direction[] facings, List<IUpgradeProvider> upgrades)
     {
-        for (EnumFacing facing: facings) {
+        for (Direction facing: facings) {
             collectUpgrades(world,pos.offset(facing),facing.getOpposite(),upgrades);
         }
         resetCheckedProxies();
@@ -69,7 +69,7 @@ public class UpgradeUtilImpl implements IUpgradeUtil {
         checkedProxies.remove();
     }
 
-    public void collectUpgrades(World world, BlockPos pos, EnumFacing side, List<IUpgradeProvider> upgrades) {
+    public void collectUpgrades(World world, BlockPos pos, Direction side, List<IUpgradeProvider> upgrades) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null && te.hasCapability(EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY, side)) {
             upgrades.add(te.getCapability(EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY, side));

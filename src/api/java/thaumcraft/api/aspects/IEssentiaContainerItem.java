@@ -27,7 +27,7 @@ public interface IEssentiaContainerItem {
 	public AspectList getAspects(ItemStack itemstack) {
 		if (itemstack.hasTagCompound()) {
 			AspectList aspects = new AspectList();
-			aspects.readFromNBT(itemstack.getTagCompound());
+			aspects.read(itemstack.getTagCompound());
 			return aspects.size()>0?aspects:null;
 		}
 		return null;
@@ -35,8 +35,8 @@ public interface IEssentiaContainerItem {
 	
 	@Override
 	public void setAspects(ItemStack itemstack, AspectList aspects) {
-		if (!itemstack.hasTagCompound()) itemstack.setTagCompound(new NBTTagCompound());
-		aspects.writeToNBT(itemstack.getTagCompound());
+		if (!itemstack.hasTagCompound()) itemstack.setTagCompound(new CompoundNBT());
+		aspects.write(itemstack.getTagCompound());
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 package thaumcraft.api.research.theorycraft;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -11,15 +11,15 @@ public class CardNotation extends TheorycraftCard {
 	private String cat1, cat2;
 	
 	@Override
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = super.serialize();
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = super.serialize();
 		nbt.setString("cat1", cat1);
 		nbt.setString("cat2", cat2);
 		return nbt;
 	}
 
 	@Override
-	public void deserialize(NBTTagCompound nbt) {
+	public void deserialize(CompoundNBT nbt) {
 		super.deserialize(nbt);
 		cat1 = nbt.getString("cat1");
 		cat2 = nbt.getString("cat2");
@@ -49,7 +49,7 @@ public class CardNotation extends TheorycraftCard {
 	}
 
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) {
+	public boolean initialize(PlayerEntity player, ResearchTableData data) {
 		if (data.categoryTotals.size()<2) return false;
 		int lVal=Integer.MAX_VALUE;
 		String lKey="";
@@ -73,7 +73,7 @@ public class CardNotation extends TheorycraftCard {
 	}
 
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {		
+	public boolean activate(PlayerEntity player, ResearchTableData data) {		
 		if (cat1==null || cat2==null) return false;
 		int lVal = data.getTotal(cat1);
 		data.addTotal(cat1, -lVal);

@@ -1,12 +1,12 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -69,32 +69,32 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         writeFilter(tag);
         return tag;
     }
 
-    private void writeFilter(NBTTagCompound tag) {
+    private void writeFilter(CompoundNBT tag) {
         if (!filterItem.isEmpty()) {
-            tag.setTag("filter", filterItem.writeToNBT(new NBTTagCompound()));
+            tag.setTag("filter", filterItem.write(new CompoundNBT()));
         } else {
             tag.setString("filter", "empty");
         }
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        if (tag.hasKey("filter")) {
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if (tag.contains("filter")) {
             filterItem = new ItemStack(tag.getCompoundTag("filter"));
         }
         setupFilter();
     }
 
     @Override
-    public NBTTagCompound getSyncTag() {
-        NBTTagCompound compound = super.getUpdateTag();
+    public CompoundNBT getSyncTag() {
+        CompoundNBT compound = super.getUpdateTag();
         if (syncFilter)
             writeFilter(compound);
         return compound;
@@ -117,7 +117,7 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null || facing.getAxis() == getFacing().getAxis())
                 return true;
@@ -128,9 +128,9 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            EnumFacing transferFacing = getFacing();
+            Direction transferFacing = getFacing();
             if (facing == transferFacing)
                 return (T) this.outputSide;
             else if (facing == null || facing.getAxis() == transferFacing.getAxis())
@@ -141,14 +141,14 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
         return super.getCapability(capability, facing);
     }
 
-    private EnumFacing getFacing() {
+    private Direction getFacing() {
         IBlockState state = getWorld().getBlockState(getPos());
         return state.getValue(BlockItemTransfer.facing);
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (heldItem != ItemStack.EMPTY) {
@@ -183,8 +183,8 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         Misc.spawnInventoryInWorld(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, inventory);
         world.setTileEntity(pos, null);
     }
@@ -198,27 +198,27 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     }
 
     @Override
-    public int getPriority(EnumFacing facing) {
+    public int getPriority(Direction facing) {
         return PRIORITY_TRANSFER;
     }
 
     @Override
-    public EnumPipeConnection getInternalConnection(EnumFacing facing) {
+    public EnumPipeConnection getInternalConnection(Direction facing) {
         return EnumPipeConnection.NONE;
     }
 
     @Override
-    void setInternalConnection(EnumFacing facing, EnumPipeConnection connection) {
+    void setInternalConnection(Direction facing, EnumPipeConnection connection) {
         //NOOP
     }
 
     @Override
-    boolean isConnected(EnumFacing facing) {
+    boolean isConnected(Direction facing) {
         return getFacing().getAxis() == facing.getAxis();
     }
 
     @Override
-    protected boolean isFrom(EnumFacing facing) {
+    protected boolean isFrom(Direction facing) {
         return facing == getFacing().getOpposite();
     }
 
@@ -229,7 +229,7 @@ public class TileEntityItemTransfer extends TileEntityItemPipeBase {
     }
 
     @Override
-    public EnumPipeConnection getConnection(EnumFacing facing) {
+    public EnumPipeConnection getConnection(Direction facing) {
         if(getFacing().getAxis() == facing.getAxis())
             return EnumPipeConnection.PIPE;
         return EnumPipeConnection.NONE;

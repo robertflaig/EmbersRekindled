@@ -1,7 +1,7 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -31,14 +31,14 @@ public class BlockLantern extends BlockBase {
 	}
 	
 	@Override
-	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random random){
+	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random){
 		for (int i = 0; i < 3; i ++){
 			ParticleUtil.spawnParticleGlow(world, pos.getX()+0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, (random.nextFloat()-0.5f)*0.003f, (random.nextFloat())*0.003f, (random.nextFloat()-0.5f)*0.003f, 255, 64, 16, 2.5f, 120);
 		}
 	}
 
     @Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess worldIn, BlockPos pos)
     {
         return AABB_BASE;
     }

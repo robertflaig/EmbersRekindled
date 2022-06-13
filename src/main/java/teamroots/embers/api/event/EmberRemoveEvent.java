@@ -1,24 +1,24 @@
 package teamroots.embers.api.event;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmberRemoveEvent extends Event {
-	private EntityPlayer player;
+	private PlayerEntity player;
 	private double amount = 0;
 	private double originalAmount = 0;
 	private List<Double> reductions = new ArrayList<Double>();
 	
-	public EmberRemoveEvent(EntityPlayer player, double amount){
+	public EmberRemoveEvent(PlayerEntity player, double amount){
 		this.player = player;
 		this.originalAmount = amount;
 		this.amount = amount;
 	}
 	
-	public EntityPlayer getPlayer(){
+	public PlayerEntity getPlayer(){
 		return player;
 	}
 	

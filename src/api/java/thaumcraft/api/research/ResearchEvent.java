@@ -1,6 +1,6 @@
 package thaumcraft.api.research;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import thaumcraft.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
 
@@ -10,14 +10,14 @@ import thaumcraft.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
  */
 public class ResearchEvent extends Event {
 
-	private final EntityPlayer player;
+	private final PlayerEntity player;
 	
-	public ResearchEvent(EntityPlayer player)
+	public ResearchEvent(PlayerEntity player)
     {
         this.player = player;
     }
 
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return player;
     }
@@ -29,7 +29,7 @@ public class ResearchEvent extends Event {
 		private final ResearchCategory category;
 		private final int amount;
 		
-		public Knowledge(EntityPlayer player, EnumKnowledgeType type, ResearchCategory category, int amount)
+		public Knowledge(PlayerEntity player, EnumKnowledgeType type, ResearchCategory category, int amount)
         {
             super(player);
             this.type = type;
@@ -55,7 +55,7 @@ public class ResearchEvent extends Event {
     {
 		private final String researchKey;
 		
-		public Research(EntityPlayer player, String researchKey)
+		public Research(PlayerEntity player, String researchKey)
         {
             super(player);
             this.researchKey = researchKey;

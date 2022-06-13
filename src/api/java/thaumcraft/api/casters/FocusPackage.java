@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.world.World;
@@ -126,7 +126,7 @@ public class FocusPackage implements IFocusElement {
 		return out.toArray(new FocusEffect[]{});
 	}
 
-	public void deserialize(NBTTagCompound nbt) {
+	public void deserialize(CompoundNBT nbt) {
 		uid = nbt.getUniqueId("uid");		
 		index = nbt.getInteger("index");
 		int dim = nbt.getInteger("dim");
@@ -138,7 +138,7 @@ public class FocusPackage implements IFocusElement {
 		NBTTagList nodelist = nbt.getTagList("nodes", (byte)10);
 		nodes.clear();
 		for (int x=0;x<nodelist.tagCount();x++) {
-			NBTTagCompound nodenbt = (NBTTagCompound) nodelist.getCompoundTagAt(x);
+			CompoundNBT nodenbt = (CompoundNBT) nodelist.getCompoundTagAt(x);
 			EnumUnitType ut = EnumUnitType.valueOf(nodenbt.getString("type"));
 			if (ut!=null) {
 				if (ut==EnumUnitType.PACKAGE) {
@@ -168,8 +168,8 @@ public class FocusPackage implements IFocusElement {
 		
 	}
 
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = new NBTTagCompound();
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = new CompoundNBT();
 		if (uid!=null) nbt.setUniqueId("uid", uid);
 		nbt.setInteger("index", index);
 		if (getCasterUUID() != null) nbt.setUniqueId("casterUUID", getCasterUUID());
@@ -181,7 +181,7 @@ public class FocusPackage implements IFocusElement {
 		NBTTagList nodelist = new NBTTagList();
 		synchronized (nodes) {
 			for (IFocusElement node:nodes) {
-				NBTTagCompound nodenbt = new NBTTagCompound();
+				CompoundNBT nodenbt = new CompoundNBT();
 				nodenbt.setString("type", node.getType().name());
 				nodenbt.setString("key", node.getKey());
 				if (node.getType()==EnumUnitType.PACKAGE) {

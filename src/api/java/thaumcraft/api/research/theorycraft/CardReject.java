@@ -3,8 +3,8 @@ package thaumcraft.api.research.theorycraft;
 import java.util.ArrayList;
 import java.util.Random;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -13,14 +13,14 @@ public class CardReject extends TheorycraftCard {
 	private String cat1;
 	
 	@Override
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = super.serialize();
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = super.serialize();
 		nbt.setString("cat", cat1);
 		return nbt;
 	}
 
 	@Override
-	public void deserialize(NBTTagCompound nbt) {
+	public void deserialize(CompoundNBT nbt) {
 		super.deserialize(nbt);
 		cat1 = nbt.getString("cat");
 	}
@@ -45,7 +45,7 @@ public class CardReject extends TheorycraftCard {
 	}
 
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) {
+	public boolean initialize(PlayerEntity player, ResearchTableData data) {
 		ArrayList<String> s = new ArrayList<>();
 		for (String c:data.categoryTotals.keySet()) {
 			if (!data.categoriesBlocked.contains(c))
@@ -58,7 +58,7 @@ public class CardReject extends TheorycraftCard {
 	}
 
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {		
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		if (cat1==null) return false;
 		data.addTotal("BASICS", 5);
 		data.categoriesBlocked.add(cat1);				

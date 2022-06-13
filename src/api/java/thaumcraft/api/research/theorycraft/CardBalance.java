@@ -1,6 +1,6 @@
 package thaumcraft.api.research.theorycraft;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextComponentTranslation;
 
 public class CardBalance extends TheorycraftCard {
@@ -21,7 +21,7 @@ public class CardBalance extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) {
+	public boolean initialize(PlayerEntity player, ResearchTableData data) {
 		int total=0;
 		int size=0;
 		for (String c:data.categoryTotals.keySet()) {
@@ -33,7 +33,7 @@ public class CardBalance extends TheorycraftCard {
 	}
 
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		int total=0;
 		int size=0;
 		for (String c:data.categoryTotals.keySet()) {

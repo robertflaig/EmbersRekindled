@@ -12,9 +12,9 @@ import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
@@ -640,12 +640,12 @@ public class RegistryManager {
 		CapabilityManager.INSTANCE.register(IUpgradeProvider.class, new Capability.IStorage<IUpgradeProvider>() {
 			@Nullable
 			@Override
-			public NBTBase writeNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, EnumFacing side) {
+			public NBTBase writeNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, Direction side) {
 				return null;
 			}
 
 			@Override
-			public void readNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, EnumFacing side, NBTBase nbt) {
+			public void readNBT(Capability<IUpgradeProvider> capability, IUpgradeProvider instance, Direction side, NBTBase nbt) {
 				//NOOP
 			}
 		}, () -> {
@@ -654,16 +654,16 @@ public class RegistryManager {
 		CapabilityManager.INSTANCE.register(IResearchCapability.class, new Capability.IStorage<IResearchCapability>() {
 			@Nullable
 			@Override
-			public NBTBase writeNBT(Capability<IResearchCapability> capability, IResearchCapability instance, EnumFacing side) {
-				NBTTagCompound compound = new NBTTagCompound();
-				instance.writeToNBT(compound);
+			public NBTBase writeNBT(Capability<IResearchCapability> capability, IResearchCapability instance, Direction side) {
+				CompoundNBT compound = new CompoundNBT();
+				instance.write(compound);
 				return compound;
 			}
 
 			@Override
-			public void readNBT(Capability<IResearchCapability> capability, IResearchCapability instance, EnumFacing side, NBTBase nbt) {
-				NBTTagCompound compound = (NBTTagCompound) nbt;
-				instance.readFromNBT(compound);
+			public void readNBT(Capability<IResearchCapability> capability, IResearchCapability instance, Direction side, NBTBase nbt) {
+				CompoundNBT compound = (CompoundNBT) nbt;
+				instance.read(compound);
 			}
 		}, DefaultResearchCapability::new);
 	}

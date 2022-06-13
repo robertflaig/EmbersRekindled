@@ -2,9 +2,9 @@ package teamroots.embers.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -30,7 +30,7 @@ public class BlockEmberPipe extends BlockTEBase {
 	}
 	
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
 		TileEntityEmberPipe p = (TileEntityEmberPipe)world.getTileEntity(pos);
 		p.updateNeighbors(world);
 		p.markDirty();
@@ -45,12 +45,12 @@ public class BlockEmberPipe extends BlockTEBase {
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side){
 		return false;
 	}
 
 	@Override
-	public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+	public RayTraceResult collisionRayTrace(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
 		List<AxisAlignedBB> subBoxes = new ArrayList<>();
 
 		subBoxes.add(new AxisAlignedBB(0.375, 0.375, 0.375, 0.625, 0.625, 0.625));
@@ -58,17 +58,17 @@ public class BlockEmberPipe extends BlockTEBase {
 		if (world.getTileEntity(pos) instanceof TileEntityEmberPipe) {
 			TileEntityEmberPipe pipe = ((TileEntityEmberPipe) world.getTileEntity(pos));
 
-			if (pipe.getInternalConnection(EnumFacing.UP) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.UP) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.625, 0.375, 0.625, 1.0, 0.625));
-			if (pipe.getInternalConnection(EnumFacing.DOWN) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.DOWN) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.0, 0.375, 0.625, 0.375, 0.625));
-			if (pipe.getInternalConnection(EnumFacing.NORTH) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.NORTH) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.375, 0.0, 0.625, 0.625, 0.375));
-			if (pipe.getInternalConnection(EnumFacing.SOUTH) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.SOUTH) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.375, 0.625, 0.625, 0.625, 1.0));
-			if (pipe.getInternalConnection(EnumFacing.WEST) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.WEST) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.0, 0.375, 0.375, 0.375, 0.625, 0.625));
-			if (pipe.getInternalConnection(EnumFacing.EAST) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.EAST) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.625, 0.375, 0.375, 1.0, 0.625, 0.625));
 		}
 
@@ -76,7 +76,7 @@ public class BlockEmberPipe extends BlockTEBase {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos) {
 		double x1 = 0.375;
 		double y1 = 0.375;
 		double z1 = 0.375;
@@ -86,22 +86,22 @@ public class BlockEmberPipe extends BlockTEBase {
 
 		if (source.getTileEntity(pos) instanceof TileEntityEmberPipe) {
 			TileEntityEmberPipe pipe = ((TileEntityEmberPipe) source.getTileEntity(pos));
-			if (pipe.getInternalConnection(EnumFacing.UP) != EnumPipeConnection.NONE) {
+			if (pipe.getInternalConnection(Direction.UP) != EnumPipeConnection.NONE) {
 				y2 = 1;
 			}
-			if (pipe.getInternalConnection(EnumFacing.DOWN) != EnumPipeConnection.NONE) {
+			if (pipe.getInternalConnection(Direction.DOWN) != EnumPipeConnection.NONE) {
 				y1 = 0;
 			}
-			if (pipe.getInternalConnection(EnumFacing.NORTH) != EnumPipeConnection.NONE) {
+			if (pipe.getInternalConnection(Direction.NORTH) != EnumPipeConnection.NONE) {
 				z1 = 0;
 			}
-			if (pipe.getInternalConnection(EnumFacing.SOUTH) != EnumPipeConnection.NONE) {
+			if (pipe.getInternalConnection(Direction.SOUTH) != EnumPipeConnection.NONE) {
 				z2 = 1;
 			}
-			if (pipe.getInternalConnection(EnumFacing.WEST) != EnumPipeConnection.NONE) {
+			if (pipe.getInternalConnection(Direction.WEST) != EnumPipeConnection.NONE) {
 				x1 = 0;
 			}
-			if (pipe.getInternalConnection(EnumFacing.EAST) != EnumPipeConnection.NONE) {
+			if (pipe.getInternalConnection(Direction.EAST) != EnumPipeConnection.NONE) {
 				x2 = 1;
 			}
 		}

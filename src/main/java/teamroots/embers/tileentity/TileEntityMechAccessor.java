@@ -1,13 +1,13 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,41 +41,41 @@ public class TileEntityMechAccessor extends TileEntity implements ITileEntityBas
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        return super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        return super.write(tag);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        EnumFacing accessFace = getFacing();
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
+        Direction accessFace = getFacing();
         TileEntity tile = getAttachedMultiblock(accessFace);
         return (tile != null && canAccess(tile) && tile.hasCapability(capability, accessFace)) || super.hasCapability(capability, facing);
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        EnumFacing accessFace = getFacing();
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
+        Direction accessFace = getFacing();
         TileEntity tile = getAttachedMultiblock(accessFace);
         return tile != null && canAccess(tile) ? tile.getCapability(capability, accessFace) : super.getCapability(capability,facing);
     }
@@ -86,14 +86,14 @@ public class TileEntityMechAccessor extends TileEntity implements ITileEntityBas
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         return false;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         world.setTileEntity(pos, null);
     }
 
@@ -103,14 +103,14 @@ public class TileEntityMechAccessor extends TileEntity implements ITileEntityBas
         Misc.syncTE(this);
     }
 
-    public EnumFacing getFacing() {
+    public Direction getFacing() {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockMechAccessor)
             return state.getValue(BlockMechAccessor.facing);
         return null;
     }
 
-    public TileEntity getAttachedMultiblock(EnumFacing facing) {
+    public TileEntity getAttachedMultiblock(Direction facing) {
         if (facing != null) {
             TileEntity tileEntity = world.getTileEntity(pos.offset(facing.getOpposite()));
             return tileEntity;
@@ -119,8 +119,8 @@ public class TileEntityMechAccessor extends TileEntity implements ITileEntityBas
     }
 
     @Override
-    public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
-        EnumFacing accessFace = getFacing();
+    public void addDialInformation(Direction facing, List<String> information, String dialType) {
+        Direction accessFace = getFacing();
         TileEntity tile = getAttachedMultiblock(accessFace);
         if (tile instanceof IExtraDialInformation && canAccess(tile))
             ((IExtraDialInformation) tile).addDialInformation(accessFace, information, dialType);
@@ -128,7 +128,7 @@ public class TileEntityMechAccessor extends TileEntity implements ITileEntityBas
 
     @Override
     public boolean hasCapabilityDescription(Capability<?> capability) {
-        EnumFacing accessFace = getFacing();
+        Direction accessFace = getFacing();
         TileEntity tile = getAttachedMultiblock(accessFace);
         if (tile instanceof IExtraCapabilityInformation && canAccess(tile))
             return ((IExtraCapabilityInformation) tile).hasCapabilityDescription(capability);
@@ -136,16 +136,16 @@ public class TileEntityMechAccessor extends TileEntity implements ITileEntityBas
     }
 
     @Override
-    public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
-        EnumFacing accessFace = getFacing();
+    public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
+        Direction accessFace = getFacing();
         TileEntity tile = getAttachedMultiblock(accessFace);
         if (tile instanceof IExtraCapabilityInformation && canAccess(tile))
             ((IExtraCapabilityInformation) tile).addCapabilityDescription(strings, capability, accessFace);
     }
 
     @Override
-    public void addOtherDescription(List<String> strings, EnumFacing facing) {
-        EnumFacing accessFace = getFacing();
+    public void addOtherDescription(List<String> strings, Direction facing) {
+        Direction accessFace = getFacing();
         TileEntity tile = getAttachedMultiblock(accessFace);
         if (tile instanceof IExtraCapabilityInformation && canAccess(tile))
             ((IExtraCapabilityInformation) tile).addOtherDescription(strings, accessFace);

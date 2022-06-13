@@ -4,10 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -48,25 +48,25 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(facing,EnumFacing.getFront(meta));
+		return getDefaultState().withProperty(facing,Direction.getFront(meta));
 	}
 	
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
+	public IBlockState getStateForPlacement(World world, BlockPos pos, Direction face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
 		return getDefaultState().withProperty(facing, face.getOpposite());
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side){
 		return side == getFacing(state);
 	}
 
-	public EnumFacing getFacing(IBlockState state) {
+	public Direction getFacing(IBlockState state) {
 		return state.getValue(facing);
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
 		((TileEntityItemRequisition)world.getTileEntity(pos)).updateConnections();
 	}
 
@@ -86,7 +86,7 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 	}
 
 	@Override
-	public void updateTEData(World world, IBlockState state, BlockPos pos) {
+	public void updateTEData(World world, BlockState state, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile != null){
 			PacketHandler.INSTANCE.sendToServer(new MessageTEUpdateRequest(pos));
@@ -99,7 +99,7 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 	}
 
 	@Override
-	public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+	public RayTraceResult collisionRayTrace(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
 		List<AxisAlignedBB> subBoxes = new ArrayList<>();
 
 		subBoxes.add(getBaseBox(state));
@@ -107,17 +107,17 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 		if (world.getTileEntity(pos) instanceof TileEntityItemRequisition) {
 			TileEntityItemRequisition pipe = ((TileEntityItemRequisition) world.getTileEntity(pos));
 
-			if (pipe.getInternalConnection(EnumFacing.UP) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.UP) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.625, 0.375, 0.625, 1.0, 0.625));
-			if (pipe.getInternalConnection(EnumFacing.DOWN) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.DOWN) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.0, 0.375, 0.625, 0.375, 0.625));
-			if (pipe.getInternalConnection(EnumFacing.NORTH) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.NORTH) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.375, 0.0, 0.625, 0.625, 0.375));
-			if (pipe.getInternalConnection(EnumFacing.SOUTH) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.SOUTH) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.375, 0.375, 0.625, 0.625, 0.625, 1.0));
-			if (pipe.getInternalConnection(EnumFacing.WEST) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.WEST) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.0, 0.375, 0.375, 0.375, 0.625, 0.625));
-			if (pipe.getInternalConnection(EnumFacing.EAST) != EnumPipeConnection.NONE)
+			if (pipe.getInternalConnection(Direction.EAST) != EnumPipeConnection.NONE)
 				subBoxes.add(new AxisAlignedBB(0.625, 0.375, 0.375, 1.0, 0.625, 0.625));
 		}
 
@@ -125,7 +125,7 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos) {
 		double x1 = 0.25;
 		double y1 = 0.25;
 		double z1 = 0.25;
@@ -133,21 +133,21 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 		double y2 = 0.75;
 		double z2 = 0.75;
 
-		EnumFacing facing = getFacing(state);
+		Direction facing = getFacing(state);
 
 		if (source.getTileEntity(pos) instanceof TileEntityItemRequisition) {
 			TileEntityItemRequisition pipe = ((TileEntityItemRequisition) source.getTileEntity(pos));
-			if (pipe.getInternalConnection(EnumFacing.UP) != EnumPipeConnection.NONE || facing == EnumFacing.UP)
+			if (pipe.getInternalConnection(Direction.UP) != EnumPipeConnection.NONE || facing == Direction.UP)
 				y2 = 1;
-			if (pipe.getInternalConnection(EnumFacing.DOWN) != EnumPipeConnection.NONE|| facing == EnumFacing.DOWN)
+			if (pipe.getInternalConnection(Direction.DOWN) != EnumPipeConnection.NONE|| facing == Direction.DOWN)
 				y1 = 0;
-			if (pipe.getInternalConnection(EnumFacing.NORTH) != EnumPipeConnection.NONE|| facing == EnumFacing.NORTH)
+			if (pipe.getInternalConnection(Direction.NORTH) != EnumPipeConnection.NONE|| facing == Direction.NORTH)
 				z1 = 0;
-			if (pipe.getInternalConnection(EnumFacing.SOUTH) != EnumPipeConnection.NONE|| facing == EnumFacing.SOUTH)
+			if (pipe.getInternalConnection(Direction.SOUTH) != EnumPipeConnection.NONE|| facing == Direction.SOUTH)
 				z2 = 1;
-			if (pipe.getInternalConnection(EnumFacing.WEST) != EnumPipeConnection.NONE|| facing == EnumFacing.WEST)
+			if (pipe.getInternalConnection(Direction.WEST) != EnumPipeConnection.NONE|| facing == Direction.WEST)
 				x1 = 0;
-			if (pipe.getInternalConnection(EnumFacing.EAST) != EnumPipeConnection.NONE|| facing == EnumFacing.EAST)
+			if (pipe.getInternalConnection(Direction.EAST) != EnumPipeConnection.NONE|| facing == Direction.EAST)
 				x2 = 1;
 		}
 
@@ -162,19 +162,19 @@ public class BlockItemRequisition extends BlockTEBase implements IDial {
 		double y2 = 0.75;
 		double z2 = 0.75;
 
-		EnumFacing facing = getFacing(state);
+		Direction facing = getFacing(state);
 
-			if (facing == EnumFacing.UP)
+			if (facing == Direction.UP)
 				y2 = 1;
-			if (facing == EnumFacing.DOWN)
+			if (facing == Direction.DOWN)
 				y1 = 0;
-			if (facing == EnumFacing.NORTH)
+			if (facing == Direction.NORTH)
 				z1 = 0;
-			if (facing == EnumFacing.SOUTH)
+			if (facing == Direction.SOUTH)
 				z2 = 1;
-			if (facing == EnumFacing.WEST)
+			if (facing == Direction.WEST)
 				x1 = 0;
-			if (facing == EnumFacing.EAST)
+			if (facing == Direction.EAST)
 				x2 = 1;
 
 		return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);

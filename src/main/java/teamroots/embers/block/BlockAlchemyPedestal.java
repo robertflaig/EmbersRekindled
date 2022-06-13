@@ -3,14 +3,14 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -39,7 +39,7 @@ public class BlockAlchemyPedestal extends BlockTEBase {
 	}
 	
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		if (getMetaFromState(state) == 1){
 			return AABB_HALF;
 		}
@@ -64,10 +64,10 @@ public class BlockAlchemyPedestal extends BlockTEBase {
 		}
 		IBlockState state = world.getBlockState(pos);
 		if (this.getMetaFromState(state) == 1 && world.getTileEntity(pos) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world,pos,state,null);
+			((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world,pos,state,null);
 		}
 		else if (world.getTileEntity(pos.up()) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos.up())).breakBlock(world,pos,state,null);
+			((ITileEntityBase)world.getTileEntity(pos.up())).onHarvest(world,pos,state,null);
 		}
 		if (this.getMetaFromState(state) == 0){
 			world.setBlockToAir(pos.up());
@@ -89,22 +89,22 @@ public class BlockAlchemyPedestal extends BlockTEBase {
 	}
 	
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		return new ArrayList<ItemStack>();
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		if (state.getValue(isTop) && world.getBlockState(pos.down()).getBlock() == this || !state.getValue(isTop) && world.getBlockState(pos.up()).getBlock() == this){
 			if (!world.isRemote && !player.capabilities.isCreativeMode){
 				world.spawnEntity(new EntityItem(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,new ItemStack(this,1,0)));
 			}
 		}
 		if (this.getMetaFromState(state) == 1 && world.getTileEntity(pos) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world,pos,state,player);
+			((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world,pos,state,player);
 		}
 		else if (world.getTileEntity(pos.up()) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos.up())).breakBlock(world,pos,state,player);
+			((ITileEntityBase)world.getTileEntity(pos.up())).onHarvest(world,pos,state,player);
 		}
 		if (this.getMetaFromState(state) == 0){
 			world.setBlockToAir(pos.up());
@@ -131,7 +131,7 @@ public class BlockAlchemyPedestal extends BlockTEBase {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ){
 		if (getMetaFromState(state) == 1){
 			return ((ITileEntityBase)world.getTileEntity(pos)).activate(world,pos,state,player,hand,side,hitX,hitY,hitZ);
 		}

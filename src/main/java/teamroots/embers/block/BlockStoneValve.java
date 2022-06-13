@@ -1,11 +1,11 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import teamroots.embers.tileentity.ITileEntityBase;
@@ -38,16 +38,16 @@ public class BlockStoneValve extends BlockStoneEdge {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
 		TileEntity tile = world.getTileEntity(pos);
 		return tile instanceof ITileEntityBase && ((ITileEntityBase) tile).activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
 	}
 
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile instanceof ITileEntityBase)
-			((ITileEntityBase)tile).breakBlock(world,pos,state,player);
+			((ITileEntityBase)tile).onHarvest(world,pos,state,player);
 		super.onBlockHarvested(world, pos, state, player);
 	}
 

@@ -1,7 +1,7 @@
 package teamroots.embers.api.tile;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.List;
@@ -11,11 +11,11 @@ public interface IExtraCapabilityInformation {
         return false;
     }
 
-    default void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+    default void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
         //NOOP
     }
 
-    default void addOtherDescription(List<String> strings, EnumFacing facing) {
+    default void addOtherDescription(List<String> strings, Direction facing) {
         //NOOP
     }
 

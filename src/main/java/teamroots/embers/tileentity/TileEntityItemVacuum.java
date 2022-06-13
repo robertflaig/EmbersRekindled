@@ -1,14 +1,14 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -22,7 +22,7 @@ import teamroots.embers.util.EnumPipeConnection;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityItemVacuum extends TileEntity implements ITileEntityBase, ITickable, IItemPipeConnectable {
+public class TileEntityItemVacuum extends TileEntity implements ITileEntityBase, ITickableTileEntity, IItemPipeConnectable {
     Random random = new Random();
 
     public TileEntityItemVacuum() {
@@ -30,32 +30,32 @@ public class TileEntityItemVacuum extends TileEntity implements ITileEntityBase,
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         return false;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         world.setTileEntity(pos, null);
     }
 
     @Override
     public void update() {
         IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing facing = state.getValue(BlockVacuum.facing);
+        Direction facing = state.getValue(BlockVacuum.facing);
         TileEntity tile = getWorld().getTileEntity(getPos().offset(facing.getOpposite()));
         if (!world.isRemote && world.isBlockPowered(getPos()) && tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)) {
             IItemHandler inventory = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
@@ -105,9 +105,9 @@ public class TileEntityItemVacuum extends TileEntity implements ITileEntityBase,
     }
 
     @Override
-    public EnumPipeConnection getConnection(EnumFacing facing) {
+    public EnumPipeConnection getConnection(Direction facing) {
         IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing face = state.getValue(BlockVacuum.facing);
+        Direction face = state.getValue(BlockVacuum.facing);
         return face.getOpposite() == facing ? EnumPipeConnection.PIPE : EnumPipeConnection.NONE;
     }
 }

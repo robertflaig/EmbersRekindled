@@ -2,19 +2,19 @@ package teamroots.embers.tileentity;
 
 import mysticalmechanics.api.DefaultMechCapability;
 import mysticalmechanics.api.MysticalMechanicsAPI;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -38,7 +38,7 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 
-public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase, ITickable, ISoundController, IExtraCapabilityInformation {
+public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase, ITickableTileEntity, ISoundController, IExtraCapabilityInformation {
     class BurningFuel {
         ItemStack solidFuel = ItemStack.EMPTY;
         FluidStack liquidFuel;
@@ -76,19 +76,19 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
             return liquidFuel != null;
         }
 
-        public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        public CompoundNBT write(CompoundNBT tag) {
             if(liquidFuel != null)
-                tag.setTag("fluid", liquidFuel.writeToNBT(new NBTTagCompound()));
+                tag.setTag("fluid", liquidFuel.write(new CompoundNBT()));
             if(!solidFuel.isEmpty())
                 tag.setTag("item", solidFuel.serializeNBT());
             tag.setInteger("timeLeft",timeLeft);
             return tag;
         }
 
-        public void readFromNBT(NBTTagCompound tag) {
-            if(tag.hasKey("fluid"))
+        public void read(CompoundNBT tag) {
+            if(tag.contains("fluid"))
                 liquidFuel = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("fluid"));
-            if(tag.hasKey("item"))
+            if(tag.contains("item"))
                 solidFuel = new ItemStack(tag.getCompoundTag("item"));
             timeLeft = tag.getInteger("timeLeft");
         }
@@ -127,11 +127,11 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     //int burnProgress = 0;
     //int steamProgress = 0;
     HashSet<Integer> soundsPlaying = new HashSet<>();
-    EnumFacing front = EnumFacing.UP;
+    Direction front = Direction.UP;
     public FluidTank tank = new FluidTank(CAPACITY);
     public DefaultMechCapability capability = new DefaultMechCapability() {
         @Override
-        public void setPower(double value, EnumFacing from) {
+        public void setPower(double value, Direction from) {
             if (from == null)
                 super.setPower(value, null);
         }
@@ -167,44 +167,44 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         tag.setDouble("mech_power", capability.power);
-        tag.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
-        tag.setTag("progress", currentFuel.writeToNBT(new NBTTagCompound()));
+        tag.setTag("tank", tank.write(new CompoundNBT()));
+        tag.setTag("progress", currentFuel.write(new CompoundNBT()));
         tag.setInteger("front", front.getIndex());
         tag.setTag("inventory", inventory.serializeNBT());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         capability.power = tag.getDouble("mech_power");
-        tank.readFromNBT(tag.getCompoundTag("tank"));
-        currentFuel.readFromNBT(tag.getCompoundTag("progress"));
+        tank.read(tag.getCompoundTag("tank"));
+        currentFuel.read(tag.getCompoundTag("progress"));
         inventory.deserializeNBT(tag.getCompoundTag("inventory"));
-        front = EnumFacing.getFront(tag.getInteger("front"));
+        front = Direction.getFront(tag.getInteger("front"));
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == MysticalMechanicsAPI.MECH_CAPABILITY) {
             return facing == front;
         }
@@ -218,7 +218,7 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == MysticalMechanicsAPI.MECH_CAPABILITY) {
             return (T) this.capability;
         }
@@ -238,8 +238,8 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         //TODO: Any fluid container
         boolean didFill = FluidUtil.interactWithFluidHandler(player, hand, tank);
@@ -251,8 +251,8 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         Misc.spawnInventoryInWorld(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, inventory);
         capability.setPower(0f, null);
         updateNearby();
@@ -260,7 +260,7 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     }
 
     public void updateNearby() {
-        for (EnumFacing f : EnumFacing.values()) {
+        for (Direction f : Direction.values()) {
             TileEntity t = world.getTileEntity(getPos().offset(f));
             if (t != null && f == front) {
                 if (t.hasCapability(MysticalMechanicsAPI.MECH_CAPABILITY, Misc.getOppositeFace(f))) {
@@ -362,7 +362,7 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
         for (int i = 0; i < 4; i++) {
             float offX = 0.09375f + 0.8125f * (float) Misc.random.nextInt(2);
             float offZ = 0.28125f + 0.4375f * (float) Misc.random.nextInt(2);
-            if (front.getAxis() == EnumFacing.Axis.X) {
+            if (front.getAxis() == Direction.Axis.X) {
                 float h = offX;
                 offX = offZ;
                 offZ = h;
@@ -434,7 +434,7 @@ public class TileEntitySteamEngine extends TileEntity implements ITileEntityBase
     }
 
     @Override
-    public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+    public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.INPUT, "embers.tooltip.goggles.item", I18n.format("embers.tooltip.goggles.item.fuel")));
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)

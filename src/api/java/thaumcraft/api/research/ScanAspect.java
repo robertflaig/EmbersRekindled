@@ -3,7 +3,7 @@ package thaumcraft.api.research;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import thaumcraft.api.ThaumcraftApi;
@@ -28,7 +28,7 @@ public class ScanAspect implements IScanThing {
 	}
 
 	@Override
-	public boolean checkThing(EntityPlayer player, Object obj) {	
+	public boolean checkThing(PlayerEntity player, Object obj) {	
 		if (obj == null) return false;
 		
 		AspectList al = null;		
@@ -55,14 +55,14 @@ public class ScanAspect implements IScanThing {
 	}
 	
 	@Override
-	public void onSuccess(EntityPlayer player, Object obj) {
+	public void onSuccess(PlayerEntity player, Object obj) {
 		ThaumcraftApi.internalMethods.addKnowledge(player, EnumKnowledgeType.OBSERVATION, ResearchCategories.getResearchCategory("AUROMANCY"), 1);
 		ThaumcraftApi.internalMethods.addKnowledge(player, EnumKnowledgeType.OBSERVATION, ResearchCategories.getResearchCategory("BASICS"), 1);
 		ThaumcraftApi.internalMethods.addKnowledge(player, EnumKnowledgeType.OBSERVATION, ResearchCategories.getResearchCategory("ALCHEMY"), 1);
 	}
 	
 	@Override
-	public String getResearchKey(EntityPlayer player, Object object) {
+	public String getResearchKey(PlayerEntity player, Object object) {
 		return research;
 	}
 	

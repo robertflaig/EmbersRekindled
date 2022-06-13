@@ -1,12 +1,12 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.Explosion;
 import teamroots.embers.Embers;
@@ -29,15 +29,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class TileEntityEmberPipeBase extends TileEntity implements ITileEntityBase, ITickable, IEmberPipeConnectable, IEmberPipePriority {
+public abstract class TileEntityEmberPipeBase extends TileEntity implements ITileEntityBase, ITickableTileEntity, IEmberPipeConnectable, IEmberPipePriority {
     public static final int PRIORITY_BLOCK = 0;
     public static final int PRIORITY_PIPE = PRIORITY_BLOCK;
 
     Random random = new Random();
-    boolean[] from = new boolean[EnumFacing.VALUES.length];
+    boolean[] from = new boolean[Direction.VALUES.length];
     boolean clogged = false;
     double packet;
-    EnumFacing lastTransfer;
+    Direction lastTransfer;
     boolean syncPacket;
     boolean syncCloggedFlag;
     boolean syncTransfer;
@@ -50,54 +50,54 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public SUpdateTileEntityPacket getUpdatePacket() {
         if (requiresSync()) {
-            NBTTagCompound updateTag = getSyncTag();
+            CompoundNBT updateTag = getSyncTag();
             resetSync();
-            return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
+            return new SUpdateTileEntityPacket(getPos(), 0, updateTag);
         }
         return null;
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     abstract int getCapacity();
 
     @Override
-    public int getPriority(EnumFacing facing) {
+    public int getPriority(Direction facing) {
         return PRIORITY_PIPE;
     }
 
-    public abstract EnumPipeConnection getInternalConnection(EnumFacing facing);
+    public abstract EnumPipeConnection getInternalConnection(Direction facing);
 
-    abstract void setInternalConnection(EnumFacing facing, EnumPipeConnection connection);
+    abstract void setInternalConnection(Direction facing, EnumPipeConnection connection);
 
     /**
      * @param facing
      * @return Whether items can be transferred through this side
      */
-    abstract boolean isConnected(EnumFacing facing);
+    abstract boolean isConnected(Direction facing);
 
-    public void setFrom(EnumFacing facing, boolean flag) {
+    public void setFrom(Direction facing, boolean flag) {
         from[facing.getIndex()] = flag;
     }
 
     public void resetFrom() {
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (Direction facing : Direction.VALUES) {
             setFrom(facing, false);
         }
     }
 
-    protected boolean isFrom(EnumFacing facing) {
+    protected boolean isFrom(Direction facing) {
         return from[facing.getIndex()];
     }
 
     protected boolean isAnySideUnclogged()
     {
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (Direction facing : Direction.VALUES) {
             if (!isConnected(facing))
                 continue;
             TileEntity tile = world.getTileEntity(pos.offset(facing));
@@ -113,10 +113,10 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
             ticksExisted++;
             boolean packetMoved = false;
             if (packet > 0) {
-                PipePriorityMap<Integer, EnumFacing> possibleDirections = new PipePriorityMap<>();
-                Object[] emberCapabilities = new Object[EnumFacing.VALUES.length];
+                PipePriorityMap<Integer, Direction> possibleDirections = new PipePriorityMap<>();
+                Object[] emberCapabilities = new Object[Direction.VALUES.length];
 
-                for (EnumFacing facing : EnumFacing.VALUES) {
+                for (Direction facing : Direction.VALUES) {
                     if (!isConnected(facing))
                         continue;
                     if (isFrom(facing))
@@ -138,9 +138,9 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
                 }
 
                 for (int key : possibleDirections.keySet()) {
-                    ArrayList<EnumFacing> list = possibleDirections.get(key);
+                    ArrayList<Direction> list = possibleDirections.get(key);
                     for (int i = 0; i < list.size(); i++) {
-                        EnumFacing facing = list.get((i + lastRobin) % list.size());
+                        Direction facing = list.get((i + lastRobin) % list.size());
                         Object handler = emberCapabilities[facing.getIndex()];
                         packetMoved = pushStack(facing, handler);
                         if (lastTransfer != facing) {
@@ -201,7 +201,7 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
         }
     }
 
-    private boolean pushStack(EnumFacing facing, Object handler) {
+    private boolean pushStack(Direction facing, Object handler) {
         if(handler instanceof IEmberCapability) {
             IEmberCapability emberCapability = (IEmberCapability) handler;
             double added = emberCapability.addAmount(packet, true);
@@ -221,7 +221,7 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
             } else {
                 boolean isColliding = true;
                 int ends = 0;
-                for (EnumFacing checkFacing : EnumFacing.VALUES) {
+                for (Direction checkFacing : Direction.VALUES) {
                     if(!pipe.isConnected(checkFacing))
                         continue;
                     ends += 1;
@@ -265,12 +265,12 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
-    protected NBTTagCompound getSyncTag() {
-        NBTTagCompound compound = new NBTTagCompound();
+    protected CompoundNBT getSyncTag() {
+        CompoundNBT compound = new CompoundNBT();
         if (syncPacket)
             writePacket(compound);
         if (syncCloggedFlag)
@@ -281,42 +281,42 @@ public abstract class TileEntityEmberPipeBase extends TileEntity implements ITil
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         writePacket(tag);
         writeCloggedFlag(tag);
         writeLastTransfer(tag);
-        for (EnumFacing facing : EnumFacing.VALUES)
+        for (Direction facing : Direction.VALUES)
             tag.setBoolean("from" + facing.getIndex(), from[facing.getIndex()]);
         tag.setInteger("lastRobin",lastRobin);
         return tag;
     }
 
-    private void writeCloggedFlag(NBTTagCompound tag) {
+    private void writeCloggedFlag(CompoundNBT tag) {
         tag.setBoolean("clogged", clogged);
     }
 
-    private void writeLastTransfer(NBTTagCompound tag) {
+    private void writeLastTransfer(CompoundNBT tag) {
         tag.setInteger("lastTransfer", Misc.writeNullableFacing(lastTransfer));
     }
 
-    private void writePacket(NBTTagCompound tag) {
+    private void writePacket(CompoundNBT tag) {
         tag.setDouble("packet", packet);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        if (tag.hasKey("clogged"))
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if (tag.contains("clogged"))
             clogged = tag.getBoolean("clogged");
-        if (tag.hasKey("packet"))
+        if (tag.contains("packet"))
             packet = tag.getDouble("packet");
-        if (tag.hasKey("lastTransfer"))
+        if (tag.contains("lastTransfer"))
             lastTransfer = Misc.readNullableFacing(tag.getInteger("lastTransfer"));
-        for (EnumFacing facing : EnumFacing.VALUES)
-            if (tag.hasKey("from" + facing.getIndex()))
+        for (Direction facing : Direction.VALUES)
+            if (tag.contains("from" + facing.getIndex()))
                 from[facing.getIndex()] = tag.getBoolean("from" + facing.getIndex());
-        if (tag.hasKey("lastRobin"))
+        if (tag.contains("lastRobin"))
             lastRobin = tag.getInteger("lastRobin");
     }
 }

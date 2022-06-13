@@ -2,7 +2,7 @@ package teamroots.embers.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -30,7 +30,7 @@ public class BlockWallBase extends BlockWall implements IModeledBlock, IBlock {
     }
 	
 	@Override
-	public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos){
+	public boolean canPlaceTorchOnTop(BlockState state, IBlockAccess world, BlockPos pos){
 		return true;
 	}
 	

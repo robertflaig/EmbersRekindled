@@ -1,12 +1,12 @@
 package teamroots.embers.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,7 +33,7 @@ public class ContainerEye extends Container {
     public static final int VAR_INVERTED = 1;
     public static final int VAR_FILTER_OFFSET = 2;
 
-    EnumHand hand;
+    Hand hand;
     ItemStack stack;
 
     IInventory filterInventory = new InventoryBasic("EyeFilter", true,2);
@@ -45,13 +45,13 @@ public class ContainerEye extends Container {
     IFilterComparator comparator;
     int filterOffset;
 
-    public ContainerEye(EntityPlayer player) {
+    public ContainerEye(PlayerEntity player) {
         stack = player.getHeldItemMainhand();
-        hand = EnumHand.MAIN_HAND;
+        hand = Hand.MAIN_HAND;
         if (stack.isEmpty())
         {
             stack = player.getHeldItemOffhand();
-            hand = EnumHand.OFF_HAND;
+            hand = Hand.OFF_HAND;
         }
 
         readFromStack(stack);
@@ -80,7 +80,7 @@ public class ContainerEye extends Container {
 
     private void readFromStack(ItemStack stack)
     {
-        NBTTagCompound compound = stack.getTagCompound();
+        CompoundNBT compound = stack.getTagCompound();
         if(compound != null) {
             String comparatorName = compound.getString("comparator");
             stack1 = new ItemStack(compound.getCompoundTag("stack1"));
@@ -114,15 +114,15 @@ public class ContainerEye extends Container {
     }
 
     public void writeToStack() {
-        NBTTagCompound compound = stack.getTagCompound();
+        CompoundNBT compound = stack.getTagCompound();
         if(compound == null)
-            compound = new NBTTagCompound();
+            compound = new CompoundNBT();
         compound.setString("comparator", comparator.getName());
         compound.setInteger("offset", filterOffset);
         compound.setBoolean("inverted", inverted);
         compound.setInteger("setting", flag.ordinal());
-        compound.setTag("stack1", stack1.serializeNBT());
-        compound.setTag("stack2", stack2.serializeNBT());
+        compound.put("stack1", stack1.serializeNBT());
+        compound.put("stack2", stack2.serializeNBT());
         stack.setTagCompound(compound);
     }
 
@@ -228,7 +228,7 @@ public class ContainerEye extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
@@ -270,7 +270,7 @@ public class ContainerEye extends Container {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer playerIn) {
+    public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
         World world = playerIn.getEntityWorld();
         if (!world.isRemote) {
@@ -279,8 +279,8 @@ public class ContainerEye extends Container {
         }
     }
 
-    private void returnSlot(EntityPlayer playerIn, World worldIn, Slot slot) {
-        if (!playerIn.isEntityAlive() || playerIn instanceof EntityPlayerMP && ((EntityPlayerMP) playerIn).hasDisconnected()) {
+    private void returnSlot(PlayerEntity playerIn, World worldIn, Slot slot) {
+        if (!playerIn.isEntityAlive() || playerIn instanceof PlayerEntityMP && ((PlayerEntityMP) playerIn).hasDisconnected()) {
             playerIn.dropItem(slot.getStack(), false);
         } else {
             playerIn.inventory.placeItemBackInInventory(worldIn, slot.getStack());
@@ -300,7 +300,7 @@ public class ContainerEye extends Container {
             if (inventoryPlayer.getStackInSlot(i) == stack) {
                 addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, yInventory + 4 + 58) {
                     @Override
-                    public boolean canTakeStack(EntityPlayer playerIn) {
+                    public boolean canTakeStack(PlayerEntity playerIn) {
                         return false;
                     }
                 });
@@ -311,7 +311,7 @@ public class ContainerEye extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
+    public boolean canInteractWith(PlayerEntity playerIn) {
         return !stack.isEmpty() && playerIn.getHeldItem(hand) == stack;
     }
 }

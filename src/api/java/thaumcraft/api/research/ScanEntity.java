@@ -1,8 +1,8 @@
 package thaumcraft.api.research;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import thaumcraft.api.ThaumcraftApi.EntityTagsNBT;
 import thaumcraft.api.ThaumcraftApiHelper;
 
@@ -31,15 +31,15 @@ public class ScanEntity implements IScanThing {
 	}
 
 	@Override
-	public boolean checkThing(EntityPlayer player, Object obj) {		
+	public boolean checkThing(PlayerEntity player, Object obj) {		
 		if (obj!=null && ((!inheritedClasses && entityClass==obj.getClass()) || 
 				(inheritedClasses && entityClass.isInstance(obj)))) {			
 			if (NBTData!=null && NBTData.length>0) {
 				boolean b = true;
-				NBTTagCompound tc = new NBTTagCompound();
-				((Entity)obj).writeToNBT(tc);
+				CompoundNBT tc = new CompoundNBT();
+				((Entity)obj).write(tc);
 				for (EntityTagsNBT nbt:NBTData) {
-					if (!tc.hasKey(nbt.name) || !ThaumcraftApiHelper.getNBTDataFromId(tc, tc.getTagId(nbt.name), nbt.name).equals(nbt.value)) {
+					if (!tc.contains(nbt.name) || !ThaumcraftApiHelper.getNBTDataFromId(tc, tc.getTagId(nbt.name), nbt.name).equals(nbt.value)) {
 						return false;
 					} 					
 				} 			
@@ -50,7 +50,7 @@ public class ScanEntity implements IScanThing {
 	}
 
 	@Override
-	public String getResearchKey(EntityPlayer player, Object object) {
+	public String getResearchKey(PlayerEntity player, Object object) {
 		return research;
 	}
 	

@@ -1,6 +1,6 @@
 package teamroots.embers.api.power;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public interface IEmberCapability {
 	double getEmber();
@@ -9,8 +9,8 @@ public interface IEmberCapability {
 	void setEmberCapacity(double value);
 	double addAmount(double value, boolean doAdd);
 	double removeAmount(double value, boolean doRemove);
-	void writeToNBT(NBTTagCompound tag);
-	void readFromNBT(NBTTagCompound tag);
+	void write(CompoundNBT tag);
+	void read(CompoundNBT tag);
 	void onContentsChanged();
 	default boolean acceptsVolatile() {
 		return false;

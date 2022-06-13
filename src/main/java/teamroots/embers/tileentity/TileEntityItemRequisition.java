@@ -1,16 +1,16 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -36,10 +36,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityItemRequisition extends TileEntity implements ITileEntityBase, ITickable, IItemPipePriority, IItemPipeConnectable, ITargetable, IOrderSource, ISpecialFilter {
+public class TileEntityItemRequisition extends TileEntity implements ITileEntityBase, ITickableTileEntity, IItemPipePriority, IItemPipeConnectable, ITargetable, IOrderSource, ISpecialFilter {
     public static final int PRIORITY_REQUEST = -100;
 
-    EnumPipeConnection[] connections = new EnumPipeConnection[EnumFacing.VALUES.length];
+    EnumPipeConnection[] connections = new EnumPipeConnection[Direction.VALUES.length];
     public IItemHandler itemHandler;
     public ItemStack filterItem = ItemStack.EMPTY;
     public int filterSize = 0;
@@ -119,26 +119,26 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
     }
 
     public void updateConnections() {
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (Direction facing : Direction.VALUES) {
             setInternalConnection(facing, getConnection(world, getPos().offset(facing), facing));
         }
         markDirty();
     }
 
-    public EnumPipeConnection getInternalConnection(EnumFacing facing) {
+    public EnumPipeConnection getInternalConnection(Direction facing) {
         return connections[facing.getIndex()] != null ? connections[facing.getIndex()] : EnumPipeConnection.NONE;
     }
 
-    void setInternalConnection(EnumFacing facing, EnumPipeConnection connection) {
+    void setInternalConnection(Direction facing, EnumPipeConnection connection) {
         connections[facing.getIndex()] = connection;
     }
 
     @Override
-    public EnumPipeConnection getConnection(EnumFacing facing) {
+    public EnumPipeConnection getConnection(Direction facing) {
         return facing == getFacing() ? EnumPipeConnection.NONE : EnumPipeConnection.PIPE;
     }
 
-    public EnumPipeConnection getConnection(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public EnumPipeConnection getConnection(IBlockAccess world, BlockPos pos, Direction side) {
         TileEntity tile = world.getTileEntity(pos);
         if (side == getFacing() || tile instanceof TileEntityItemRequisition) {
             return EnumPipeConnection.NONE;
@@ -181,7 +181,7 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
         return false;
     }
 
-    private EnumFacing getFacing() {
+    private Direction getFacing() {
         IBlockState state = getWorld().getBlockState(getPos());
         return state.getValue(BlockItemRequisition.facing);
     }
@@ -211,7 +211,7 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != getFacing())
             return true;
         return super.hasCapability(capability, facing);
@@ -219,7 +219,7 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != getFacing())
             return (T) itemHandler;
         return super.getCapability(capability, facing);
@@ -279,11 +279,11 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         tag.setInteger("order", currentOrder);
         if (!filterItem.isEmpty()) {
-            tag.setTag("filter", filterItem.writeToNBT(new NBTTagCompound()));
+            tag.setTag("filter", filterItem.write(new CompoundNBT()));
             tag.setInteger("filterSize", filterSize);
         } else {
             tag.setString("filter", "empty");
@@ -293,62 +293,62 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
             tag.setInteger("targetY", target.getY());
             tag.setInteger("targetZ", target.getZ());
         }
-        tag.setInteger("up", getInternalConnection(EnumFacing.UP).getIndex());
-        tag.setInteger("down", getInternalConnection(EnumFacing.DOWN).getIndex());
-        tag.setInteger("north", getInternalConnection(EnumFacing.NORTH).getIndex());
-        tag.setInteger("south", getInternalConnection(EnumFacing.SOUTH).getIndex());
-        tag.setInteger("west", getInternalConnection(EnumFacing.WEST).getIndex());
-        tag.setInteger("east", getInternalConnection(EnumFacing.EAST).getIndex());
+        tag.setInteger("up", getInternalConnection(Direction.UP).getIndex());
+        tag.setInteger("down", getInternalConnection(Direction.DOWN).getIndex());
+        tag.setInteger("north", getInternalConnection(Direction.NORTH).getIndex());
+        tag.setInteger("south", getInternalConnection(Direction.SOUTH).getIndex());
+        tag.setInteger("west", getInternalConnection(Direction.WEST).getIndex());
+        tag.setInteger("east", getInternalConnection(Direction.EAST).getIndex());
         tag.setBoolean("lastPowered", lastPowered);
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         currentOrder = tag.getInteger("order");
-        if (tag.hasKey("filter")) {
+        if (tag.contains("filter")) {
             filterItem = new ItemStack(tag.getCompoundTag("filter"));
             filterSize = tag.getInteger("filterSize");
         }
-        if (tag.hasKey("targetX")) {
+        if (tag.contains("targetX")) {
             target = new BlockPos(tag.getInteger("targetX"), tag.getInteger("targetY"), tag.getInteger("targetZ"));
         }
-        if (tag.hasKey("up"))
-            setInternalConnection(EnumFacing.UP, EnumPipeConnection.fromIndex(tag.getInteger("up")));
-        if (tag.hasKey("down"))
-            setInternalConnection(EnumFacing.DOWN, EnumPipeConnection.fromIndex(tag.getInteger("down")));
-        if (tag.hasKey("north"))
-            setInternalConnection(EnumFacing.NORTH, EnumPipeConnection.fromIndex(tag.getInteger("north")));
-        if (tag.hasKey("south"))
-            setInternalConnection(EnumFacing.SOUTH, EnumPipeConnection.fromIndex(tag.getInteger("south")));
-        if (tag.hasKey("west"))
-            setInternalConnection(EnumFacing.WEST, EnumPipeConnection.fromIndex(tag.getInteger("west")));
-        if (tag.hasKey("east"))
-            setInternalConnection(EnumFacing.EAST, EnumPipeConnection.fromIndex(tag.getInteger("east")));
+        if (tag.contains("up"))
+            setInternalConnection(Direction.UP, EnumPipeConnection.fromIndex(tag.getInteger("up")));
+        if (tag.contains("down"))
+            setInternalConnection(Direction.DOWN, EnumPipeConnection.fromIndex(tag.getInteger("down")));
+        if (tag.contains("north"))
+            setInternalConnection(Direction.NORTH, EnumPipeConnection.fromIndex(tag.getInteger("north")));
+        if (tag.contains("south"))
+            setInternalConnection(Direction.SOUTH, EnumPipeConnection.fromIndex(tag.getInteger("south")));
+        if (tag.contains("west"))
+            setInternalConnection(Direction.WEST, EnumPipeConnection.fromIndex(tag.getInteger("west")));
+        if (tag.contains("east"))
+            setInternalConnection(Direction.EAST, EnumPipeConnection.fromIndex(tag.getInteger("east")));
         lastPowered = tag.getBoolean("lastPowered");
         setupFilter();
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (heldItem.getItem() instanceof ItemTinkerHammer)
             return false;
@@ -375,7 +375,7 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         resetOrder();
     }
 
@@ -409,7 +409,7 @@ public class TileEntityItemRequisition extends TileEntity implements ITileEntity
     }
 
     @Override
-    public int getPriority(EnumFacing facing) {
+    public int getPriority(Direction facing) {
         return PRIORITY_REQUEST;
     }
 

@@ -3,10 +3,10 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -26,7 +26,7 @@ public class BlockAdvancedEdge extends BlockBase {
 	public static final AxisAlignedBB AABB_BASE = new AxisAlignedBB(0,0,0,1,1,1);
 	
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return AABB_BASE;
 	}
 	
@@ -54,15 +54,15 @@ public class BlockAdvancedEdge extends BlockBase {
 		return getDefaultState().withProperty(state,meta);
 	}
 	
-	public void breakBlockSafe(World world, BlockPos pos, EntityPlayer player){
+	public void breakBlockSafe(World world, BlockPos pos, PlayerEntity player){
 		if (world.getTileEntity(pos) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world, pos, world.getBlockState(pos), player);
+			((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world, pos, world.getBlockState(pos), player);
 		}
 		world.setBlockToAir(pos);
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		boolean drop = !player.capabilities.isCreativeMode;
 		yeetBlocks(world, pos, player, drop);
 	}
@@ -72,7 +72,7 @@ public class BlockAdvancedEdge extends BlockBase {
 		yeetBlocks(world,pos,null,true);
 	}
 
-	public void yeetBlocks(World world, BlockPos pos, EntityPlayer player, boolean drop) {
+	public void yeetBlocks(World world, BlockPos pos, PlayerEntity player, boolean drop) {
 		if (!world.isRemote && drop){
 			world.spawnEntity(new EntityItem(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,new ItemStack(RegistryManager.crystal_cell,1,0)));
 		}

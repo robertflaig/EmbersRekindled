@@ -1,17 +1,26 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.BreakableBlock;
+import net.minecraft.block.GlassBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.CampfireTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import teamroots.embers.particle.ParticleUtil;
 import teamroots.embers.util.Misc;
 
@@ -19,7 +28,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Random;
 
-public class TileEntityArchaicGeysir extends TileEntityOpenTank implements ITileEntityBase, ITickable, IMultiblockMachine {
+public class TileEntityArchaicGeysir extends TileEntityOpenTank implements ITileEntityBase, ITickableTileEntity, IMultiblockMachine {
 	int ticksExisted = 0;
 	long charge = 0;
 
@@ -37,44 +46,56 @@ public class TileEntityArchaicGeysir extends TileEntityOpenTank implements ITile
 			}
 
 			@Override
-			public int fill(FluidStack resource, boolean doFill) {
+			public int fill(FluidStack resource, FluidAction action) {
 				if(Misc.isGaseousFluid(resource)) {
 					setEscapedFluid(resource);
-					return resource.amount;
+					return resource.getAmount();
 				}
 				return 0;
 			}
 		};
-		tank.setTileEntity(this);
-		tank.setCanFill(true);
-		tank.setCanDrain(false);
+		tank.writeToNBT(this.getTileData());
+		//tank.setCanFill(true);
+		//tank.setCanDrain(false);
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player){
+		this.remove();
+		world.setBlockState(pos.add(1,0,0), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(0,0,1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(-1,0,0), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(0,0,-1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(1,0,-1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(-1,0,1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(1,0,1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(-1,0,-1), Blocks.AIR.getDefaultState());
+		world.setTileEntity(pos, null);
+	}
+/*	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setBlockToAir(pos.add(1,0,0));
 		world.setBlockToAir(pos.add(0,0,1));
 		world.setBlockToAir(pos.add(-1,0,0));
@@ -84,14 +105,14 @@ public class TileEntityArchaicGeysir extends TileEntityOpenTank implements ITile
 		world.setBlockToAir(pos.add(1,0,1));
 		world.setBlockToAir(pos.add(-1,0,-1));
 		world.setTileEntity(pos, null);
-	}
+	}*/
 
 	@Override
-	public void update() {
+	public void tick() {
 		ticksExisted ++;
 		if (world.isRemote && true)
 			updateEscapeParticles();
-		lastEscapedTickServer = lastEscapedTickClient = world.getTotalWorldTime();
+		lastEscapedTickServer = lastEscapedTickClient = world.getGameTime();
 	}
 
 	@Override

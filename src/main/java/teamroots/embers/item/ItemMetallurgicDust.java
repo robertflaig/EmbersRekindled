@@ -1,10 +1,10 @@
 package teamroots.embers.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import teamroots.embers.util.OreTransmutationUtil;
@@ -17,7 +17,7 @@ public class ItemMetallurgicDust extends ItemBase {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(PlayerEntity player, World worldIn, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, Hand hand) {
         if (worldIn.isRemote) {
             return EnumActionResult.SUCCESS;
         } else {

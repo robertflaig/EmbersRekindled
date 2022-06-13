@@ -2,9 +2,9 @@ package thaumcraft.api.research;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
@@ -23,7 +23,7 @@ public class ScanOreDictionary implements IScanThing {
 	}
 	
 	@Override
-	public boolean checkThing(EntityPlayer player, Object obj) {	
+	public boolean checkThing(PlayerEntity player, Object obj) {
 		ItemStack stack = null;
 		if (obj!=null) {
 			if (obj instanceof BlockPos) {
@@ -60,7 +60,7 @@ public class ScanOreDictionary implements IScanThing {
 	}
 	
 	@Override
-	public String getResearchKey(EntityPlayer player, Object object) {		
+	public String getResearchKey(PlayerEntity player, Object object) {
 		return research;
 	}
 }

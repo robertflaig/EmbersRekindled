@@ -1,11 +1,11 @@
 package teamroots.embers.util;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import teamroots.embers.block.BlockAlchemyPedestal;
@@ -48,7 +48,7 @@ public class AlchemyUtil {
                 if(state.getBlock() instanceof BlockAlchemyPedestal)
                 {
                     if(!state.getValue(BlockAlchemyPedestal.isTop))
-                        pedestalPos.move(EnumFacing.UP);
+                        pedestalPos.move(Direction.UP);
                     TileEntity tile = world.getTileEntity(pedestalPos);
                     if (tile instanceof TileEntityAlchemyPedestal){
                         pedestals.add((TileEntityAlchemyPedestal)tile);

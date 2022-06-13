@@ -1,6 +1,6 @@
 package thaumcraft.api.internal;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
@@ -83,7 +83,7 @@ public class WorldCoordinates implements Comparable
         return this.compareWorldCoordinate((WorldCoordinates)par1Obj);
     }
     
-    public void readNBT(NBTTagCompound nbt) {
+    public void readNBT(CompoundNBT nbt) {
     	int x = nbt.getInteger("w_x");
     	int y = nbt.getInteger("w_y");
     	int z = nbt.getInteger("w_z");
@@ -91,7 +91,7 @@ public class WorldCoordinates implements Comparable
     	this.dim = nbt.getInteger("w_d");
     }
     
-    public void writeNBT(NBTTagCompound nbt) {
+    public void writeNBT(CompoundNBT nbt) {
     	nbt.setInteger("w_x",pos.getX());
     	nbt.setInteger("w_y",pos.getY());
     	nbt.setInteger("w_z",pos.getZ());

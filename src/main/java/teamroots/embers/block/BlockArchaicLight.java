@@ -1,7 +1,7 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import teamroots.embers.RegistryManager;
@@ -28,7 +28,7 @@ public class BlockArchaicLight extends BlockBase {
 	}
 	
 	@Override
-	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random random){
+	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random){
 		for (int i = 0; i < 12; i ++){
 			int chance = random.nextInt(3);
 			if (chance == 0){

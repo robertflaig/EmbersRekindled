@@ -1,10 +1,10 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,7 +27,7 @@ public abstract class TileEntityNodeBase extends TileEntity implements ITileEnti
 	protected abstract IUpgradeProvider initUpgrade();
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+	public boolean hasCapability(Capability<?> capability, @Nullable Direction facing)
 	{
 		if(capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY) {
 			return facing == getFacing();
@@ -37,7 +37,7 @@ public abstract class TileEntityNodeBase extends TileEntity implements ITileEnti
 
 	@Override
 	@Nullable
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing)
 	{
 		if(capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && facing == getFacing()) {
 			return (T) upgrade;
@@ -46,19 +46,19 @@ public abstract class TileEntityNodeBase extends TileEntity implements ITileEnti
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-							EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+							Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
-	public EnumFacing getFacing() {
+	public Direction getFacing() {
 		IBlockState state = world.getBlockState(pos);
 		return state.getValue(BlockNodeBase.facing);
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 

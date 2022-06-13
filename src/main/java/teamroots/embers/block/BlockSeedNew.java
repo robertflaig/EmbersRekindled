@@ -3,8 +3,8 @@ package teamroots.embers.block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -27,18 +27,18 @@ public abstract class BlockSeedNew extends BlockBase implements ITileEntityProvi
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos){
+    public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
         return AABB_BASE;
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ){
         return ((ITileEntityBase)world.getTileEntity(pos)).activate(world,pos,state,player,hand,side,hitX,hitY,hitZ);
     }
 
     @Override
-    public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
-        ((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world,pos,state,player);
+    public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
+        ((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world,pos,state,player);
     }
 
     @Override

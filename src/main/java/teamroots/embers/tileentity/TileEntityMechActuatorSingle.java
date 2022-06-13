@@ -3,17 +3,17 @@ package teamroots.embers.tileentity;
 import mysticalmechanics.api.IGearBehavior;
 import mysticalmechanics.api.IGearbox;
 import mysticalmechanics.api.MysticalMechanicsAPI;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -31,7 +31,7 @@ import java.util.Random;
 public class TileEntityMechActuatorSingle extends TileEntityMechActuator {
 
     @Override
-    public boolean canAttachGear(EnumFacing facing) {
+    public boolean canAttachGear(Direction facing) {
         return facing == getFacing();
     }
 }

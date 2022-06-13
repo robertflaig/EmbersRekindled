@@ -2,28 +2,33 @@ package teamroots.embers.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.block.BlockState;
+//import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.block.AnvilBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
 import teamroots.embers.Embers;
 
 public class BlockBase extends Block implements IModeledBlock, IBlock {
+	AnvilBlock testing = new AnvilBlock(Properties.create(Material.ANVIL));
 	public Item itemBlock = null;
 	public boolean isOpaqueCube = true, isFullCube = true, isBeaconBase = false;
 	public BlockRenderLayer layer = BlockRenderLayer.SOLID;
 	public BlockBase(Material material, String name, boolean addToTab){
-		super(material);
-		setUnlocalizedName(name);
-		setRegistryName(Embers.MODID+":"+name);
+		super(Block.Properties.create(material));
+		//setUnlocalizedName(name);
+		setRegistryName(Embers.MODID+":"+name,name);
 		if (addToTab){
+			BlockItem.BLOCK_TO_ITEM;
 			setCreativeTab(Embers.tab);
 		}
-		itemBlock = (new ItemBlock(this).setRegistryName(this.getRegistryName()));
+		itemBlock = (new BlockItem(this).setRegistryName(this.getRegistryName()));
     }
 
 	public BlockBase(Material material){
@@ -42,6 +47,11 @@ public class BlockBase extends Block implements IModeledBlock, IBlock {
 	
 	@Override
 	public boolean isBeaconBase(IBlockAccess world, BlockPos pos, BlockPos beacon){
+		return isBeaconBase;
+	}
+
+	@Override
+	public boolean isBeaconBase(){
 		return isBeaconBase;
 	}
 	

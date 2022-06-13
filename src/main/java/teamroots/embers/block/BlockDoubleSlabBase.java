@@ -5,10 +5,10 @@ import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -58,7 +58,7 @@ public class BlockDoubleSlabBase extends BlockSlab implements IModeledBlock, IBl
 	}
 
 	@Override
-	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
 		ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
 		drops.add(new ItemStack(Item.getItemFromBlock(this.slab), 1));
 		drops.add(new ItemStack(Item.getItemFromBlock(this.slab), 1));
@@ -97,7 +97,7 @@ public class BlockDoubleSlabBase extends BlockSlab implements IModeledBlock, IBl
 	}
 	
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player){
+	public ItemStack getPickBlock(BlockState state, RayTraceResult target, World world, BlockPos pos, PlayerEntity player){
 		return new ItemStack(Item.getItemFromBlock(this.slab));
 	}
 
@@ -113,7 +113,7 @@ public class BlockDoubleSlabBase extends BlockSlab implements IModeledBlock, IBl
 	}
 	
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos){
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
 		return FULL_AABB;
 	}
 

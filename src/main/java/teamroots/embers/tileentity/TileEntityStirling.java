@@ -1,16 +1,16 @@
 package teamroots.embers.tileentity;
 
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityStirling extends TileEntity implements ITickable, ITileEntityBase, IExtraDialInformation, IExtraCapabilityInformation {
+public class TileEntityStirling extends TileEntity implements ITickableTileEntity, ITileEntityBase, IExtraDialInformation, IExtraCapabilityInformation {
     public int activeTicks = 0;
     public UpgradeStirling upgrade;
     public FluidTank tank = new FluidTank(4000) {
@@ -49,39 +49,39 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag){
-        super.writeToNBT(tag);
-        NBTTagCompound tankTag = new NBTTagCompound();
-        tank.writeToNBT(tankTag);
+    public CompoundNBT write(CompoundNBT tag){
+        super.write(tag);
+        CompoundNBT tankTag = new CompoundNBT();
+        tank.write(tankTag);
         tag.setTag("tank", tankTag);
         tag.setInteger("active",activeTicks);
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag){
-        super.readFromNBT(tag);
-        tank.readFromNBT(tag.getCompoundTag("tank"));
+    public void read(CompoundNBT tag){
+        super.read(tag);
+        tank.read(tag.getCompoundTag("tank"));
         activeTicks = tag.getInteger("active");
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
-    public EnumFacing getFacing()
+    public Direction getFacing()
     {
         IBlockState state = world.getBlockState(pos);
         if(state.getBlock() instanceof BlockStirling)
@@ -95,7 +95,7 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY)
             return getFacing() == facing;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
@@ -105,7 +105,7 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing() == facing)
             return (T) upgrade;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (getFacing().getOpposite() == facing || facing == null))
@@ -118,29 +118,29 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
         activeTicks--;
         IBlockState state = world.getBlockState(pos);
         if(activeTicks > 0 && world.isRemote && state.getBlock() instanceof BlockStirling) {
-            EnumFacing facing = state.getValue(BlockStirling.FACING);
+            Direction facing = state.getValue(BlockStirling.FACING);
             float frontoffset = -0.6f;
             float yoffset = 0.2f;
             float wideoffset = 0.5f;
             float breadthoffset = 0.4f;
             Vec3d frontOffset = new Vec3d(0.5 - facing.getFrontOffsetX() * frontoffset, 0.5 - facing.getFrontOffsetY() * frontoffset, 0.5 - facing.getFrontOffsetZ() * frontoffset);
             Vec3d baseOffset = new Vec3d(0.5 - facing.getFrontOffsetX() * yoffset, 0.5 - facing.getFrontOffsetY() * yoffset, 0.5 - facing.getFrontOffsetZ() * yoffset);
-            EnumFacing[] planars;
+            Direction[] planars;
             switch(facing.getAxis()) {
                 case X:
-                    planars = new EnumFacing[] {EnumFacing.DOWN,EnumFacing.UP,EnumFacing.NORTH,EnumFacing.SOUTH}; break;
+                    planars = new Direction[] {Direction.DOWN,Direction.UP,Direction.NORTH,Direction.SOUTH}; break;
                 case Y:
-                    planars = new EnumFacing[] {EnumFacing.EAST,EnumFacing.WEST,EnumFacing.NORTH,EnumFacing.SOUTH}; break;
+                    planars = new Direction[] {Direction.EAST,Direction.WEST,Direction.NORTH,Direction.SOUTH}; break;
                 case Z:
-                    planars = new EnumFacing[] {EnumFacing.DOWN,EnumFacing.UP,EnumFacing.EAST,EnumFacing.WEST}; break;
+                    planars = new Direction[] {Direction.DOWN,Direction.UP,Direction.EAST,Direction.WEST}; break;
                 default:
                     planars = null; break;
             }
-            for(EnumFacing planar : planars) {
+            for(Direction planar : planars) {
                 IBlockState sideState = world.getBlockState(pos.offset(planar));
                 if(sideState.getBlockFaceShape(world,pos.offset(planar),planar.getOpposite()) != BlockFaceShape.UNDEFINED)
                     continue;
-                EnumFacing cross = facing.rotateAround(planar.getAxis());
+                Direction cross = facing.rotateAround(planar.getAxis());
                 float x1 = getPos().getX() + (float) baseOffset.x + planar.getFrontOffsetX() * wideoffset;
                 float y1 = getPos().getY() + (float) baseOffset.y + planar.getFrontOffsetY() * wideoffset;
                 float z1 = getPos().getZ() + (float) baseOffset.z + planar.getFrontOffsetZ() * wideoffset;
@@ -169,12 +169,12 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         return false;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
     }
 
     public FluidStack getFluidStack() {
@@ -192,7 +192,7 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
     }
 
     @Override
-    public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
+    public void addDialInformation(Direction facing, List<String> information, String dialType) {
         if(BlockFluidGauge.DIAL_TYPE.equals(dialType)) {
             information.clear();
             information.add(BlockFluidGauge.formatFluidStack(getFluidStack(),getCapacity()));
@@ -205,7 +205,7 @@ public class TileEntityStirling extends TileEntity implements ITickable, ITileEn
     }
 
     @Override
-    public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+    public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
         if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.INPUT,"embers.tooltip.goggles.fluid",I18n.format("embers.tooltip.goggles.fluid.steam")));
     }

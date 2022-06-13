@@ -2,10 +2,10 @@ package thaumcraft.api.items;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,7 +42,7 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
 	public AspectList getAspects(ItemStack itemstack) {
 		if (itemstack.hasTagCompound()) {
 			AspectList aspects = new AspectList();
-			aspects.readFromNBT(itemstack.getTagCompound());
+			aspects.read(itemstack.getTagCompound());
 			return aspects.size()>0?aspects:null;
 		}
 		return null;
@@ -51,8 +51,8 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
 	@Override
 	public void setAspects(ItemStack itemstack, AspectList aspects) {
 		if (!itemstack.hasTagCompound()) 
-			itemstack.setTagCompound(new NBTTagCompound());
-		aspects.writeToNBT(itemstack.getTagCompound());
+			itemstack.setTagCompound(new CompoundNBT());
+		aspects.write(itemstack.getTagCompound());
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
 	}
 
 	@Override
-	public void onCreated(ItemStack stack, World world, EntityPlayer player) {
+	public void onCreated(ItemStack stack, World world, PlayerEntity player) {
 		if (!world.isRemote && !stack.hasTagCompound()) {
 			Aspect[] displayAspects = Aspect.aspects.values().toArray(new Aspect[]{});
 			this.setAspects(stack, new AspectList().add(displayAspects[world.rand.nextInt(displayAspects.length)], base));

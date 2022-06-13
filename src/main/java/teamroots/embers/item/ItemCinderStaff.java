@@ -2,10 +2,10 @@ package teamroots.embers.item;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -51,7 +51,7 @@ public class ItemCinderStaff extends ItemBase implements IProjectileWeapon {
             double charge = (Math.min(MAX_CHARGE, getMaxItemUseDuration(stack) - timeLeft)) / MAX_CHARGE;
             float spawnDistance = 2.0f;//Math.max(1.0f, (float)charge/5.0f);
             Vec3d eyesPos = entity.getPositionEyes(1.0f);
-            RayTraceResult traceResult = this.rayTrace(world, (EntityPlayer) entity, false);
+            RayTraceResult traceResult = this.rayTrace(world, (PlayerEntity) entity, false);
             if (traceResult != null && traceResult.typeOfHit == RayTraceResult.Type.BLOCK)
                 spawnDistance = (float) Math.min(spawnDistance, traceResult.hitVec.distanceTo(eyesPos));
             Vec3d launchPos = eyesPos.add(entity.getLookVec().scale(spawnDistance));
@@ -89,7 +89,7 @@ public class ItemCinderStaff extends ItemBase implements IProjectileWeapon {
     @Override
     public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
+            stack.setTagCompound(new CompoundNBT());
             stack.getTagCompound().setInteger("cooldown", 0);
         } else {
             if (stack.getTagCompound().getInteger("cooldown") > 0) {
@@ -124,7 +124,7 @@ public class ItemCinderStaff extends ItemBase implements IProjectileWeapon {
             Color color = event.getColor();
             float spawnDistance = 2.0f;//Math.max(1.0f, (float)charge/5.0f);
             Vec3d eyesPos = player.getPositionEyes(1.0f);
-            RayTraceResult traceResult = this.rayTrace(player.world, (EntityPlayer) player, false);
+            RayTraceResult traceResult = this.rayTrace(player.world, (PlayerEntity) player, false);
             if (traceResult != null && traceResult.typeOfHit == RayTraceResult.Type.BLOCK)
                 spawnDistance = (float) Math.min(spawnDistance, traceResult.hitVec.distanceTo(eyesPos));
             Vec3d launchPos = eyesPos.add(player.getLookVec().scale(spawnDistance));
@@ -144,7 +144,7 @@ public class ItemCinderStaff extends ItemBase implements IProjectileWeapon {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (EmberInventoryUtil.getEmberTotal(player) >= EMBER_COST && stack.getTagCompound().getInteger("cooldown") <= 0 || player.capabilities.isCreativeMode) {
             EmberInventoryUtil.removeEmber(player, EMBER_COST);

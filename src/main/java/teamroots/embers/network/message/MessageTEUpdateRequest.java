@@ -1,9 +1,9 @@
 package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -38,11 +38,11 @@ public class MessageTEUpdateRequest implements IMessage {
         @Override
         public IMessage onMessage(final MessageTEUpdateRequest message, final MessageContext ctx) {
             BlockPos pos = BlockPos.fromLong(message.pos);
-            EntityPlayerMP player = ctx.getServerHandler().player;
+            PlayerEntityMP player = ctx.getServerHandler().player;
             if (player != null && player.world != null) {
                 TileEntity tileEntity = player.world.getTileEntity(pos);
                 if (tileEntity != null) {
-                    SPacketUpdateTileEntity packet = tileEntity.getUpdatePacket();
+                    SUpdateTileEntityPacket packet = tileEntity.getUpdatePacket();
                     if (packet != null)
                         player.connection.sendPacket(packet);
                 }

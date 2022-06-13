@@ -2,7 +2,7 @@ package teamroots.embers.api.filter;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 
 import ResourceLocation;
@@ -16,8 +16,8 @@ public class FilterItem implements IFilter {
         this.filterItem = filterItem;
     }
 
-    public FilterItem(NBTTagCompound tag) {
-        readFromNBT(tag);
+    public FilterItem(CompoundNBT tag) {
+        read(tag);
     }
 
     @Override
@@ -36,14 +36,14 @@ public class FilterItem implements IFilter {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+    public CompoundNBT write(CompoundNBT tag) {
         tag.setString("type",getType().toString());
         tag.setTag("filterStack",filterItem.serializeNBT());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         filterItem = new ItemStack(tag.getCompoundTag("filterStack"));
     }
 

@@ -3,12 +3,12 @@ package thaumcraft.api.research;
 import java.util.ArrayList;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -37,7 +37,7 @@ public class ScanningManager {
 	 * @param player
 	 * @param object this could in theory be anything, but vanilla tc scanning tools only pass in Entity, BlockPos, Itemstack or null
 	 */
-	public static void scanTheThing(EntityPlayer player, Object object) {
+	public static void scanTheThing(PlayerEntity player, Object object) {
 		boolean found = false;
 		boolean suppress = false;
 		for (IScanThing thing:things) {
@@ -61,7 +61,7 @@ public class ScanningManager {
 		
 		// scan contents of inventories
 		if (object instanceof BlockPos) {
-			IItemHandler handler = ThaumcraftApiHelper.getItemHandlerAt(player.getEntityWorld(), (BlockPos) object, EnumFacing.UP);
+			IItemHandler handler = ThaumcraftApiHelper.getItemHandlerAt(player.getEntityWorld(), (BlockPos) object, Direction.UP);
 			if (handler != null) {
 				int scanned = 0;
 				for (int slot=0;slot<handler.getSlots();slot++) {
@@ -86,7 +86,7 @@ public class ScanningManager {
 	 * @param object
 	 * @return true if the object can be scanned for research the player has not yet discovered
 	 */
-	public static boolean isThingStillScannable(EntityPlayer player, Object object) {		
+	public static boolean isThingStillScannable(PlayerEntity player, Object object) {
 		for (IScanThing thing:things) {
 			if (thing.checkThing(player, object)) {
 				try {
@@ -100,7 +100,7 @@ public class ScanningManager {
 	}
 		
 	
-	public static ItemStack getItemFromParms(EntityPlayer player, Object obj) {
+	public static ItemStack getItemFromParms(PlayerEntity player, Object obj) {
 		ItemStack is = ItemStack.EMPTY;
 		if (obj instanceof ItemStack) 
 			is = (ItemStack) obj;
@@ -125,7 +125,7 @@ public class ScanningManager {
 		return is;
 	}
 	
-	private static RayTraceResult rayTrace(EntityPlayer player)
+	private static RayTraceResult rayTrace(PlayerEntity player)
     {
         Vec3d vec3d = player.getPositionEyes(0);
         Vec3d vec3d1 = player.getLook(0);

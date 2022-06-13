@@ -3,9 +3,9 @@ package thaumcraft.api.items;
 import java.util.ArrayList;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -26,12 +26,12 @@ public interface IArchitect {
 	 * Returns a list of blocks that should be highlighted in world. The starting point is whichever block the player currently has highlighted in the world.
 	 */
 	public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, World world, 
-			BlockPos pos, EnumFacing side, EntityPlayer player);
+			BlockPos pos, Direction side, PlayerEntity player);
 	
 	/**
 	 * which axis should be displayed. 
 	 */
-	public boolean showAxis(ItemStack stack, World world, EntityPlayer player, EnumFacing side, 
+	public boolean showAxis(ItemStack stack, World world, PlayerEntity player, Direction side,
 			EnumAxis axis);
 	
 	public enum EnumAxis {

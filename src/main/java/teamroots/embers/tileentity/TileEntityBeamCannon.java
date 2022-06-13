@@ -1,15 +1,15 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase, ITickable, ITargetable {
+public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase, ITickableTileEntity, ITargetable {
 	public static final double PULL_RATE = 2000.0;
 	public static final int FIRE_THRESHOLD = 400;
 	public static final float DAMAGE = 25.0f;
@@ -64,59 +64,59 @@ public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase,
 	}
 
 	@Nonnull
-	public EnumFacing getFacing() {
+	public Direction getFacing() {
 		IBlockState state = getWorld().getBlockState(getPos());
 		return state.getValue(BlockBeamCannon.facing);
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
 		if (target != null){
 			tag.setInteger("targetX", target.getX());
 			tag.setInteger("targetY", target.getY());
 			tag.setInteger("targetZ", target.getZ());
 		}
 		tag.setBoolean("lastPowered", lastPowered);
-		capability.writeToNBT(tag);
+		capability.write(tag);
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
-		if (tag.hasKey("targetX")){
+	public void read(CompoundNBT tag){
+		super.read(tag);
+		if (tag.contains("targetX")){
 			target = new BlockPos(tag.getInteger("targetX"), tag.getInteger("targetY"), tag.getInteger("targetZ"));
 		}
 		lastPowered = tag.getBoolean("lastPowered");
-		capability.readFromNBT(tag);
+		capability.read(tag);
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 
@@ -127,12 +127,12 @@ public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void update() {
-		EnumFacing facing = getFacing();
+	public void tick() {
+		Direction facing = getFacing();
 		if (this.target == null && this.ticksExisted == 0){
 			this.target = getPos().offset(facing);
 		}
-		upgrades = UpgradeUtil.getUpgrades(world, pos, new EnumFacing[]{facing.getOpposite()});
+		upgrades = UpgradeUtil.getUpgrades(world, pos, new Direction[]{facing.getOpposite()});
 		UpgradeUtil.verifyUpgrades(this, upgrades);
 		ticksExisted++;
 		boolean cancel = UpgradeUtil.doWork(this,upgrades);
@@ -146,7 +146,7 @@ public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase,
 	}
 
 	private void pullEmber() {
-		EnumFacing facing = getFacing();
+		Direction facing = getFacing();
 		TileEntity attachedTile = getWorld().getTileEntity(getPos().offset(facing.getOpposite()));
 		if (attachedTile != null){
 			if (attachedTile.hasCapability(EmbersCapabilities.EMBER_CAPABILITY, facing)){
@@ -160,7 +160,7 @@ public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase,
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return true;
 		}
@@ -168,7 +168,7 @@ public class TileEntityBeamCannon extends TileEntity implements ITileEntityBase,
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return (T)this.capability;
 		}

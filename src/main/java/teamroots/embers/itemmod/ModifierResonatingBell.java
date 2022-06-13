@@ -1,7 +1,7 @@
 package teamroots.embers.itemmod;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +56,7 @@ public class ModifierResonatingBell extends ModifierBase {
     public void onClick(PlayerInteractEvent.RightClickBlock event) {
         ItemStack heldStack = event.getItemStack();
         World world = event.getWorld();
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getPlayerEntity();
         BlockPos pos = event.getPos();
         if (ItemModUtil.hasHeat(heldStack)) {
             int level = ItemModUtil.getModifierLevel(heldStack, EmbersAPI.RESONATING_BELL);

@@ -1,16 +1,20 @@
 package teamroots.embers.tileentity;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -45,8 +49,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBase, ITickable, ISparkable, ISoundController, IExtraCapabilityInformation {
-    public static final EnumFacing[] UPGRADE_SIDES = new EnumFacing[]{EnumFacing.DOWN};
+public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBase, ITickableTileEntity, ISparkable, ISoundController, IExtraCapabilityInformation {
+    public static final Direction[] UPGRADE_SIDES = new Direction[]{Direction.DOWN};
     public IEmberCapability capability = new DefaultEmberCapability();
     int angle = 0;
     int turnRate = 0;
@@ -107,50 +111,50 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
-        tag.setInteger("progress", progress);
-        tag.setTag("aspects", aspects.serializeNBT());
-        tag.setTag("north", north.serializeNBT());
-        tag.setTag("south", south.serializeNBT());
-        tag.setTag("east", east.serializeNBT());
-        tag.setTag("west", west.serializeNBT());
-        tag.setTag("center", center.serializeNBT());
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
+        tag.putInt("progress", progress);
+        tag.put("aspects", aspects.serializeNBT());
+        tag.put("north", north.serializeNBT());
+        tag.put("south", south.serializeNBT());
+        tag.put("east", east.serializeNBT());
+        tag.put("west", west.serializeNBT());
+        tag.put("center", center.serializeNBT());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        progress = tag.getInteger("progress");
-        aspects.deserializeNBT(tag.getCompoundTag("aspects"));
-        north.deserializeNBT(tag.getCompoundTag("north"));
-        south.deserializeNBT(tag.getCompoundTag("south"));
-        east.deserializeNBT(tag.getCompoundTag("east"));
-        west.deserializeNBT(tag.getCompoundTag("west"));
-        center.deserializeNBT(tag.getCompoundTag("center"));
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        progress = tag.getInt("progress");
+        aspects.deserializeNBT(tag.get("aspects"));
+        north.deserializeNBT(tag.get("north"));
+        south.deserializeNBT(tag.get("south"));
+        east.deserializeNBT(tag.get("east"));
+        west.deserializeNBT(tag.get("west"));
+        center.deserializeNBT(tag.get("center"));
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (facing != EnumFacing.UP && facing != null) {
+            if (facing != Direction.UP && facing != null) {
                 return true;
             }
         }
@@ -158,21 +162,21 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (facing == EnumFacing.DOWN) {
+            if (facing == Direction.DOWN) {
                 return (T) center;
             }
-            if (facing == EnumFacing.NORTH) {
+            if (facing == Direction.NORTH) {
                 return (T) north;
             }
-            if (facing == EnumFacing.SOUTH) {
+            if (facing == Direction.SOUTH) {
                 return (T) south;
             }
-            if (facing == EnumFacing.EAST) {
+            if (facing == Direction.EAST) {
                 return (T) east;
             }
-            if (facing == EnumFacing.WEST) {
+            if (facing == Direction.WEST) {
                 return (T) west;
             }
         }
@@ -183,20 +187,20 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
         return ((int) (hitX / 0.3333)) * 3 + ((int) (hitZ / 0.3333));
     }
 
-    public ItemStackHandler getInventoryForFace(EnumFacing facing) {
-        if (facing == EnumFacing.DOWN) {
+    public ItemStackHandler getInventoryForFace(Direction facing) {
+        if (facing == Direction.DOWN) {
             return center;
         }
-        if (facing == EnumFacing.NORTH) {
+        if (facing == Direction.NORTH) {
             return north;
         }
-        if (facing == EnumFacing.SOUTH) {
+        if (facing == Direction.SOUTH) {
             return south;
         }
-        if (facing == EnumFacing.EAST) {
+        if (facing == Direction.EAST) {
             return east;
         }
-        if (facing == EnumFacing.WEST) {
+        if (facing == Direction.WEST) {
             return west;
         }
         return center;
@@ -240,8 +244,8 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!heldItem.isEmpty()) {
             player.setHeldItem(hand, getInventoryForFace(side).insertItem(0, heldItem, false));
@@ -260,8 +264,8 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         Misc.spawnInventoryInWorld(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, north);
         Misc.spawnInventoryInWorld(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, south);
         Misc.spawnInventoryInWorld(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, east);
@@ -295,8 +299,8 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
 
     @Override
     public void update() {
-        angle += 1.0f;
-        List<IUpgradeProvider> upgrades = UpgradeUtil.getUpgrades(world, pos, new EnumFacing[]{EnumFacing.DOWN}); //Defer to when events are added to the upgrade system
+        angle += 1;
+        List<IUpgradeProvider> upgrades = UpgradeUtil.getUpgrades(world, pos, new Direction[]{Direction.DOWN}); //Defer to when events are added to the upgrade system
         UpgradeUtil.verifyUpgrades(this, upgrades);
         if (getWorld().isRemote)
             handleSound();
@@ -427,7 +431,7 @@ public class TileEntityAlchemyTablet extends TileEntity implements ITileEntityBa
     }
 
     @Override
-    public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+    public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             String filter = null;
             switch (facing) {

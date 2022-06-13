@@ -1,13 +1,13 @@
 package thaumcraft.api.golems.seals;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 public class SealPos  {
 		public BlockPos pos;
-		public EnumFacing face;
+		public Direction face;
 		
-		public SealPos(BlockPos pos, EnumFacing face) {
+		public SealPos(BlockPos pos, Direction face) {
 			super();
 			this.pos = pos;
 			this.face = face;

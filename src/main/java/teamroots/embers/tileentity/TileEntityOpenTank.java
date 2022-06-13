@@ -1,7 +1,12 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.CampfireTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.TileFluidHandler;
 import teamroots.embers.particle.ParticleUtil;
 import teamroots.embers.util.FluidColorHelper;
@@ -9,7 +14,7 @@ import teamroots.embers.util.FluidColorHelper;
 import java.awt.*;
 import java.util.Random;
 
-import NBTTagCompound;
+//import CompoundNBT;
 
 public abstract class TileEntityOpenTank extends TileFluidHandler {
     FluidStack lastEscaped = null;
@@ -17,27 +22,27 @@ public abstract class TileEntityOpenTank extends TileFluidHandler {
     long lastEscapedTickClient;
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        NBTTagCompound compound = super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        CompoundNBT compound = super.write(tag);
         if(lastEscaped != null) {
-            compound.setTag("lastEscaped",lastEscaped.writeToNBT(new NBTTagCompound()));
-            compound.setLong("lastEscapedTick",lastEscapedTickServer);
+            compound.put("lastEscaped",lastEscaped.writeToNBT(new CompoundNBT()));
+            compound.putLong("lastEscapedTick",lastEscapedTickServer);
         }
         return compound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        if(tag.hasKey("lastEscaped")) {
-            lastEscaped = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("lastEscaped"));
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if(tag.contains("lastEscaped")) {
+            lastEscaped = FluidStack.loadFluidStackFromNBT(tag.getCompound("lastEscaped"));
             lastEscapedTickServer = tag.getLong("lastEscapedTick");
         }
     }
 
     public void setEscapedFluid(FluidStack stack) {
         lastEscaped = stack;
-        lastEscapedTickServer = world.getTotalWorldTime();
+        lastEscapedTickServer = world.getDayTime();
         markDirty();
     }
 
@@ -48,11 +53,13 @@ public abstract class TileEntityOpenTank extends TileFluidHandler {
             lastEscapedTickClient = lastEscapedTickServer;
             return true;
         }
-        long dTime = world.getTotalWorldTime() - lastEscapedTickClient;
-        if(dTime < lastEscaped.amount+5)
+        long dTime = world.getDayTime() - lastEscapedTickClient;
+        if(dTime < lastEscaped.getAmount()+5)
             return true;
         return false;
     }
 
     protected abstract void updateEscapeParticles();
+
+
 }

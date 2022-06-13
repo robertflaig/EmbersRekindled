@@ -1,6 +1,6 @@
 package teamroots.embers.power;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import teamroots.embers.Embers;
 
@@ -54,17 +54,17 @@ public class DefaultEmberCapability implements IEmberCapability {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public void write(CompoundNBT tag) {
 		tag.setDouble(Embers.MODID+":ember", ember);
 		tag.setDouble(Embers.MODID+":emberCapacity", capacity);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		if (tag.hasKey(Embers.MODID+":ember")){
+	public void read(CompoundNBT tag) {
+		if (tag.contains(Embers.MODID+":ember")){
 			ember = tag.getDouble(Embers.MODID+":ember");
 		}
-		if (tag.hasKey(Embers.MODID+":emberCapacity")){
+		if (tag.contains(Embers.MODID+":emberCapacity")){
 			capacity = tag.getDouble(Embers.MODID+":emberCapacity");
 		}
 	}

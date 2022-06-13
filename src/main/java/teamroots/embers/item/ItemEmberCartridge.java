@@ -1,7 +1,7 @@
 package teamroots.embers.item;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import teamroots.embers.api.item.IHeldEmberCell;
 import teamroots.embers.power.DefaultEmberItemCapability;
@@ -26,7 +26,7 @@ public class ItemEmberCartridge extends ItemEmberStorage implements IHeldEmberCe
 
 	@Nullable
 	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
 		return new EmberCartridgeCapability(stack, getCapacity());
 	}
 

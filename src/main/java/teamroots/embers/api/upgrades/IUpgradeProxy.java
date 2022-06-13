@@ -1,11 +1,11 @@
 package teamroots.embers.api.upgrades;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 import java.util.List;
 
 public interface IUpgradeProxy {
     void collectUpgrades(List<IUpgradeProvider> upgrades);
-    boolean isSocket(EnumFacing facing);
-    boolean isProvider(EnumFacing facing);
+    boolean isSocket(Direction facing);
+    boolean isProvider(Direction facing);
 }

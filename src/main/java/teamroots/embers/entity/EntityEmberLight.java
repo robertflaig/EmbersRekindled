@@ -1,10 +1,10 @@
 package teamroots.embers.entity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -64,7 +64,7 @@ public class EntityEmberLight extends Entity {
 		motionY += -0.05f;
 
 		if (!world.isRemote && raytraceresult != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK && !ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-			EnumFacing side = raytraceresult.sideHit;
+			Direction side = raytraceresult.sideHit;
 			BlockPos hitPos = raytraceresult.getBlockPos().offset(side);
 			boolean hitGlimmer = false;
 			if (getEntityWorld().isAirBlock(hitPos) || getEntityWorld().getBlockState(hitPos).getBlock().isReplaceable(getEntityWorld(), hitPos)){
@@ -78,33 +78,33 @@ public class EntityEmberLight extends Entity {
 
 		/*IBlockState state = getEntityWorld().getBlockState(getPosition());
 		if (state.isFullCube() && state.isOpaqueCube() && !getEntityWorld().isRemote){
-			EnumFacing face = EnumFacing.UP;
+			Direction face = Direction.UP;
 			boolean didHit = false;
 			double blockX = getPosition().getX()+0.5;
 			double blockY = getPosition().getY()+0.5;
 			double blockZ = getPosition().getZ()+0.5;
 			if (Math.abs(posX-blockX) > Math.abs(posZ-blockZ) && Math.abs(posX-blockX) > Math.abs(posY-blockY)){
 				if (posX-blockX > 0){
-					face = EnumFacing.WEST;
+					face = Direction.WEST;
 				}
 				else {
-					face = EnumFacing.EAST;
+					face = Direction.EAST;
 				}
 			}
 			else if (Math.abs(posY-blockY) > Math.abs(posZ-blockZ) && Math.abs(posY-blockY) > Math.abs(posX-blockX)){
 				if (posY-blockY > 0){
-					face = EnumFacing.DOWN;
+					face = Direction.DOWN;
 				}
 				else {
-					face = EnumFacing.UP;
+					face = Direction.UP;
 				}
 			}
 			else if (Math.abs(posZ-blockZ) > Math.abs(posX-blockX) && Math.abs(posZ-blockZ) > Math.abs(posY-blockY)){
 				if (posZ-blockZ > 0){
-					face = EnumFacing.NORTH;
+					face = Direction.NORTH;
 				}
 				else {
-					face = EnumFacing.SOUTH;
+					face = Direction.SOUTH;
 				}
 			}
 			if (getEntityWorld().isAirBlock(getPosition().offset(face)) || getEntityWorld().getBlockState(getPosition().offset(face)).getBlock().isReplaceable(getEntityWorld(), getPosition().offset(face))){
@@ -114,10 +114,10 @@ public class EntityEmberLight extends Entity {
 			}
 			if (!didHit){
 				if (posX-blockX > 0){
-					face = EnumFacing.WEST;
+					face = Direction.WEST;
 				}
 				else {
-					face = EnumFacing.EAST;
+					face = Direction.EAST;
 				}
 				if (getEntityWorld().isAirBlock(getPosition().offset(face)) || getEntityWorld().getBlockState(getPosition().offset(face)).getBlock().isReplaceable(getEntityWorld(), getPosition().offset(face))){
 					getEntityWorld().setBlockState(getPosition().offset(face), RegistryManager.glow.getDefaultState());
@@ -127,10 +127,10 @@ public class EntityEmberLight extends Entity {
 			}
 			if (!didHit){
 				if (posY-blockY > 0){
-					face = EnumFacing.DOWN;
+					face = Direction.DOWN;
 				}
 				else {
-					face = EnumFacing.UP;
+					face = Direction.UP;
 				}
 				if (getEntityWorld().isAirBlock(getPosition().offset(face)) || getEntityWorld().getBlockState(getPosition().offset(face)).getBlock().isReplaceable(getEntityWorld(), getPosition().offset(face))){
 					getEntityWorld().setBlockState(getPosition().offset(face), RegistryManager.glow.getDefaultState());
@@ -140,10 +140,10 @@ public class EntityEmberLight extends Entity {
 			}
 			if (!didHit){
 				if (posZ-blockZ > 0){
-					face = EnumFacing.NORTH;
+					face = Direction.NORTH;
 				}
 				else {
-					face = EnumFacing.SOUTH;
+					face = Direction.SOUTH;
 				}
 				if (getEntityWorld().isAirBlock(getPosition().offset(face)) || getEntityWorld().getBlockState(getPosition().offset(face)).getBlock().isReplaceable(getEntityWorld(), getPosition().offset(face))){
 					getEntityWorld().setBlockState(getPosition().offset(face), RegistryManager.glow.getDefaultState());
@@ -162,13 +162,13 @@ public class EntityEmberLight extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {
+	protected void readEntityFromNBT(CompoundNBT compound) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {
+	protected void writeEntityToNBT(CompoundNBT compound) {
 		// TODO Auto-generated method stub
 		
 	}

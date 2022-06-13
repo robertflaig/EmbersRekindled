@@ -1,6 +1,6 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import teamroots.embers.Embers;
@@ -50,22 +50,22 @@ public class TileEntityStamperRenderer extends TileEntitySpecialRenderer<TileEnt
 			boolean powered = tile.powered;
 			boolean prevPowered = tile.prevPowered;
 			if (powered){
-				if (state.getValue(BlockStamper.facing) == EnumFacing.EAST){
+				if (state.getValue(BlockStamper.facing) == Direction.EAST){
 					offX = 1;
 				}
-				if (state.getValue(BlockStamper.facing) == EnumFacing.WEST){
+				if (state.getValue(BlockStamper.facing) == Direction.WEST){
 					offX = -1;
 				}
-				if (state.getValue(BlockStamper.facing) == EnumFacing.NORTH){
+				if (state.getValue(BlockStamper.facing) == Direction.NORTH){
 					offZ = -1;
 				}
-				if (state.getValue(BlockStamper.facing) == EnumFacing.SOUTH){
+				if (state.getValue(BlockStamper.facing) == Direction.SOUTH){
 					offZ = 1;
 				}
-				if (state.getValue(BlockStamper.facing) == EnumFacing.UP){
+				if (state.getValue(BlockStamper.facing) == Direction.UP){
 					offY = 1;
 				}
-				if (state.getValue(BlockStamper.facing) == EnumFacing.DOWN){
+				if (state.getValue(BlockStamper.facing) == Direction.DOWN){
 					offY = -1;
 				}
 			}
@@ -86,13 +86,13 @@ public class TileEntityStamperRenderer extends TileEntitySpecialRenderer<TileEnt
 			offX *= magnitude;
 			offY *= magnitude;
 			offZ *= magnitude;
-			if (state.getValue(BlockStamper.facing) == EnumFacing.EAST || state.getValue(BlockStamper.facing) == EnumFacing.WEST){
+			if (state.getValue(BlockStamper.facing) == Direction.EAST || state.getValue(BlockStamper.facing) == Direction.WEST){
 				RenderUtil.addBox(buffer, stampX.x1+x-0.0001+offX, stampX.y1+y, stampX.z1+z, stampX.x2+x+0.0001+offX, stampX.y2+y, stampX.z2+z, stampX.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (state.getValue(BlockStamper.facing) == EnumFacing.UP || state.getValue(BlockStamper.facing) == EnumFacing.DOWN){
+			if (state.getValue(BlockStamper.facing) == Direction.UP || state.getValue(BlockStamper.facing) == Direction.DOWN){
 				RenderUtil.addBox(buffer, stampY.x1+x, stampY.y1-0.0001+y+offY, stampY.z1+z, stampY.x2+x, stampY.y2+y+0.0001+offY, stampY.z2+z, stampY.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (state.getValue(BlockStamper.facing) == EnumFacing.NORTH || state.getValue(BlockStamper.facing) == EnumFacing.SOUTH){
+			if (state.getValue(BlockStamper.facing) == Direction.NORTH || state.getValue(BlockStamper.facing) == Direction.SOUTH){
 				RenderUtil.addBox(buffer, stampZ.x1+x, stampZ.y1+y, stampZ.z1-0.0001+z+offZ, stampZ.x2+x, stampZ.y2+y, stampZ.z2+0.0001+z+offZ, stampZ.textures, new int[]{1,1,1,1,1,1});
 			}
 

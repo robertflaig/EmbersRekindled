@@ -3,13 +3,13 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -43,7 +43,7 @@ public class BlockEmberFunnel extends BlockTEBase {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ){
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof ITileEntityBase) {
             return ((ITileEntityBase) tileEntity).activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
@@ -52,10 +52,10 @@ public class BlockEmberFunnel extends BlockTEBase {
     }
 
     @Override
-    public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+    public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof ITileEntityBase) {
-            ((ITileEntityBase) tileEntity).breakBlock(world,pos,state,player);
+            ((ITileEntityBase) tileEntity).onHarvest(world,pos,state,player);
         }
     }
 
@@ -71,16 +71,16 @@ public class BlockEmberFunnel extends BlockTEBase {
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(facing, EnumFacing.getFront(meta));
+        return getDefaultState().withProperty(facing, Direction.getFront(meta));
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World world, BlockPos pos, Direction face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return getDefaultState().withProperty(facing, face);
     }
 
     @Override
-    public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
         return false;
     }
 

@@ -1,8 +1,8 @@
 package teamroots.embers.api;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -81,11 +81,11 @@ public interface IEmbersAPI {
 
     ILiquidFuel getSteamEngineFuel(FluidStack fluidstack);
 
-    double getEmberTotal(EntityPlayer player);
+    double getEmberTotal(PlayerEntity player);
 
-    double getEmberCapacityTotal(EntityPlayer player);
+    double getEmberCapacityTotal(PlayerEntity player);
 
-    void removeEmber(EntityPlayer player, double amount);
+    void removeEmber(PlayerEntity player, double amount);
 
     double getScales(EntityLivingBase entity);
 

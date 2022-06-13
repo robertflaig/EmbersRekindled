@@ -4,7 +4,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -56,7 +56,7 @@ public class AshenCloakSocketRecipe extends IForgeRegistryEntry.Impl<IRecipe> im
 		}
 		if (!capeStack.isEmpty()){
 			if (!capeStack.hasTagCompound()){
-				capeStack.setTagCompound(new NBTTagCompound());
+				capeStack.setTagCompound(new CompoundNBT());
 			}
 			int counter = 1;
 			for (int i = 0; i < inv.getSizeInventory(); i ++){

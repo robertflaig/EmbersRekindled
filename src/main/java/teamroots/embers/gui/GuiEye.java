@@ -3,7 +3,7 @@ package teamroots.embers.gui;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +20,7 @@ public class GuiEye extends GuiContainer {
 
     private static final ResourceLocation guiLocation = new ResourceLocation(Embers.MODID,"textures/gui/eye_gui.png");
 
-    public GuiEye(EntityPlayer player) {
+    public GuiEye(PlayerEntity player) {
         super(new ContainerEye(player));
         this.xSize = ContainerEye.WIDTH;
         this.ySize = ContainerEye.HEIGHT;

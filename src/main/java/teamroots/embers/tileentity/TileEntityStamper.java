@@ -1,18 +1,18 @@
 package teamroots.embers.tileentity;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityStamper extends TileEntity implements ITileEntityBase, ITickable, IMechanicallyPowered, IExtraDialInformation, IExtraCapabilityInformation {
+public class TileEntityStamper extends TileEntity implements ITileEntityBase, ITickableTileEntity, IMechanicallyPowered, IExtraDialInformation, IExtraCapabilityInformation {
     public static final double EMBER_COST = 80.0;
     public static final int STAMP_TIME = 70;
     public static final int RETRACT_TIME = 10;
@@ -77,41 +77,41 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         tag.setBoolean("powered", powered);
-        capability.writeToNBT(tag);
+        capability.write(tag);
         tag.setTag("stamp", stamp.serializeNBT());
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         powered = tag.getBoolean("powered");
-        capability.readFromNBT(tag);
+        capability.read(tag);
         stamp.deserializeNBT(tag.getCompoundTag("stamp"));
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!heldItem.isEmpty()) {
             if (stamp.getStackInSlot(0).isEmpty()) {
@@ -131,8 +131,8 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         world.setTileEntity(pos, null);
         Misc.spawnInventoryInWorld(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stamp);
     }
@@ -141,9 +141,9 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     public void update() {
         this.ticksExisted++;
         prevPowered = powered;
-        EnumFacing face = getWorld().getBlockState(getPos()).getValue(BlockStamper.facing);
+        Direction face = getWorld().getBlockState(getPos()).getValue(BlockStamper.facing);
         if (getWorld().getBlockState(getPos().offset(face, 2)).getBlock() == RegistryManager.stamp_base) {
-            upgrades = UpgradeUtil.getUpgrades(world, pos, EnumFacing.HORIZONTALS);
+            upgrades = UpgradeUtil.getUpgrades(world, pos, Direction.HORIZONTALS);
             UpgradeUtil.verifyUpgrades(this, upgrades);
             if (UpgradeUtil.doTick(this, upgrades))
                 return;
@@ -218,7 +218,7 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == EmbersCapabilities.EMBER_CAPABILITY) {
             return true;
         }
@@ -229,7 +229,7 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == EmbersCapabilities.EMBER_CAPABILITY) {
             return (T) this.capability;
         }
@@ -261,7 +261,7 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     }
 
     @Override
-    public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
+    public void addDialInformation(Direction facing, List<String> information, String dialType) {
         UpgradeUtil.throwEvent(this,new DialInformationEvent(this,information,dialType),upgrades);
     }
 
@@ -271,7 +271,7 @@ public class TileEntityStamper extends TileEntity implements ITileEntityBase, IT
     }
 
     @Override
-    public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+    public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
         if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.BOTH,"embers.tooltip.goggles.item", I18n.format("embers.tooltip.goggles.item.stamp")));
     }

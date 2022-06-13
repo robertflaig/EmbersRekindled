@@ -3,9 +3,9 @@ package teamroots.embers.entity;
 //import elucent.albedo.lighting.ILightProvider;
 //import elucent.albedo.lighting.Light;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -53,8 +53,8 @@ public class EntityEmberPacket extends Entity/* implements ILightProvider*/ {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey("destX")){
+	protected void readEntityFromNBT(CompoundNBT compound) {
+		if (compound.contains("destX")){
 			dest = new BlockPos(compound.getInteger("destX"),compound.getInteger("destY"),compound.getInteger("destZ"));
 			setPosition(compound.getDouble("x"),compound.getDouble("y"),compound.getDouble("z"));
 			value = compound.getDouble("value");
@@ -66,7 +66,7 @@ public class EntityEmberPacket extends Entity/* implements ILightProvider*/ {
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {
+	protected void writeEntityToNBT(CompoundNBT compound) {
 		if (dest != null){
 			compound.setInteger("destX",dest.getX());
 			compound.setInteger("destY",dest.getY());
@@ -139,7 +139,7 @@ public class EntityEmberPacket extends Entity/* implements ILightProvider*/ {
 		}
 	}
 	
-	public void affectTileEntity(IBlockState state, TileEntity tile){
+	public void affectTileEntity(BlockState state, TileEntity tile){
 		if (tile instanceof IEmberPacketReceiver){
 			if (((IEmberPacketReceiver)tile).onReceive(this)){
 				if (tile.hasCapability(EmbersCapabilities.EMBER_CAPABILITY, null)){

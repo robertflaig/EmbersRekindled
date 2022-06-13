@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -20,12 +20,12 @@ public interface IDustTrigger {
 	 * @param face
 	 * @return the placement offset (from clicked block) and facing (if used). Can contain . Return Null if not valid
 	 */
-	public Placement getValidFace(World world, EntityPlayer player, BlockPos pos, EnumFacing face);
+	public Placement getValidFace(World world, PlayerEntity player, BlockPos pos, Direction face);
 	
 	class Placement {
 		public int xOffset,yOffset,zOffset;
-		public EnumFacing facing;
-		public Placement(int xOffset, int yOffset, int zOffset, EnumFacing facing) {
+		public Direction facing;
+		public Placement(int xOffset, int yOffset, int zOffset, Direction facing) {
 			this.xOffset = xOffset;
 			this.yOffset = yOffset;
 			this.zOffset = zOffset;
@@ -42,7 +42,7 @@ public interface IDustTrigger {
 	 * @param placement
 	 * @param side 
 	 */
-	public void execute(World world, EntityPlayer player, BlockPos pos, Placement placement, EnumFacing side);
+	public void execute(World world, PlayerEntity player, BlockPos pos, Placement placement, Direction side);
 	
 	/**
 	 * This method returns a list of block locations that should display the dust sparkle fx.
@@ -54,7 +54,7 @@ public interface IDustTrigger {
 	 * @param side
 	 * @return
 	 */
-	public default List<BlockPos> sparkle(World world, EntityPlayer player, BlockPos pos, Placement placement) {
+	public default List<BlockPos> sparkle(World world, PlayerEntity player, BlockPos pos, Placement placement) {
 		return Arrays.asList(new BlockPos[]{pos});
 	}
 	

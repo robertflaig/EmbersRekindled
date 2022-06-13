@@ -1,6 +1,6 @@
 package thaumcraft.api.aura;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import thaumcraft.api.ThaumcraftApi;
@@ -93,7 +93,7 @@ public class AuraHelper {
 	 * @param pos
 	 * @return
 	 */
-	public static boolean shouldPreserveAura(World world, EntityPlayer player, BlockPos pos) {
+	public static boolean shouldPreserveAura(World world, PlayerEntity player, BlockPos pos) {
 		return ThaumcraftApi.internalMethods.shouldPreserveAura(world,player,pos);
 	}
 }

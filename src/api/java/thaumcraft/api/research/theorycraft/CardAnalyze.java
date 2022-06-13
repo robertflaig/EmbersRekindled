@@ -3,8 +3,8 @@ package thaumcraft.api.research.theorycraft;
 import java.util.ArrayList;
 import java.util.Random;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -18,14 +18,14 @@ public class CardAnalyze extends TheorycraftCard {
 	String cat = null;
 	
 	@Override
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = super.serialize();
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = super.serialize();
 		nbt.setString("cat", cat);
 		return nbt;
 	}
 
 	@Override
-	public void deserialize(NBTTagCompound nbt) {
+	public void deserialize(CompoundNBT nbt) {
 		super.deserialize(nbt);
 		cat = nbt.getString("cat");
 	}
@@ -36,7 +36,7 @@ public class CardAnalyze extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) { 
+	public boolean initialize(PlayerEntity player, ResearchTableData data) {
 		Random r = new Random(this.getSeed());
 		ArrayList<String> cats = new ArrayList<>();
 		for (ResearchCategory rc:ResearchCategories.researchCategories.values()) {
@@ -72,7 +72,7 @@ public class CardAnalyze extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		ResearchCategory rc = ResearchCategories.getResearchCategory(cat);
 		int k = ThaumcraftCapabilities.getKnowledge(player).getKnowledge(EnumKnowledgeType.OBSERVATION, rc);		
 		if (k>=1) {

@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.RegistryEvent;
@@ -135,12 +135,12 @@ public class MysticalMechanicsIntegration {
     {
         MysticalMechanicsAPI.IMPL.registerGear(DAWNSTONE_GEAR_BEHAVIOR, new OreIngredient("gearDawnstone"), new IGearBehavior() {
             @Override
-            public double transformPower(TileEntity tile, @Nullable EnumFacing facing, ItemStack gear, IGearData data, double power) {
+            public double transformPower(TileEntity tile, @Nullable Direction facing, ItemStack gear, IGearData data, double power) {
                 return power;
             }
 
             @Override
-            public void visualUpdate(TileEntity tile, @Nullable EnumFacing facing, ItemStack gear, IGearData data, double powerIn, double powerOut) {
+            public void visualUpdate(TileEntity tile, @Nullable Direction facing, ItemStack gear, IGearData data, double powerIn, double powerOut) {
                 int particles = Math.min((int)Math.ceil(powerIn / 40),5);
                 if(powerIn >= IRON_GEAR_MAX_POWER)
                     for(int i = 0; i < particles; i++) {
@@ -176,13 +176,13 @@ public class MysticalMechanicsIntegration {
     private static IGearBehavior wrapPowerLevelBehavior(IGearBehavior behavior, double max_power, double slope) {
         return new IGearBehavior() {
             @Override
-            public double transformPower(TileEntity tile, @Nullable EnumFacing facing, ItemStack gear, IGearData data, double power) {
+            public double transformPower(TileEntity tile, @Nullable Direction facing, ItemStack gear, IGearData data, double power) {
                 power = behavior.transformPower(tile, facing, gear, data, power);
                 return Misc.getDiminishedPower(power,max_power,slope); //Diminishing returns
             }
 
             @Override
-            public void visualUpdate(TileEntity tile, @Nullable EnumFacing facing, ItemStack gear, IGearData data, double powerIn, double powerOut) {
+            public void visualUpdate(TileEntity tile, @Nullable Direction facing, ItemStack gear, IGearData data, double powerIn, double powerOut) {
                 behavior.visualUpdate(tile,facing,gear,data,powerIn,powerOut);
             }
         };
@@ -229,11 +229,11 @@ public class MysticalMechanicsIntegration {
         ResearchManager.subCategoryMechanicalPower.addResearch(mechanical_mini_boiler);
     }
 
-    public static void addCapabilityInformation(List<String> text, TileEntity tileEntity, EnumFacing facing) {
+    public static void addCapabilityInformation(List<String> text, TileEntity tileEntity, Direction facing) {
         addCapabilityMechanicalDescription(text,tileEntity,facing);
     }
 
-    public static void addCapabilityMechanicalDescription(List<String> text, TileEntity tile, EnumFacing facing) {
+    public static void addCapabilityMechanicalDescription(List<String> text, TileEntity tile, Direction facing) {
         Capability<IMechCapability> capability = MysticalMechanicsAPI.MECH_CAPABILITY;
         if(tile.hasCapability(capability,facing)) {
             IMechCapability mechCapability = tile.getCapability(capability,facing);

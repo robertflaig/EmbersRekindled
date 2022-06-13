@@ -1,7 +1,7 @@
 package teamroots.embers.itemmod;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -65,7 +65,7 @@ public class ModifierCasterOrb extends ModifierBase {
 	
 	@SubscribeEvent
 	public void onSwing(PlayerInteractEvent.LeftClickBlock event){
-		EntityPlayer player = event.getEntityPlayer();
+		PlayerEntity player = event.getPlayerEntity();
 		World world = event.getWorld();
 		ItemStack heldStack = event.getItemStack();
 		tryShoot(player, world, heldStack);
@@ -73,13 +73,13 @@ public class ModifierCasterOrb extends ModifierBase {
 	
 	@SubscribeEvent
 	public void onSwing(PlayerInteractEvent.LeftClickEmpty event){
-		EntityPlayer player = event.getEntityPlayer();
+		PlayerEntity player = event.getPlayerEntity();
 		World world = event.getWorld();
 		ItemStack heldStack = event.getItemStack();
 		tryShoot(player, world, heldStack);
 	}
 
-	private void tryShoot(EntityPlayer player, World world, ItemStack heldStack) {
+	private void tryShoot(PlayerEntity player, World world, ItemStack heldStack) {
 		if (prevCooledStrength == 1.0f){
 			if (ItemModUtil.hasHeat(heldStack)){
 				int level = ItemModUtil.getModifierLevel(heldStack, EmbersAPI.CASTER_ORB);

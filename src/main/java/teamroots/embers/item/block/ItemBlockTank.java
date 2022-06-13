@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -27,25 +27,25 @@ public class ItemBlockTank extends ItemBlock {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         return new FluidHandlerItemStack(stack, TileEntityTank.capacity) { //Damnit Elu
             @Override
             protected void setFluid(FluidStack fluid) {
                 if (!container.hasTagCompound())
                 {
-                    container.setTagCompound(new NBTTagCompound());
+                    container.setTagCompound(new CompoundNBT());
                 }
 
-                NBTTagCompound tagCompound = container.getTagCompound();
+                CompoundNBT tagCompound = container.getTagCompound();
                 tagCompound.removeTag("Empty");
-                fluid.writeToNBT(tagCompound);
+                fluid.write(tagCompound);
             }
 
             @Nullable
             @Override
             public FluidStack getFluid() {
-                NBTTagCompound tagCompound = container.getTagCompound();
-                if (tagCompound == null || tagCompound.hasKey("Empty"))
+                CompoundNBT tagCompound = container.getTagCompound();
+                if (tagCompound == null || tagCompound.contains("Empty"))
                 {
                     return null;
                 }
@@ -55,7 +55,7 @@ public class ItemBlockTank extends ItemBlock {
 
             @Override
             protected void setContainerToEmpty() {
-                NBTTagCompound tagCompound = container.getTagCompound();
+                CompoundNBT tagCompound = container.getTagCompound();
                 tagCompound.setString("Empty","");
                 tagCompound.removeTag("FluidName");
                 tagCompound.removeTag("Amount");

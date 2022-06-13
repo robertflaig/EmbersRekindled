@@ -1,9 +1,9 @@
 package teamroots.embers.item;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -31,13 +31,13 @@ public class ItemGolemEye extends ItemBase implements IFilterItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         playerIn.openGui(Embers.instance, GuiHandler.EYE, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().getY(), playerIn.getPosition().getZ());
         return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(PlayerEntity player, World world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, Hand hand) {
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof ISpecialFilter && player.isSneaking()) {
             ItemStack held = player.getHeldItem(hand);
@@ -49,22 +49,22 @@ public class ItemGolemEye extends ItemBase implements IFilterItem {
     }
 
     public void setFilter(ItemStack filterStack, IFilter filter) {
-        NBTTagCompound compound = getOrCreateTagCompound(filterStack);
-        compound.setTag("filter",filter.writeToNBT(new NBTTagCompound()));
+        CompoundNBT compound = getOrCreateTagCompound(filterStack);
+        compound.put("filter",filter.write(new CompoundNBT()));
     }
 
     @Override
     public IFilter getFilter(ItemStack filterStack) {
-        NBTTagCompound compound = filterStack.getTagCompound();
+        CompoundNBT compound = filterStack.getTagCompound();
         if (compound == null)
             return FilterUtil.FILTER_ANY;
         return FilterUtil.deserializeFilter(compound.getCompoundTag("filter"));
     }
 
-    private NBTTagCompound getOrCreateTagCompound(ItemStack filterStack) {
-        NBTTagCompound compound = filterStack.getTagCompound();
+    private CompoundNBT getOrCreateTagCompound(ItemStack filterStack) {
+        CompoundNBT compound = filterStack.getTagCompound();
         if(compound == null) {
-            compound = new NBTTagCompound();
+            compound = new CompoundNBT();
             filterStack.setTagCompound(compound);
         }
         return compound;
@@ -79,7 +79,7 @@ public class ItemGolemEye extends ItemBase implements IFilterItem {
     }
 
     public void reset(ItemStack filterStack) {
-        NBTTagCompound compound = filterStack.getTagCompound();
+        CompoundNBT compound = filterStack.getTagCompound();
         if (compound == null)
             return;
         compound.removeTag("comparator");

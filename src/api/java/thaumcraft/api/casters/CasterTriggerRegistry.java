@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -44,7 +44,7 @@ public class CasterTriggerRegistry {
 	 * @param meta send -1 as a wildcard value for all possible meta values
 	 * @param modid a unique identifier. It is best to register your own triggers using your mod id to avoid conflicts with mods that register triggers for the same block
 	 */
-	public static void registerWandBlockTrigger(ICasterTriggerManager manager, int event, IBlockState state, String modid) {
+	public static void registerWandBlockTrigger(ICasterTriggerManager manager, int event, BlockState state, String modid) {
 		if (!triggers.containsKey(modid)) {
 			triggers.put(modid, new LinkedHashMap<IBlockState,List<Trigger>>());
 		}
@@ -80,7 +80,7 @@ public class CasterTriggerRegistry {
 	/**
 	 * modid sensitive version
 	 */
-	public static boolean hasTrigger(IBlockState state, String modid) {
+	public static boolean hasTrigger(BlockState state, String modid) {
 		if (!triggers.containsKey(modid)) return false;
 		LinkedHashMap<IBlockState,List<Trigger>> temp = triggers.get(modid);
 		if (temp.containsKey(state)) return true;
@@ -102,8 +102,8 @@ public class CasterTriggerRegistry {
 	 * @param meta
 	 * @return
 	 */
-	public static boolean performTrigger(World world, ItemStack casterStack, EntityPlayer player, 
-			BlockPos pos, EnumFacing side, IBlockState state) {
+	public static boolean performTrigger(World world, ItemStack casterStack, PlayerEntity player, 
+			BlockPos pos, Direction side, IBlockState state) {
 		for (String modid:triggers.keySet()) {
 			LinkedHashMap<IBlockState,List<Trigger>> temp = triggers.get(modid);
 			List<Trigger> l = temp.get(state);
@@ -119,8 +119,8 @@ public class CasterTriggerRegistry {
 	/**
 	 * modid sensitive version
 	 */
-	public static boolean performTrigger(World world, ItemStack casterStack, EntityPlayer player, 
-			BlockPos pos, EnumFacing side, IBlockState state, String modid) {
+	public static boolean performTrigger(World world, ItemStack casterStack, PlayerEntity player, 
+			BlockPos pos, Direction side, BlockState state, String modid) {
 		if (!triggers.containsKey(modid)) return false;
 		LinkedHashMap<IBlockState,List<Trigger>> temp = triggers.get(modid);
 		List<Trigger> l = temp.get(state);

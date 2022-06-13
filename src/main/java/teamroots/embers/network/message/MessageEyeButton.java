@@ -1,7 +1,7 @@
 package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.WorldServer;
@@ -37,7 +37,7 @@ public class MessageEyeButton implements IMessage {
     public static class MessageHolder implements IMessageHandler<MessageEyeButton, IMessage> {
         @Override
         public IMessage onMessage(final MessageEyeButton message, final MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().player;
+            PlayerEntity player = ctx.getServerHandler().player;
             WorldServer world = ctx.getServerHandler().player.getServerWorld();
             world.addScheduledTask(() -> {
                 Container container = player.openContainer;

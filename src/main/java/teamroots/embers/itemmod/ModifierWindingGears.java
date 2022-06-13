@@ -1,16 +1,16 @@
 package teamroots.embers.itemmod;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.PlayerEntitySP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.ResourceLocation;
@@ -101,7 +101,7 @@ public class ModifierWindingGears extends ModifierBase {
     }
 
     public static double getCharge(World world, ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTagCompound();
         if(tagCompound != null) {
             long dTime = getTimeSinceLastCharge(world, stack);
             return Math.max(0,tagCompound.getDouble(TAG_CHARGE) - Math.max(0, dTime - CHARGE_DECAY_DELAY) * getChargeDecay(world,stack));
@@ -111,10 +111,10 @@ public class ModifierWindingGears extends ModifierBase {
     }
 
     private static long getTimeSinceLastCharge(World world, ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTagCompound();
         if(tagCompound != null) {
             long lastTime = tagCompound.getLong(TAG_CHARGE_TIME);
-            long currentTime = world.getTotalWorldTime();
+            long currentTime = world.getDayTime();
             if (lastTime > currentTime)
                 return 0;
             else
@@ -136,10 +136,10 @@ public class ModifierWindingGears extends ModifierBase {
     public static void setCharge(World world, ItemStack stack, double charge) {
         if(world.isRemote)
             return;
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTagCompound();
         if(tagCompound != null) {
             tagCompound.setDouble(TAG_CHARGE, charge);
-            tagCompound.setLong(TAG_CHARGE_TIME, world.getTotalWorldTime());
+            tagcompound.putLong(TAG_CHARGE_TIME, world.getDayTime());
         }
     }
 
@@ -151,9 +151,9 @@ public class ModifierWindingGears extends ModifierBase {
         if(world.isRemote)
             return;
         setCharge(world,stack,Math.min(getMaxCharge(world,stack),getCharge(world,stack)+charge));
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTagCompound();
         if(tagCompound != null)
-            tagCompound.setLong(TAG_CHARGE_TIME, world.getTotalWorldTime());
+            tagcompound.putLong(TAG_CHARGE_TIME, world.getDayTime());
     }
 
     public static float getSpeedBonus(World world,ItemStack stack) {
@@ -250,7 +250,7 @@ public class ModifierWindingGears extends ModifierBase {
 
     @SubscribeEvent
     public void getBreakSpeed(PlayerEvent.BreakSpeed event) {
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getPlayerEntity();
         ItemStack mainStack = player.getHeldItemMainhand();
         float speed = event.getNewSpeed();
         if (isClockworkTool(mainStack)) {
@@ -263,7 +263,7 @@ public class ModifierWindingGears extends ModifierBase {
 
     @SubscribeEvent
     public void onBreak(BlockEvent.BreakEvent event) {
-        EntityPlayer player = event.getPlayer();
+        PlayerEntity player = event.getPlayer();
         if(!event.isCanceled() && player != null) {
             ItemStack mainStack = player.getHeldItemMainhand();
             if (isClockworkTool(mainStack)) {
@@ -278,7 +278,7 @@ public class ModifierWindingGears extends ModifierBase {
 
     @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getPlayerEntity();
         ItemStack stack = event.getItemStack();
 
         if (isClockworkTool(stack)) {
@@ -287,7 +287,7 @@ public class ModifierWindingGears extends ModifierBase {
 
             if (level > 0) {
                 if (stack.getTagCompound() == null)
-                    stack.setTagCompound(new NBTTagCompound()); //I promise you this has a 0% chance of ever running
+                    stack.setTagCompound(new CompoundNBT()); //I promise you this has a 0% chance of ever running
                 double resonance = EmbersAPI.getEmberEfficiency(stack);
                 double charge = getCharge(player.world, stack);
                 double addAmount = Math.max((0.025 + 0.01 * level) * (maxCharge - charge), 5 * resonance);
@@ -305,7 +305,7 @@ public class ModifierWindingGears extends ModifierBase {
         if (event.phase == TickEvent.Phase.START) {
             ticks++;
             Minecraft mc = Minecraft.getMinecraft();
-            EntityPlayerSP player = mc.player;
+            PlayerEntitySP player = mc.player;
 
             if (player != null) {
                 ItemStack stack = getHeldClockworkTool(player);
@@ -324,7 +324,7 @@ public class ModifierWindingGears extends ModifierBase {
     }
 
     @SideOnly(Side.CLIENT)
-    private boolean canAutoAttack(EntityPlayerSP player, ItemStack stack, RayTraceResult objectMouseOver) {
+    private boolean canAutoAttack(PlayerEntitySP player, ItemStack stack, RayTraceResult objectMouseOver) {
         return player.getCooledAttackStrength(0) >= 1.0f && getCharge(player.world, stack) > 0 && objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY && /*!isInvulnerable(objectMouseOver.entityHit) &&*/ !player.isRowingBoat();
     }
 
@@ -347,7 +347,7 @@ public class ModifierWindingGears extends ModifierBase {
         fill += 16;
         if (event.getType() == RenderGameOverlayEvent.ElementType.JUMPBAR || event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
             Minecraft mc = Minecraft.getMinecraft();
-            EntityPlayer player = mc.player;
+            PlayerEntity player = mc.player;
             if (player == null)
                 return;
             ItemStack stack = getHeldClockworkTool(player);

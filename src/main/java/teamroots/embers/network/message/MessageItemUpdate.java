@@ -2,8 +2,8 @@ package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -14,14 +14,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.UUID;
 
 public class MessageItemUpdate implements IMessage {
-	public NBTTagCompound tag = new NBTTagCompound();
+	public CompoundNBT tag = new CompoundNBT();
 	public int slot = 0;
 	public UUID id = null;
 	public MessageItemUpdate(){
 		//
 	}
 	
-	public MessageItemUpdate(UUID id, int slot, NBTTagCompound tag){
+	public MessageItemUpdate(UUID id, int slot, CompoundNBT tag){
 		this.tag = tag;
 		this.id = id;
 		this.slot = slot;
@@ -48,7 +48,7 @@ public class MessageItemUpdate implements IMessage {
         @Override
         public IMessage onMessage(final MessageItemUpdate message, final MessageContext ctx) {
     		Minecraft.getMinecraft().addScheduledTask(()-> {
-	    		EntityPlayer player = Minecraft.getMinecraft().world.getPlayerEntityByUUID(message.id);
+	    		PlayerEntity player = Minecraft.getMinecraft().world.getPlayerEntityByUUID(message.id);
 	    		if (player != null){
 	    			player.inventory.getStackInSlot(message.slot).setTagCompound(message.tag);
 	    		}

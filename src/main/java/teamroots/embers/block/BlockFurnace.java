@@ -3,15 +3,15 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -40,7 +40,7 @@ public class BlockFurnace extends BlockTEBase {
 	}
 
     @Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean b)
+	public void addCollisionBoxToList(BlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean b)
     {
     	if (state.getValue(isTop)){
 	        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_SIDE_WEST);
@@ -65,7 +65,7 @@ public class BlockFurnace extends BlockTEBase {
 		else {
 			world.setBlockToAir(pos.down());
 		}
-		((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world,pos,state,null);
+		((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world,pos,state,null);
 		world.setBlockToAir(pos);
 	}
 	
@@ -96,28 +96,28 @@ public class BlockFurnace extends BlockTEBase {
 	}
 	
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		return new ArrayList<ItemStack>();
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		if (!world.isRemote && !player.capabilities.isCreativeMode){
 			world.spawnEntity(new EntityItem(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,new ItemStack(this,1,0)));
 		}
 		if (this.getMetaFromState(state) == 0){
 			if (world.getTileEntity(pos.up()) instanceof ITileEntityBase){
-				((ITileEntityBase)world.getTileEntity(pos.up())).breakBlock(world, pos.up(), state, player);
+				((ITileEntityBase)world.getTileEntity(pos.up())).onHarvest(world, pos.up(), state, player);
 			}
 			world.setBlockToAir(pos.up());
 		}
 		else {
 			if (world.getTileEntity(pos.down()) instanceof ITileEntityBase){
-				((ITileEntityBase)world.getTileEntity(pos.down())).breakBlock(world, pos.down(), state, player);
+				((ITileEntityBase)world.getTileEntity(pos.down())).onHarvest(world, pos.down(), state, player);
 			}
 			world.setBlockToAir(pos.down());
 		}
-		((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world,pos,state,player);
+		((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world,pos,state,player);
 	}
 	
 	@Override
@@ -137,7 +137,7 @@ public class BlockFurnace extends BlockTEBase {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ){
 		return ((ITileEntityBase)world.getTileEntity(pos)).activate(world,pos,state,player,hand,side,hitX,hitY,hitZ);
 	}
 }

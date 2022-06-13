@@ -3,7 +3,7 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -34,7 +34,7 @@ public class BlockInfernoForge extends BlockTEBase {
 	}
 
     @Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean b)
+	public void addCollisionBoxToList(BlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean b)
     {
     	if (state.getValue(isTop)){
     		TileEntity t = worldIn.getTileEntity(pos);
@@ -164,7 +164,7 @@ public class BlockInfernoForge extends BlockTEBase {
 	}
 	
 	@Override
-	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
 		if (state.getBlock() == this){
 			if (!state.getValue(isTop)){

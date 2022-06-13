@@ -1,6 +1,6 @@
 package teamroots.embers.world;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import teamroots.embers.Embers;
@@ -16,13 +16,13 @@ public class EmberWorldData extends WorldSavedData {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
+	public void read(CompoundNBT tag) {
 		EmberGenUtil.offX = tag.getInteger("offX");
 		EmberGenUtil.offZ = tag.getInteger("offZ");
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+	public CompoundNBT write(CompoundNBT tag) {
 		tag.setInteger("offX", EmberGenUtil.offX);
 		tag.setInteger("offZ", EmberGenUtil.offZ);
 		return tag;

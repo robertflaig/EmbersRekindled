@@ -1,12 +1,12 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -26,7 +26,7 @@ import java.util.Random;
 
 public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     Random random = new Random();
-    EnumPipeConnection[] connections = new EnumPipeConnection[EnumFacing.VALUES.length];
+    EnumPipeConnection[] connections = new EnumPipeConnection[Direction.VALUES.length];
     IFluidHandler[] sideHandlers;
     boolean syncConnections;
     boolean active;
@@ -39,8 +39,8 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     @Override
     protected void initFluidTank() {
         super.initFluidTank();
-        sideHandlers = new IFluidHandler[EnumFacing.VALUES.length];
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        sideHandlers = new IFluidHandler[Direction.VALUES.length];
+        for (Direction facing : Direction.VALUES) {
             sideHandlers[facing.getIndex()] = new IFluidHandler() {
                 @Override
                 public IFluidTankProperties[] getTankProperties() {
@@ -72,48 +72,48 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     }
 
     public void updateNeighbors(IBlockAccess world) {
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (Direction facing : Direction.VALUES) {
             setInternalConnection(facing, getConnection(world, getPos().offset(facing), facing));
         }
         syncConnections = true;
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         writeConnections(tag);
         return tag;
     }
 
-    private void writeConnections(NBTTagCompound tag) {
-        tag.setInteger("up", getInternalConnection(EnumFacing.UP).getIndex());
-        tag.setInteger("down", getInternalConnection(EnumFacing.DOWN).getIndex());
-        tag.setInteger("north", getInternalConnection(EnumFacing.NORTH).getIndex());
-        tag.setInteger("south", getInternalConnection(EnumFacing.SOUTH).getIndex());
-        tag.setInteger("west", getInternalConnection(EnumFacing.WEST).getIndex());
-        tag.setInteger("east", getInternalConnection(EnumFacing.EAST).getIndex());
+    private void writeConnections(CompoundNBT tag) {
+        tag.setInteger("up", getInternalConnection(Direction.UP).getIndex());
+        tag.setInteger("down", getInternalConnection(Direction.DOWN).getIndex());
+        tag.setInteger("north", getInternalConnection(Direction.NORTH).getIndex());
+        tag.setInteger("south", getInternalConnection(Direction.SOUTH).getIndex());
+        tag.setInteger("west", getInternalConnection(Direction.WEST).getIndex());
+        tag.setInteger("east", getInternalConnection(Direction.EAST).getIndex());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
-        if (tag.hasKey("up"))
-            setInternalConnection(EnumFacing.UP, EnumPipeConnection.fromIndex(tag.getInteger("up")));
-        if (tag.hasKey("down"))
-            setInternalConnection(EnumFacing.DOWN, EnumPipeConnection.fromIndex(tag.getInteger("down")));
-        if (tag.hasKey("north"))
-            setInternalConnection(EnumFacing.NORTH, EnumPipeConnection.fromIndex(tag.getInteger("north")));
-        if (tag.hasKey("south"))
-            setInternalConnection(EnumFacing.SOUTH, EnumPipeConnection.fromIndex(tag.getInteger("south")));
-        if (tag.hasKey("west"))
-            setInternalConnection(EnumFacing.WEST, EnumPipeConnection.fromIndex(tag.getInteger("west")));
-        if (tag.hasKey("east"))
-            setInternalConnection(EnumFacing.EAST, EnumPipeConnection.fromIndex(tag.getInteger("east")));
+    public void read(CompoundNBT tag) {
+        super.read(tag);
+        if (tag.contains("up"))
+            setInternalConnection(Direction.UP, EnumPipeConnection.fromIndex(tag.getInteger("up")));
+        if (tag.contains("down"))
+            setInternalConnection(Direction.DOWN, EnumPipeConnection.fromIndex(tag.getInteger("down")));
+        if (tag.contains("north"))
+            setInternalConnection(Direction.NORTH, EnumPipeConnection.fromIndex(tag.getInteger("north")));
+        if (tag.contains("south"))
+            setInternalConnection(Direction.SOUTH, EnumPipeConnection.fromIndex(tag.getInteger("south")));
+        if (tag.contains("west"))
+            setInternalConnection(Direction.WEST, EnumPipeConnection.fromIndex(tag.getInteger("west")));
+        if (tag.contains("east"))
+            setInternalConnection(Direction.EAST, EnumPipeConnection.fromIndex(tag.getInteger("east")));
     }
 
     @Override
-    public NBTTagCompound getSyncTag() {
-        NBTTagCompound compound = super.getUpdateTag();
+    public CompoundNBT getSyncTag() {
+        CompoundNBT compound = super.getUpdateTag();
         if (syncConnections)
             writeConnections(compound);
         return compound;
@@ -135,14 +135,14 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
         return 240;
     }
 
-    public EnumPipeConnection getConnection(EnumFacing side) {
+    public EnumPipeConnection getConnection(Direction side) {
         if (getInternalConnection(side) == EnumPipeConnection.FORCENONE)
             return EnumPipeConnection.NEIGHBORNONE;
         return EnumPipeConnection.PIPE;
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return true;
         }
@@ -150,7 +150,7 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (facing == null)
                 return (T) this.tank;
@@ -161,21 +161,21 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     }
 
     @Override
-    public EnumPipeConnection getInternalConnection(EnumFacing facing) {
+    public EnumPipeConnection getInternalConnection(Direction facing) {
         return connections[facing.getIndex()] != null ? connections[facing.getIndex()] : EnumPipeConnection.NONE;
     }
 
     @Override
-    void setInternalConnection(EnumFacing facing, EnumPipeConnection connection) {
+    void setInternalConnection(Direction facing, EnumPipeConnection connection) {
         connections[facing.getIndex()] = connection;
     }
 
     @Override
-    boolean isConnected(EnumFacing facing) {
+    boolean isConnected(Direction facing) {
         return getInternalConnection(facing).canTransfer();
     }
 
-    public EnumPipeConnection getConnection(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public EnumPipeConnection getConnection(IBlockAccess world, BlockPos pos, Direction side) {
         TileEntity tile = world.getTileEntity(pos);
         if (getInternalConnection(side) == EnumPipeConnection.FORCENONE) {
             return EnumPipeConnection.FORCENONE;
@@ -200,7 +200,7 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
         return EnumPipeConnection.NONE;
     }
 
-    public void reverseConnection(EnumFacing face) {
+    public void reverseConnection(Direction face) {
         EnumPipeConnection connection = getInternalConnection(face);
         setInternalConnection(face, reverseForce(connection));
         TileEntity tile = world.getTileEntity(pos.offset(face));
@@ -216,52 +216,52 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                            EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+                            Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ItemTinkerHammer) {
-            if (side == EnumFacing.UP || side == EnumFacing.DOWN) {
+            if (side == Direction.UP || side == Direction.DOWN) {
                 if (Math.abs(hitX - 0.5) > Math.abs(hitZ - 0.5)) {
                     if (hitX < 0.5) {
-                        this.reverseConnection(EnumFacing.WEST);
+                        this.reverseConnection(Direction.WEST);
                     } else {
-                        this.reverseConnection(EnumFacing.EAST);
+                        this.reverseConnection(Direction.EAST);
                     }
                 } else {
                     if (hitZ < 0.5) {
-                        this.reverseConnection(EnumFacing.NORTH);
+                        this.reverseConnection(Direction.NORTH);
                     } else {
-                        this.reverseConnection(EnumFacing.SOUTH);
+                        this.reverseConnection(Direction.SOUTH);
                     }
                 }
             }
-            if (side == EnumFacing.EAST || side == EnumFacing.WEST) {
+            if (side == Direction.EAST || side == Direction.WEST) {
                 if (Math.abs(hitY - 0.5) > Math.abs(hitZ - 0.5)) {
                     if (hitY < 0.5) {
-                        this.reverseConnection(EnumFacing.DOWN);
+                        this.reverseConnection(Direction.DOWN);
                     } else {
-                        this.reverseConnection(EnumFacing.UP);
+                        this.reverseConnection(Direction.UP);
                     }
                 } else {
                     if (hitZ < 0.5) {
-                        this.reverseConnection(EnumFacing.NORTH);
+                        this.reverseConnection(Direction.NORTH);
                     } else {
-                        this.reverseConnection(EnumFacing.SOUTH);
+                        this.reverseConnection(Direction.SOUTH);
                     }
                 }
             }
-            if (side == EnumFacing.NORTH || side == EnumFacing.SOUTH) {
+            if (side == Direction.NORTH || side == Direction.SOUTH) {
                 if (Math.abs(hitX - 0.5) > Math.abs(hitY - 0.5)) {
                     if (hitX < 0.5) {
-                        this.reverseConnection(EnumFacing.WEST);
+                        this.reverseConnection(Direction.WEST);
                     } else {
-                        this.reverseConnection(EnumFacing.EAST);
+                        this.reverseConnection(Direction.EAST);
                     }
                 } else {
                     if (hitY < 0.5) {
-                        this.reverseConnection(EnumFacing.DOWN);
+                        this.reverseConnection(Direction.DOWN);
                     } else {
-                        this.reverseConnection(EnumFacing.UP);
+                        this.reverseConnection(Direction.UP);
                     }
                 }
             }
@@ -273,8 +273,8 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-        this.invalidate();
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        this.remove();
         world.setTileEntity(pos, null);
     }
 
@@ -284,7 +284,7 @@ public class TileEntityFluidExtractor extends TileEntityFluidPipeBase {
             Misc.spawnClogParticles(world, pos, 1, 0.25f);
         if (!world.isRemote) {
             active = getWorld().isBlockPowered(getPos());
-            for (EnumFacing facing : EnumFacing.VALUES) {
+            for (Direction facing : Direction.VALUES) {
                 if (!isConnected(facing))
                     continue;
                 TileEntity tile = world.getTileEntity(pos.offset(facing));

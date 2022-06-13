@@ -8,21 +8,21 @@ import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockRedstoneTorch;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Biomes;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.network.datasync.DataSerializer;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -52,7 +52,7 @@ public class Misc {
     public static final double LOG_E = Math.log10(Math.exp(1));
     public static Random random = new Random();
 
-    public static EntityEquipmentSlot handToSlot(EnumHand hand)
+    public static EntityEquipmentSlot handToSlot(Hand hand)
     {
         switch(hand)
         {
@@ -65,23 +65,23 @@ public class Misc {
         }
     }
 
-    public static boolean isValidLever(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public static boolean isValidLever(IBlockAccess world, BlockPos pos, Direction side) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block instanceof BlockLever) {
-            EnumFacing face = state.getValue(BlockLever.FACING).getFacing();
+            Direction face = state.getValue(BlockLever.FACING).getFacing();
             return face == side;
         } else if (block instanceof BlockButton) {
-            EnumFacing face = state.getValue(BlockButton.FACING);
+            Direction face = state.getValue(BlockButton.FACING);
             return face == side;
         } else if (block instanceof BlockRedstoneTorch) {
-            EnumFacing face = state.getValue(BlockRedstoneTorch.FACING);
+            Direction face = state.getValue(BlockRedstoneTorch.FACING);
             return face == side;
         }
         return false;
     }
 
-    public static boolean isValidPipeConnector(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public static boolean isValidPipeConnector(IBlockAccess world, BlockPos pos, Direction side) {
         IBlockState state = world.getBlockState(pos);
         if(state.getBlockFaceShape(world,pos,side.getOpposite()) == BlockFaceShape.CENTER_BIG)
             return true;
@@ -89,15 +89,15 @@ public class Misc {
     }
 
     //TODO: DANNY DELETO
-    public static EnumFacing getOppositeFace(EnumFacing face) {
+    public static Direction getOppositeFace(Direction face) {
         return face.getOpposite();
     }
 
-    public static EnumFacing getOppositeHorizontalFace(EnumFacing face) {
+    public static Direction getOppositeHorizontalFace(Direction face) {
         return face.getAxis().isHorizontal() ? face.getOpposite() : face;
     }
 
-    public static EnumFacing getOppositeVerticalFace(EnumFacing face) {
+    public static Direction getOppositeVerticalFace(Direction face) {
         return face.getAxis().isVertical() ? face.getOpposite() : face;
     }
 
@@ -289,7 +289,7 @@ public class Misc {
 
         World world = tile.getWorld();
         if(!tile.isInvalid() && world instanceof WorldServer) {
-            SPacketUpdateTileEntity packet = tile.getUpdatePacket();
+            SUpdateTileEntityPacket packet = tile.getUpdatePacket();
             if (packet != null) {
                 PlayerChunkMap chunkMap = ((WorldServer) world).getPlayerChunkMap();
                 int i = tile.getPos().getX() >> 4;
@@ -359,14 +359,14 @@ public class Misc {
         return entities;
     }
 
-    public static List<EntityPlayer> getNonCreativePlayers(World world, AxisAlignedBB box) {
-        return world.getEntitiesWithinAABB(EntityPlayer.class, box);
-        //return world.getEntitiesWithinAABB(EntityPlayer.class, box, Predicates.not(EntityPlayer::isCreative));
+    public static List<PlayerEntity> getNonCreativePlayers(World world, AxisAlignedBB box) {
+        return world.getEntitiesWithinAABB(PlayerEntity.class, box);
+        //return world.getEntitiesWithinAABB(PlayerEntity.class, box, Predicates.not(PlayerEntity::isCreative));
     }
 
     public static boolean isCreativePlayer(EntityLivingBase e) {
-        if (e instanceof EntityPlayer) {
-            return ((EntityPlayer) e).isCreative();
+        if (e instanceof PlayerEntity) {
+            return ((PlayerEntity) e).isCreative();
         }
         return false;
     }
@@ -597,11 +597,11 @@ public class Misc {
         return quatVec.scale(2 * quatVec.dotProduct(vec)).add(vec.scale(quatScalar * quatScalar - quatVec.dotProduct(quatVec))).add(quatVec.crossProduct(vec).scale(2.0 * quatScalar));
     }
 
-    public static EnumFacing readNullableFacing(int index) {
-        return index > 0 ? EnumFacing.getFront(index) : null;
+    public static Direction readNullableFacing(int index) {
+        return index > 0 ? Direction.getFront(index) : null;
     }
 
-    public static int writeNullableFacing(EnumFacing facing) {
+    public static int writeNullableFacing(Direction facing) {
         return facing != null ? facing.getIndex() : -1;
     }
 

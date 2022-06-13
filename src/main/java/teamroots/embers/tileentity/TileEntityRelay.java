@@ -1,16 +1,16 @@
 package teamroots.embers.tileentity;
 
 import net.minecraft.block.BlockLever;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -29,7 +29,7 @@ import teamroots.embers.util.Misc;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmberPacketProducer, IEmberPacketReceiver, ITickable {
+public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmberPacketProducer, IEmberPacketReceiver, ITickableTileEntity {
 	public IEmberCapability capability = new DefaultEmberCapability();
 	public BlockPos target = null;
 	public long ticksExisted = 0;
@@ -58,17 +58,17 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 	}
 	
 	public void updateNeighbors(IBlockAccess world){
-		up = getConnection(world,getPos().up(),EnumFacing.DOWN);
-		down = getConnection(world,getPos().down(),EnumFacing.UP);
-		north = getConnection(world,getPos().north(),EnumFacing.NORTH);
-		south = getConnection(world,getPos().south(),EnumFacing.SOUTH);
-		west = getConnection(world,getPos().west(),EnumFacing.WEST);
-		east = getConnection(world,getPos().east(),EnumFacing.EAST);
+		up = getConnection(world,getPos().up(),Direction.DOWN);
+		down = getConnection(world,getPos().down(),Direction.UP);
+		north = getConnection(world,getPos().north(),Direction.NORTH);
+		south = getConnection(world,getPos().south(),Direction.SOUTH);
+		west = getConnection(world,getPos().west(),Direction.WEST);
+		east = getConnection(world,getPos().east(),Direction.EAST);
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
 		tag.setInteger("up", up.ordinal());
 		tag.setInteger("down", down.ordinal());
 		tag.setInteger("north", north.ordinal());
@@ -80,45 +80,45 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 			tag.setInteger("targetY", target.getY());
 			tag.setInteger("targetZ", target.getZ());
 		}
-		capability.writeToNBT(tag);
+		capability.write(tag);
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
+	public void read(CompoundNBT tag){
+		super.read(tag);
 		up = connectionFromInt(tag.getInteger("up"));
 		down = connectionFromInt(tag.getInteger("down"));
 		north = connectionFromInt(tag.getInteger("north"));
 		south = connectionFromInt(tag.getInteger("south"));
 		west = connectionFromInt(tag.getInteger("west"));
 		east = connectionFromInt(tag.getInteger("east"));
-		if (tag.hasKey("targetX")){
+		if (tag.contains("targetX")){
 			target = new BlockPos(tag.getInteger("targetX"), tag.getInteger("targetY"), tag.getInteger("targetZ"));
 		}
-		capability.readFromNBT(tag);
+		capability.read(tag);
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 	
-	public EnumConnection getConnection(IBlockAccess world, BlockPos pos, EnumFacing side){
+	public EnumConnection getConnection(IBlockAccess world, BlockPos pos, Direction side){
 		if (world.getBlockState(pos).getBlock() == Blocks.LEVER){
-			EnumFacing face = world.getBlockState(pos).getValue(BlockLever.FACING).getFacing();
-			if (face == side || face == EnumFacing.DOWN && side == EnumFacing.UP || face == EnumFacing.UP && side == EnumFacing.DOWN){
+			Direction face = world.getBlockState(pos).getValue(BlockLever.FACING).getFacing();
+			if (face == side || face == Direction.DOWN && side == Direction.UP || face == Direction.UP && side == Direction.DOWN){
 				return EnumConnection.LEVER;
 			}
 		}
@@ -126,19 +126,19 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return true;
 		}
@@ -146,7 +146,7 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return (T)this.capability;
 		}
@@ -154,7 +154,7 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 	}
 
 	@Override
-	public void setTargetPosition(BlockPos pos, EnumFacing side) {
+	public void setTargetPosition(BlockPos pos, Direction side) {
 		if (pos.compareTo(getPos()) != 0){
 			capability.setEmberCapacity(200);
 			target = pos;
@@ -195,7 +195,7 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 	}
 	
 	@Override
-	public void update(){
+	public void tick(){
 		this.polled = false;
 	}
 

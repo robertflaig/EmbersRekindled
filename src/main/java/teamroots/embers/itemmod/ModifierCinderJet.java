@@ -1,7 +1,7 @@
 package teamroots.embers.itemmod;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
@@ -43,14 +43,14 @@ public class ModifierCinderJet extends ModifierBase {
 	public void onLivingTick(LivingUpdateEvent event){
 		EntityLivingBase entity = event.getEntityLiving();
 		World world = entity.world;
-		if (entity instanceof EntityPlayer && !world.isRemote){
+		if (entity instanceof PlayerEntity && !world.isRemote){
 			UUID id = entity.getUniqueID();
 			if (sprinting.containsKey(id)){
 				if (entity.isSprinting() && !sprinting.get(id)){
-					int level = ItemModUtil.getArmorModifierLevel((EntityPlayer) entity, EmbersAPI.JET_AUGMENT);
+					int level = ItemModUtil.getArmorModifierLevel((PlayerEntity) entity, EmbersAPI.JET_AUGMENT);
 					float dashStrength = (float)(2.0*(Math.atan(0.6*(level))/(1.25)));
-					if (dashStrength > 0 && entity.onGround && EmberInventoryUtil.getEmberTotal((EntityPlayer) entity) > cost){
-						EmberInventoryUtil.removeEmber(((EntityPlayer) entity), cost);
+					if (dashStrength > 0 && entity.onGround && EmberInventoryUtil.getEmberTotal((PlayerEntity) entity) > cost){
+						EmberInventoryUtil.removeEmber(((PlayerEntity) entity), cost);
 						entity.velocityChanged = true;
 						entity.motionX += 2.0* entity.getLookVec().x*dashStrength;
 						entity.motionY += 0.4;

@@ -1,18 +1,18 @@
 package teamroots.embers.tileentity;
 
 import com.google.common.collect.Lists;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -51,7 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, ITickable, IMultiblockMachine, ISoundController, IExtraDialInformation, IExtraCapabilityInformation {
+public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, ITickableTileEntity, IMultiblockMachine, ISoundController, IExtraDialInformation, IExtraCapabilityInformation {
 	public static final double EMBER_COST = 1.0;
 	public static final double HEATING_SPEED = 1.0;
 	public static final double COOLING_SPEED = 1.0;
@@ -83,9 +83,9 @@ public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, I
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
-		capability.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
+		capability.write(tag);
 		tag.setInteger("progress", progress);
 		tag.setDouble("heat", heat);
 		tag.setTag("inventory", inventory.serializeNBT());
@@ -93,56 +93,56 @@ public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, I
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
-		capability.readFromNBT(tag);
+	public void read(CompoundNBT tag){
+		super.read(tag);
+		capability.read(tag);
 		inventory.deserializeNBT(tag.getCompoundTag("inventory"));
-		if (tag.hasKey("progress")){
+		if (tag.contains("progress")){
 			progress = tag.getInteger("progress");
 		}
-		if (tag.hasKey("heat")){
+		if (tag.contains("heat")){
 			heat = tag.getDouble("heat");
 		}
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
-		world.setBlockToAir(pos.add(1,0,0));
-		world.setBlockToAir(pos.add(0,0,1));
-		world.setBlockToAir(pos.add(-1,0,0));
-		world.setBlockToAir(pos.add(0,0,-1));
-		world.setBlockToAir(pos.add(1,0,-1));
-		world.setBlockToAir(pos.add(-1,0,1));
-		world.setBlockToAir(pos.add(1,0,1));
-		world.setBlockToAir(pos.add(-1,0,-1));
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
+		world.setBlockState(pos.add(1, 0, 0), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(0, 0, 1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(-1, 0, 0), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(0, 0, -1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(1, 0, -1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(-1, 0, 1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(1, 0, 1), Blocks.AIR.getDefaultState());
+		world.setBlockState(pos.add(-1, 0, -1), Blocks.AIR.getDefaultState());
 		world.setTileEntity(pos, null);
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return true;
 		}
@@ -153,7 +153,7 @@ public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, I
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return (T)this.capability;
 		}
@@ -164,13 +164,13 @@ public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		ticksExisted ++;
 
 		if(getWorld().isRemote)
 			handleSound();
 
-		upgrades = UpgradeUtil.getUpgrades(world, pos, new EnumFacing[]{EnumFacing.DOWN});
+		upgrades = UpgradeUtil.getUpgrades(world, pos, new Direction[]{Direction.DOWN});
 		UpgradeUtil.verifyUpgrades(this, upgrades);
 		if (UpgradeUtil.doTick(this, upgrades))
 			return;
@@ -322,7 +322,7 @@ public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
-	public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
+	public void addDialInformation(Direction facing, List<String> information, String dialType) {
 		if(BlockEmberGauge.DIAL_TYPE.equals(dialType)) {
 			DecimalFormat heatFormat = Embers.proxy.getDecimalFormat("embers.decimal_format.heat");
 			double maxHeat = UpgradeUtil.getOtherParameter(this,"max_heat",MAX_HEAT, upgrades);
@@ -337,7 +337,7 @@ public class TileEntityHeatCoil extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
-	public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+	public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.OUTPUT,"embers.tooltip.goggles.item", null));
 	}

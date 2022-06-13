@@ -188,7 +188,7 @@ public class ResearchBase {
 	@SideOnly(Side.CLIENT)
 	private String[] getTags() {
 		String translateKey = "embers.research.page." + name + ".tags";
-		if(I18n.hasKey(translateKey)) {
+		if(I18n.contains(translateKey)) {
 			return I18n.format(translateKey).split(";");
 		} else {
 			return new String[0];

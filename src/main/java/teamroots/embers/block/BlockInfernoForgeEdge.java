@@ -3,10 +3,10 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -42,9 +42,9 @@ public class BlockInfernoForgeEdge extends BlockBase {
 		return getDefaultState().withProperty(state,meta);
 	}
 	
-	public static void breakBlockSafe(World world, BlockPos pos, EntityPlayer player){
+	public static void breakBlockSafe(World world, BlockPos pos, PlayerEntity player){
 		if (world.getTileEntity(pos) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world, pos, world.getBlockState(pos), player);
+			((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world, pos, world.getBlockState(pos), player);
 			if (!world.isRemote && !player.capabilities.isCreativeMode){
 				if (!world.getBlockState(pos).getValue(BlockInfernoForge.isTop)){
 					world.spawnEntity(new EntityItem(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,new ItemStack(world.getBlockState(pos).getBlock())));
@@ -55,7 +55,7 @@ public class BlockInfernoForgeEdge extends BlockBase {
 	}
 	
 	@Override
-	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public ArrayList<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		return new ArrayList<ItemStack>();
 	}
 
@@ -65,7 +65,7 @@ public class BlockInfernoForgeEdge extends BlockBase {
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		for (int i = -1; i <= 1; i ++){
 			for (int j = -1; j <= 0; j ++){
 				for (int k = -1; k <= 1; k ++){

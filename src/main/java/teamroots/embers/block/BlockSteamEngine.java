@@ -4,10 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -35,16 +35,16 @@ public class BlockSteamEngine extends BlockTEBase {
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(facing,EnumFacing.getFront(meta));
+		return getDefaultState().withProperty(facing,Direction.getFront(meta));
 	}
 	
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
+	public IBlockState getStateForPlacement(World world, BlockPos pos, Direction face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
 		return getDefaultState().withProperty(facing, Misc.getOppositeFace(placer.getHorizontalFacing()));
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+	public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side){
 		return side != state.getValue(facing);
 	}
 
@@ -54,7 +54,7 @@ public class BlockSteamEngine extends BlockTEBase {
 	}
 	
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
 		TileEntitySteamEngine p = (TileEntitySteamEngine)world.getTileEntity(pos);
 		p.updateNearby();
 		p.markDirty();

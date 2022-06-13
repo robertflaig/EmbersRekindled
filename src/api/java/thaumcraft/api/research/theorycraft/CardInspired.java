@@ -1,7 +1,7 @@
 package thaumcraft.api.research.theorycraft;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -11,15 +11,15 @@ public class CardInspired extends TheorycraftCard {
 	int amt;
 	
 	@Override
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = super.serialize();
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = super.serialize();
 		nbt.setString("cat", cat);
 		nbt.setInteger("amt", amt);
 		return nbt;
 	}
 
 	@Override
-	public void deserialize(NBTTagCompound nbt) {
+	public void deserialize(CompoundNBT nbt) {
 		super.deserialize(nbt);
 		cat = nbt.getString("cat");
 		amt = nbt.getInteger("amt");
@@ -31,7 +31,7 @@ public class CardInspired extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) { 
+	public boolean initialize(PlayerEntity player, ResearchTableData data) { 
 		if (data.categoryTotals.size()<1) return false;
 		int hVal=0;
 		String hKey="";
@@ -64,7 +64,7 @@ public class CardInspired extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		data.addTotal(cat, amt);
 		return true;
 	}

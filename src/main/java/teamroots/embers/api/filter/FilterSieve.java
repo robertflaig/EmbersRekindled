@@ -1,7 +1,7 @@
 package teamroots.embers.api.filter;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import teamroots.embers.util.FilterUtil;
 
@@ -20,8 +20,8 @@ public class FilterSieve implements IFilter {
     private boolean inverted;
     private IFilterComparator comparator;
 
-    public FilterSieve(NBTTagCompound tag) {
-        readFromNBT(tag);
+    public FilterSieve(CompoundNBT tag) {
+        read(tag);
     }
 
     public FilterSieve(ItemStack stack1, ItemStack stack2, int offset, EnumFilterSetting setting, boolean inverted) {
@@ -60,7 +60,7 @@ public class FilterSieve implements IFilter {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+    public CompoundNBT write(CompoundNBT tag) {
         tag.setString("type",getType().toString());
         tag.setTag("stack1",stack1.serializeNBT());
         tag.setTag("stack2",stack2.serializeNBT());
@@ -72,13 +72,13 @@ public class FilterSieve implements IFilter {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         stack1 = new ItemStack(tag.getCompoundTag("stack1"));
         stack2 = new ItemStack(tag.getCompoundTag("stack2"));
         offset = tag.getInteger("offset");
         setting = EnumFilterSetting.values()[tag.getInteger("setting")];
         inverted = tag.getBoolean("invert");
-        if(tag.hasKey("comparator"))
+        if(tag.contains("comparator"))
             comparator = FilterUtil.getComparator(tag.getString("comparator"));
         else
             findComparator();

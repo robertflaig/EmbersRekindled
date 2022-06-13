@@ -6,9 +6,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -25,7 +25,7 @@ public class ItemInflictorGem extends ItemBase implements IInflictorGem {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking() && stack.getItemDamage() == 1){
 			stack.setItemDamage(0);
@@ -40,14 +40,14 @@ public class ItemInflictorGem extends ItemBase implements IInflictorGem {
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
 		if (!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
+			stack.setTagCompound(new CompoundNBT());
 		}
 	}
 	
 	@Override
 	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced){
 		if (stack.hasTagCompound()){
-			if (stack.getTagCompound().hasKey("type")){
+			if (stack.getTagCompound().contains("type")){
 				tooltip.add(I18n.format("embers.tooltip.inflictor")+stack.getTagCompound().getString("type"));
 			}
 		}
@@ -77,7 +77,7 @@ public class ItemInflictorGem extends ItemBase implements IInflictorGem {
 
 	@Override
 	public String getAttunedSource(ItemStack stack) {
-		if(!stack.isEmpty() && stack.hasTagCompound() &&  stack.getTagCompound().hasKey("type"))
+		if(!stack.isEmpty() && stack.hasTagCompound() &&  stack.getTagCompound().contains("type"))
 			return stack.getTagCompound().getString("type");
 		return null;
 	}

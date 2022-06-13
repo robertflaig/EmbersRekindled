@@ -1,14 +1,14 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityClockworkAttenuator extends TileEntity implements ITickable, ITileEntityBase {
+public class TileEntityClockworkAttenuator extends TileEntity implements ITickableTileEntity, ITileEntityBase {
     public UpgradeClockworkAttenuator upgrade;
     public boolean powered, lastPowered = false;
     public double activeSpeed = 0, inactiveSpeed = 1;
@@ -37,37 +37,37 @@ public class TileEntityClockworkAttenuator extends TileEntity implements ITickab
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         tag.setDouble("active_speed", activeSpeed);
         tag.setDouble("inactive_speed", inactiveSpeed);
         return tag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         activeSpeed = tag.getDouble("active_speed");
         inactiveSpeed = tag.getDouble("inactive_speed");
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
-    public EnumFacing getFacing() {
+    public Direction getFacing() {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockClockworkAttenuator)
             return state.getValue(BlockClockworkAttenuator.facing);
@@ -75,7 +75,7 @@ public class TileEntityClockworkAttenuator extends TileEntity implements ITickab
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY)
             return getFacing().getOpposite() == facing;
         return super.hasCapability(capability, facing);
@@ -83,7 +83,7 @@ public class TileEntityClockworkAttenuator extends TileEntity implements ITickab
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing().getOpposite() == facing)
             return (T) upgrade;
         return super.getCapability(capability, facing);
@@ -126,7 +126,7 @@ public class TileEntityClockworkAttenuator extends TileEntity implements ITickab
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         if (powered)
             activeSpeed = player.isSneaking() ? getPrevious(activeSpeed) : getNext(activeSpeed);
         else
@@ -136,7 +136,7 @@ public class TileEntityClockworkAttenuator extends TileEntity implements ITickab
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
 
     }
 

@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
@@ -34,14 +34,14 @@ public class TileEntityStampBaseRenderer extends TileEntitySpecialRenderer<TileE
 	public void render(TileEntityStampBase tile, double x, double y, double z, float partialTicks, int destroyStage, float tileAlpha){
 		if (tile != null && !tile.getWorld().isAirBlock(tile.getPos())){
 			if (tile.getWorld().getBlockState(tile.getPos()).getBlock() instanceof BlockStampBase){
-				EnumFacing face = tile.getWorld().getBlockState(tile.getPos()).getValue(BlockStampBase.facing);
+				Direction face = tile.getWorld().getBlockState(tile.getPos()).getValue(BlockStampBase.facing);
 				int capacity = tile.getCapacity();
 	            GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 				FluidStack fluidStack = tile.getFluidStack();
 
 				if (fluidStack != null){
 					Fluid fluid = fluidStack.getFluid();
-					int amount = fluidStack.amount;
+					int amount = fluidStack.getAmount();
 					int c = fluid.getColor(fluidStack);
 		            blue = c & 0xFF;
 		            green = (c >> 8) & 0xFF;
@@ -71,25 +71,25 @@ public class TileEntityStampBaseRenderer extends TileEntitySpecialRenderer<TileE
 					GL11.glPushMatrix();
 					GL11.glTranslated(x, y, z);
 					GL11.glTranslated(0.5, 0.5, 0.5);
-					if (face == EnumFacing.UP){
+					if (face == Direction.UP){
                         GL11.glRotated(180, 1, 0, 0);
                     }
 
-					if (face == EnumFacing.NORTH){
+					if (face == Direction.NORTH){
                         GL11.glRotated(90, 1, 0, 0);
                     }
 
-					if (face == EnumFacing.WEST){
+					if (face == Direction.WEST){
                         GL11.glRotated(90, 0, 1, 0);
                         GL11.glRotated(90, 1, 0, 0);
                     }
 
-					if (face == EnumFacing.SOUTH){
+					if (face == Direction.SOUTH){
                         GL11.glRotated(180, 0, 1, 0);
                         GL11.glRotated(90, 1, 0, 0);
                     }
 
-					if (face == EnumFacing.EAST){
+					if (face == Direction.EAST){
                         GL11.glRotated(270, 0, 1, 0);
                         GL11.glRotated(90, 1, 0, 0);
                     }
@@ -117,25 +117,25 @@ public class TileEntityStampBaseRenderer extends TileEntitySpecialRenderer<TileE
 					GL11.glTranslated(x, y, z);
 					GL11.glTranslated(0.5, 0.5+0.25, 0.5);
 					
-					if (face == EnumFacing.UP){
+					if (face == Direction.UP){
 						GL11.glRotated(180, 1, 0, 0);
 					}
 					
-					if (face == EnumFacing.NORTH){
+					if (face == Direction.NORTH){
 						GL11.glRotated(90, 1, 0, 0);
 					}
 					
-					if (face == EnumFacing.WEST){
+					if (face == Direction.WEST){
 						GL11.glRotated(90, 0, 1, 0);
 						GL11.glRotated(90, 1, 0, 0);
 					}
 					
-					if (face == EnumFacing.SOUTH){
+					if (face == Direction.SOUTH){
 						GL11.glRotated(180, 0, 1, 0);
 						GL11.glRotated(90, 1, 0, 0);
 					}
 					
-					if (face == EnumFacing.EAST){
+					if (face == Direction.EAST){
 						GL11.glRotated(270, 0, 1, 0);
 						GL11.glRotated(90, 1, 0, 0);
 					}

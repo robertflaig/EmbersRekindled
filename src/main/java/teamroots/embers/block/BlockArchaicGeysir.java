@@ -1,7 +1,7 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,7 +29,7 @@ public class BlockArchaicGeysir extends BlockTEBase {
 				&& isReplaceable(world,pos.east().south())
 				&& isReplaceable(world,pos.west().north())
 				&& isReplaceable(world,pos.west().south())){
-			return super.canPlaceBlockAt(world,pos);
+			return super..canPlaceBlockAt(world,pos);
 		}
 		return false;
 	}

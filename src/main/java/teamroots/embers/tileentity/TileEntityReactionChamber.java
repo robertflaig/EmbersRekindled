@@ -1,10 +1,10 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +32,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityReactionChamber extends TileEntity implements ITileEntityBase, ITickable, IExtraDialInformation, IExtraCapabilityInformation, IFluidPipeConnectable {
+public class TileEntityReactionChamber extends TileEntity implements ITileEntityBase, ITickableTileEntity, IExtraDialInformation, IExtraCapabilityInformation, IFluidPipeConnectable {
 	Random random = new Random();
 	protected FluidTank fluidTank = new FluidTank(getCapacity());
 	protected FluidTank gasTank = new FluidTank(getCapacity());
@@ -73,43 +73,43 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag)
+	public void read(CompoundNBT tag)
 	{
-		super.readFromNBT(tag);
-		fluidTank.readFromNBT(tag.getCompoundTag("fluidTank"));
-		gasTank.readFromNBT(tag.getCompoundTag("gasTank"));
+		super.read(tag);
+		fluidTank.read(tag.getCompoundTag("fluidTank"));
+		gasTank.read(tag.getCompoundTag("gasTank"));
 		lastReaction = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("lastReaction"));
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag)
+	public CompoundNBT write(CompoundNBT tag)
 	{
-		tag = super.writeToNBT(tag);
-		tag.setTag("fluidTank",fluidTank.writeToNBT(new NBTTagCompound()));
-		tag.setTag("gasTank",gasTank.writeToNBT(new NBTTagCompound()));
+		tag = super.write(tag);
+		tag.setTag("fluidTank",fluidTank.write(new CompoundNBT()));
+		tag.setTag("gasTank",gasTank.write(new CompoundNBT()));
 		if(lastReaction != null)
-			tag.setTag("lastReaction", lastReaction.writeToNBT(new NBTTagCompound()));
+			tag.setTag("lastReaction", lastReaction.write(new CompoundNBT()));
 		return tag;
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+	public boolean hasCapability(Capability<?> capability, @Nullable Direction facing)
 	{
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return facing != null;
@@ -119,7 +119,7 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 
 	@Override
 	@Nullable
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing)
 	{
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return (T) fluidInterface;
@@ -128,8 +128,8 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
@@ -199,8 +199,8 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 
@@ -211,16 +211,16 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 	}
 
 	@Override
-	public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
-		/*if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != EnumFacing.Axis.Y) {
+	public void addDialInformation(Direction facing, List<String> information, String dialType) {
+		/*if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != Direction.Axis.Y) {
 			information.add(BlockFluidGauge.formatFluidStack(getGasStack(),getCapacity()));
 			information.add(BlockFluidGauge.formatFluidStack(getFluidStack(),getCapacity()));
 		}*/
 	}
 
 	@Override
-	public int getComparatorData(EnumFacing facing, int data, String dialType) {
-		if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != EnumFacing.Axis.Y) {
+	public int getComparatorData(Direction facing, int data, String dialType) {
+		if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != Direction.Axis.Y) {
 			double fill = getGasAmount() / (double)getCapacity();
 			return fill > 0 ? (int) (1 + fill * 14) : 0;
 		}
@@ -228,7 +228,7 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		if(world.isRemote)
 			spawnParticles();
 		if(!world.isRemote)
@@ -265,12 +265,12 @@ public class TileEntityReactionChamber extends TileEntity implements ITileEntity
 	}
 
 	@Override
-	public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+	public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
 		strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.BOTH,"embers.tooltip.goggles.fluid",null));
 	}
 
 	@Override
-	public EnumPipeConnection getConnection(EnumFacing facing) {
+	public EnumPipeConnection getConnection(Direction facing) {
 		return EnumPipeConnection.BLOCK;
 	}
 }

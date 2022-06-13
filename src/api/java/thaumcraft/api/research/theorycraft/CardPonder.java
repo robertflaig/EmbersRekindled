@@ -1,6 +1,6 @@
 package thaumcraft.api.research.theorycraft;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextComponentTranslation;
 
 public class CardPonder extends TheorycraftCard {
@@ -21,12 +21,12 @@ public class CardPonder extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean initialize(EntityPlayer player, ResearchTableData data) {
+	public boolean initialize(PlayerEntity player, ResearchTableData data) {
 		return data.categoriesBlocked.size()<data.categoryTotals.size();
 	}
 
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		int a = 25;
 		int tries=0;
 		while (a>0 && tries<1000) {

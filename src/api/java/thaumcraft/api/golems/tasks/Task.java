@@ -166,17 +166,17 @@ public class Task {
 	
 	
 	
-//	public static Task readNBT(NBTTagCompound nbt)
+//	public static Task readNBT(CompoundNBT nbt)
 //  {		
 //		Task task = new Task();
 //		task.id = nbt.getInteger("id");
 //		task.type = nbt.getByte("type");		
-//		if (nbt.hasKey("pos", 4)) task.pos = BlockPos.fromLong(nbt.getLong("pos"));	
+//		if (nbt.contains("pos", 4)) task.pos = BlockPos.fromLong(nbt.getLong("pos"));	
 //		
-//		if (nbt.hasKey("GUUIDMost", 4) && nbt.hasKey("GUUIDLeast", 4))
+//		if (nbt.contains("GUUIDMost", 4) && nbt.contains("GUUIDLeast", 4))
 //			task.golemUUID = new UUID(nbt.getLong("GUUIDMost"), nbt.getLong("GUUIDLeast"));
 //		
-//		if (nbt.hasKey("EUUIDMost", 4) && nbt.hasKey("EUUIDLeast", 4))
+//		if (nbt.contains("EUUIDMost", 4) && nbt.contains("EUUIDLeast", 4))
 //			task.entityUUID = new UUID(nbt.getLong("EUUIDMost"), nbt.getLong("EUUIDLeast"));
 //		
 //		if (task.pos==null && task.entityUUID==null) return null;
@@ -186,17 +186,17 @@ public class Task {
 //		task.suspended = false;
 //		task.completed = nbt.getBoolean("completed");
 //		task.expireTime = System.currentTimeMillis() + 300000;		
-//		if (nbt.hasKey("sealpos", 10)) {
-//			NBTTagCompound sealpos = nbt.getCompoundTag("sealpos");
-//			SealPos sp = new SealPos(BlockPos.fromLong(nbt.getLong("pos")), EnumFacing.VALUES[nbt.getByte("face")]);
+//		if (nbt.contains("sealpos", 10)) {
+//			CompoundNBT sealpos = nbt.getCompoundTag("sealpos");
+//			SealPos sp = new SealPos(BlockPos.fromLong(nbt.getLong("pos")), Direction.VALUES[nbt.getByte("face")]);
 //			TaskHandler.sealTaskCrossRef.put(task.id, sp);
 //		}
 //		return task;
 //  }
 //	
-//	public static NBTTagCompound writeNBT(Task task)
+//	public static CompoundNBT writeNBT(Task task)
 //  {
-//		NBTTagCompound nbt = new NBTTagCompound();
+//		CompoundNBT nbt = new CompoundNBT();
 //		nbt.setInteger("id", task.id);
 //		nbt.setByte("type", task.type);
 //		if (task.pos!=null) nbt.setLong("pos", task.pos.toLong());
@@ -214,7 +214,7 @@ public class Task {
 //		
 //		SealPos sp = TaskHandler.sealTaskCrossRef.get(task.getId());
 //		if (sp!=null) {
-//			NBTTagCompound sealpos = new NBTTagCompound();
+//			CompoundNBT sealpos = new CompoundNBT();
 //			sealpos.setLong("pos", sp.pos.toLong());
 //			sealpos.setByte("face", (byte) sp.face.ordinal());
 //			nbt.setTag("sealpos", sealpos);

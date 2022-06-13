@@ -1,12 +1,12 @@
 package teamroots.embers.item;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -45,8 +45,8 @@ public class ItemIgnitionCannon extends ItemBase implements IProjectileWeapon {
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft){
 		if (!world.isRemote) {
 			double charge = (Math.min(MAX_CHARGE, getMaxItemUseDuration(stack) - timeLeft)) / MAX_CHARGE;
-			double handmod = entity.getActiveHand() == EnumHand.MAIN_HAND ? 1.0 : -1.0;
-			handmod *= entity.getPrimaryHand() == EnumHandSide.RIGHT ? 1.0 : -1.0;
+			double handmod = entity.getActiveHand() == Hand.MAIN_HAND ? 1.0 : -1.0;
+			handmod *= entity.getPrimaryHand() == HandSide.RIGHT ? 1.0 : -1.0;
 			double posX = entity.posX + entity.getLookVec().x + handmod * (entity.width / 2.0) * Math.sin(Math.toRadians(-entity.rotationYaw - 90));
 			double posY = entity.posY + entity.getEyeHeight() - 0.2 + entity.getLookVec().y;
 			double posZ = entity.posZ + entity.getLookVec().z + handmod * (entity.width / 2.0) * Math.cos(Math.toRadians(-entity.rotationYaw - 90));
@@ -80,7 +80,7 @@ public class ItemIgnitionCannon extends ItemBase implements IProjectileWeapon {
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
 		if (!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
+			stack.setTagCompound(new CompoundNBT());
 			stack.getTagCompound().setInteger("cooldown", 0);
 		}
 		else {
@@ -101,7 +101,7 @@ public class ItemIgnitionCannon extends ItemBase implements IProjectileWeapon {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		if (stack.getTagCompound().getInteger("cooldown") <= 0 || player.capabilities.isCreativeMode){
 			if(EmberInventoryUtil.getEmberTotal(player) >= EMBER_COST || player.capabilities.isCreativeMode) {

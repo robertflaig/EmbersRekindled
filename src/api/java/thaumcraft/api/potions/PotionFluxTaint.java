@@ -3,7 +3,7 @@ package thaumcraft.api.potions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,12 +45,12 @@ public class PotionFluxTaint extends Potion
 		if (target instanceof ITaintedMob || (cai!=null && (int) cai.getAttributeValue() == 13)) {
 			target.heal(1);
 		} else {
-			if (!target.isEntityUndead() && !(target instanceof EntityPlayer))
+			if (!target.isEntityUndead() && !(target instanceof PlayerEntity))
 	        {
 				target.attackEntityFrom(DamageSourceThaumcraft.taint, 1);		
 	        } 
 			else
-			if (!target.isEntityUndead() && (target.getMaxHealth() > 1 || (target instanceof EntityPlayer)))
+			if (!target.isEntityUndead() && (target.getMaxHealth() > 1 || (target instanceof PlayerEntity)))
 	        {
 				target.attackEntityFrom(DamageSourceThaumcraft.taint, 1);
 	        } 

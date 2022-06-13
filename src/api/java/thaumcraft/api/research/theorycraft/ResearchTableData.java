@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import thaumcraft.api.capabilities.IPlayerKnowledge;
@@ -61,7 +61,7 @@ public class ResearchTableData
 		table = tileResearchTable;
 	}
 		
-	public ResearchTableData(EntityPlayer player2, TileEntity tileResearchTable) {
+	public ResearchTableData(PlayerEntity player2, TileEntity tileResearchTable) {
 		player = player2.getName();
 		table = tileResearchTable;
 	}
@@ -92,8 +92,8 @@ public class ResearchTableData
 		if (inspiration>inspirationStart) inspiration = inspirationStart;
 	}	
 	
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = new NBTTagCompound();
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = new CompoundNBT();
 		
 		nbt.setString("player", player);
 		nbt.setInteger("inspiration", inspiration);
@@ -106,7 +106,7 @@ public class ResearchTableData
 		//
 		NBTTagList savedTag = new NBTTagList();
 		for (Long card:savedCards) {
-			NBTTagCompound gt = new NBTTagCompound();
+			CompoundNBT gt = new CompoundNBT();
 			gt.setLong("card", card);
 			savedTag.appendTag(gt);
 		}		
@@ -115,7 +115,7 @@ public class ResearchTableData
 		//
 		NBTTagList categoriesBlockedTag = new NBTTagList();
 		for (String category:categoriesBlocked) {
-			NBTTagCompound gt = new NBTTagCompound();
+			CompoundNBT gt = new CompoundNBT();
 			gt.setString("category", category);
 			categoriesBlockedTag.appendTag(gt);
 		}		
@@ -124,7 +124,7 @@ public class ResearchTableData
 		//
 		NBTTagList categoryTotalsTag = new NBTTagList();
 		for (String category:categoryTotals.keySet()) {
-			NBTTagCompound gt = new NBTTagCompound();
+			CompoundNBT gt = new CompoundNBT();
 			gt.setString("category", category);
 			gt.setInteger("total", categoryTotals.get(category));
 			categoryTotalsTag.appendTag(gt);
@@ -134,7 +134,7 @@ public class ResearchTableData
 		//
 		NBTTagList aidCardsTag = new NBTTagList();
 		for (String mc:aidCards) {
-			NBTTagCompound gt = new NBTTagCompound();
+			CompoundNBT gt = new CompoundNBT();
 			gt.setString("aidCard", mc);
 			aidCardsTag.appendTag(gt);
 		}		
@@ -143,7 +143,7 @@ public class ResearchTableData
 		//
 		NBTTagList cardChoicesTag = new NBTTagList();
 		for (CardChoice mc:cardChoices) {
-			NBTTagCompound gt = serializeCardChoice(mc);
+			CompoundNBT gt = serializeCardChoice(mc);
 			cardChoicesTag.appendTag(gt);
 		}		
 		nbt.setTag("cardChoices", cardChoicesTag);	
@@ -153,8 +153,8 @@ public class ResearchTableData
 		return nbt;
 	}
 	
-	public NBTTagCompound serializeCardChoice(CardChoice mc) {
-		NBTTagCompound nbt = new NBTTagCompound();	
+	public CompoundNBT serializeCardChoice(CardChoice mc) {
+		CompoundNBT nbt = new CompoundNBT();
 		nbt.setString("cardChoice", mc.key);
 		nbt.setBoolean("aid", mc.fromAid); 
 		nbt.setBoolean("select", mc.selected);
@@ -164,7 +164,7 @@ public class ResearchTableData
 		return nbt;
 	}
 	
-	public void deserialize(NBTTagCompound nbt) {	
+	public void deserialize(CompoundNBT nbt) {
 		if (nbt == null) return;	
 		inspiration = nbt.getInteger("inspiration");
 		inspirationStart = nbt.getInteger("inspirationStart");
@@ -178,7 +178,7 @@ public class ResearchTableData
 		NBTTagList savedTag = nbt.getTagList("savedCards", (byte)10);
 		savedCards = new ArrayList<Long>();
 		for (int x=0;x<savedTag.tagCount();x++) {
-			NBTTagCompound nbtdata = (NBTTagCompound) savedTag.getCompoundTagAt(x);
+			CompoundNBT nbtdata = (CompoundNBT) savedTag.getCompoundTagAt(x);
 			savedCards.add(nbtdata.getLong("card"));
 		}
 		
@@ -186,7 +186,7 @@ public class ResearchTableData
 		NBTTagList categoriesBlockedTag = nbt.getTagList("categoriesBlocked", (byte)10);
 		categoriesBlocked = new ArrayList<String>();
 		for (int x=0;x<categoriesBlockedTag.tagCount();x++) {
-			NBTTagCompound nbtdata = (NBTTagCompound) categoriesBlockedTag.getCompoundTagAt(x);
+			CompoundNBT nbtdata = (CompoundNBT) categoriesBlockedTag.getCompoundTagAt(x);
 			categoriesBlocked.add(nbtdata.getString("category"));
 		}
 		
@@ -194,7 +194,7 @@ public class ResearchTableData
 		NBTTagList categoryTotalsTag = nbt.getTagList("categoryTotals", (byte)10);
 		categoryTotals = new TreeMap<String,Integer>();
 		for (int x=0;x<categoryTotalsTag.tagCount();x++) {
-			NBTTagCompound nbtdata = (NBTTagCompound) categoryTotalsTag.getCompoundTagAt(x);
+			CompoundNBT nbtdata = (CompoundNBT) categoryTotalsTag.getCompoundTagAt(x);
 			categoryTotals.put(nbtdata.getString("category"), nbtdata.getInteger("total"));
 		}
 		
@@ -202,20 +202,20 @@ public class ResearchTableData
 		NBTTagList aidCardsTag = nbt.getTagList("aidCards", (byte)10);
 		aidCards = new ArrayList<String>();
 		for (int x=0;x<aidCardsTag.tagCount();x++) {
-			NBTTagCompound nbtdata = (NBTTagCompound) aidCardsTag.getCompoundTagAt(x);
+			CompoundNBT nbtdata = (CompoundNBT) aidCardsTag.getCompoundTagAt(x);
 			aidCards.add(nbtdata.getString("aidCard"));
 		}
 		
 		//
 		
-		EntityPlayer pe = null;		
+		PlayerEntity pe = null;		
 		if (this.table!=null && table.getWorld()!=null && !table.getWorld().isRemote) 
 			pe = this.table.getWorld().getPlayerEntityByName(player);
 			
 		NBTTagList cardChoicesTag = nbt.getTagList("cardChoices", (byte)10);
 		cardChoices = new ArrayList<CardChoice>();
 		for (int x=0;x<cardChoicesTag.tagCount();x++) {			
-			NBTTagCompound nbtdata = (NBTTagCompound) cardChoicesTag.getCompoundTagAt(x);			
+			CompoundNBT nbtdata = (CompoundNBT) cardChoicesTag.getCompoundTagAt(x);
 			CardChoice cc = deserializeCardChoice(nbtdata);
 			if (cc!=null) cardChoices.add(cc);
 		}
@@ -224,7 +224,7 @@ public class ResearchTableData
 		
 	}
 	
-	public CardChoice deserializeCardChoice(NBTTagCompound nbt) {	
+	public CardChoice deserializeCardChoice(CompoundNBT nbt) {
 		if (nbt == null) return null;	
 		String key = nbt.getString("cardChoice");			
 		TheorycraftCard tc=generateCardWithNBT(nbt.getString("cardChoice"), nbt.getCompoundTag("cardNBT"));				
@@ -236,7 +236,7 @@ public class ResearchTableData
 		return this.categoriesBlocked.contains(cat);
 	}
 	
-	public void drawCards(int draw, EntityPlayer pe) {
+	public void drawCards(int draw, PlayerEntity pe) {
 		
 		if (draw==3) {
 			if (bonusDraws>0) {
@@ -292,7 +292,7 @@ public class ResearchTableData
 		}
 	}
 	
-	private TheorycraftCard generateCard(String key, long seed, EntityPlayer pe) {
+	private TheorycraftCard generateCard(String key, long seed, PlayerEntity pe) {
 		if (key==null) return null;
 		Class<TheorycraftCard> tcc = TheorycraftManager.cards.get(key);
 		if (tcc==null) return null;
@@ -311,7 +311,7 @@ public class ResearchTableData
 		return tc;
 	}
 	
-	private TheorycraftCard generateCardWithNBT(String key, NBTTagCompound nbt) {
+	private TheorycraftCard generateCardWithNBT(String key, CompoundNBT nbt) {
 		if (key==null) return null;
 		Class<TheorycraftCard> tcc = TheorycraftManager.cards.get(key);
 		if (tcc==null) return null;
@@ -323,7 +323,7 @@ public class ResearchTableData
 		return tc;
 	}
 	
-	public void initialize(EntityPlayer player1, Set<String> aids) {
+	public void initialize(PlayerEntity player1, Set<String> aids) {
 		inspirationStart=getAvailableInspiration(player1);
 		inspiration= inspirationStart - aids.size();
 		
@@ -338,7 +338,7 @@ public class ResearchTableData
 	}
 	
 	
-	public ArrayList<String> getAvailableCategories(EntityPlayer player) {
+	public ArrayList<String> getAvailableCategories(PlayerEntity player) {
 		ArrayList<String> cats = new ArrayList<String>();
 		for(String rck: ResearchCategories.researchCategories.keySet()) {
 			ResearchCategory rc = ResearchCategories.getResearchCategory(rck);
@@ -350,7 +350,7 @@ public class ResearchTableData
 		return cats;
 	}
 	
-	public static int getAvailableInspiration(EntityPlayer player) {
+	public static int getAvailableInspiration(PlayerEntity player) {
 		float tot = 5;
 		IPlayerKnowledge knowledge = ThaumcraftCapabilities.getKnowledge(player);
 		for (String s:knowledge.getResearchList()) {

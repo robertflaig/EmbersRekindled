@@ -1,6 +1,6 @@
 package thaumcraft.api.research.theorycraft;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import thaumcraft.api.research.ResearchCategories;
@@ -23,7 +23,7 @@ public class CardExperimentation extends TheorycraftCard {
 	}
 	
 	@Override
-	public boolean activate(EntityPlayer player, ResearchTableData data) {		
+	public boolean activate(PlayerEntity player, ResearchTableData data) {
 		try {
 			String[] s = ResearchCategories.researchCategories.keySet().toArray(new String[] {});
 			String cat = s[ player.getRNG().nextInt(s.length) ];

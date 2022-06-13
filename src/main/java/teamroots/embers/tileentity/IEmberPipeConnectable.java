@@ -1,8 +1,8 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import teamroots.embers.util.EnumPipeConnection;
 
 public interface IEmberPipeConnectable {
-    EnumPipeConnection getConnection(EnumFacing facing);
+    EnumPipeConnection getConnection(Direction facing);
 }

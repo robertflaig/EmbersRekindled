@@ -1,6 +1,6 @@
 package thaumcraft.api.golems.seals;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -16,9 +16,9 @@ public interface ISealEntity {
 
 	public void setPriority(byte priority);
 
-	public void readNBT(NBTTagCompound nbt);
+	public void readNBT(CompoundNBT nbt);
 
-	public NBTTagCompound writeNBT();
+	public CompoundNBT writeNBT();
 
 	public void syncToClient(World world);
 

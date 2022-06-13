@@ -1,6 +1,6 @@
 package teamroots.embers.heat;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -20,12 +20,12 @@ public class HeatCapabilityProvider implements ICapabilityProvider {
 	public static final Capability<IHeatCapability> heatCapability = null;
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, Direction facing) {
 		return capability == heatCapability;
 	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, Direction facing) {
     	if (heatCapability != null && capability == heatCapability) return (T)capability;
     	return null;
 	}

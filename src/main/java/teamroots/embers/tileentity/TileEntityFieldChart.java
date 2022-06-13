@@ -1,11 +1,11 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -15,26 +15,26 @@ import teamroots.embers.util.sound.ISoundController;
 
 import java.util.HashSet;
 
-public class TileEntityFieldChart extends TileEntity implements ITileEntityBase, ISoundController, ITickable {
+public class TileEntityFieldChart extends TileEntity implements ITileEntityBase, ISoundController, ITickableTileEntity {
 	public static final int SOUND_LOOP = 1;
 	public static final int[] SOUND_IDS = new int[]{SOUND_LOOP};
 
 	HashSet<Integer> soundsPlaying = new HashSet<>();
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		if (getWorld().isRemote)
 			handleSound();
 	}

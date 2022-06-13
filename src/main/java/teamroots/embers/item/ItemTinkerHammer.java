@@ -1,18 +1,18 @@
 package teamroots.embers.item;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,14 +32,14 @@ public class ItemTinkerHammer extends ItemBase {
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
 		if (!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
+			stack.setTagCompound(new CompoundNBT());
 		}
 	}
 	
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing face, float hitX, float hitY, float hitZ){
+	public EnumActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction face, float hitX, float hitY, float hitZ){
 		ItemStack stack = player.getHeldItem(hand);
-		NBTTagCompound tagCompound = stack.getTagCompound();
+		CompoundNBT tagCompound = stack.getTagCompound();
 		if (player.isSneaking()){
 			tagCompound.setInteger("targetWorld", world.provider.getDimension());
 			tagCompound.setInteger("targetX", pos.getX());
@@ -47,7 +47,7 @@ public class ItemTinkerHammer extends ItemBase {
 			tagCompound.setInteger("targetZ", pos.getZ());
 			world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 1.0f, 1.9f+Misc.random.nextFloat()*0.2f, false);
 			return EnumActionResult.SUCCESS;
-		} else if (tagCompound.hasKey("targetX")) {
+		} else if (tagCompound.contains("targetX")) {
 			boolean success = targetBlock(world, pos, face, stack);
 			if (success)
 				return EnumActionResult.SUCCESS;
@@ -55,8 +55,8 @@ public class ItemTinkerHammer extends ItemBase {
 		return EnumActionResult.FAIL;
 	}
 
-	public boolean targetBlock(World world, BlockPos pos, EnumFacing face, ItemStack stack) {
-		NBTTagCompound tagCompound = stack.getTagCompound();
+	public boolean targetBlock(World world, BlockPos pos, Direction face, ItemStack stack) {
+		CompoundNBT tagCompound = stack.getTagCompound();
 		int dimension = tagCompound.getInteger("targetWorld");
 		if (world.provider.getDimension() != dimension)
 			return false;
@@ -100,8 +100,8 @@ public class ItemTinkerHammer extends ItemBase {
 	@Override
 	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced){
 		if (stack.hasTagCompound()){
-			NBTTagCompound tagCompound = stack.getTagCompound();
-			if (tagCompound.hasKey("targetX")){
+			CompoundNBT tagCompound = stack.getTagCompound();
+			if (tagCompound.contains("targetX")){
 				int dimension = tagCompound.getInteger("targetWorld");
 				if(world.provider.getDimension() == dimension) {
 					BlockPos pos = new BlockPos(tagCompound.getInteger("targetX"), tagCompound.getInteger("targetY"), tagCompound.getInteger("targetZ"));

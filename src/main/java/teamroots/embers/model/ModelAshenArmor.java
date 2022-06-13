@@ -379,7 +379,7 @@ public class ModelAshenArmor extends ModelBiped {
                     ItemStack stack = ((EntityLivingBase) entity).getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                     if (stack.hasTagCompound()) {
                         for (int i = 1; i < 8; i++) {
-                            this.cape.childModels.get(i + 2).showModel = slot == EntityEquipmentSlot.CHEST && stack.getTagCompound().hasKey("gem" + i);
+                            this.cape.childModels.get(i + 2).showModel = slot == EntityEquipmentSlot.CHEST && stack.getTagCompound().contains("gem" + i);
                         }
                     }
                 }

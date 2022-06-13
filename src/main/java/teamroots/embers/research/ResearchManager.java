@@ -1,12 +1,12 @@
 package teamroots.embers.research;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -95,13 +95,13 @@ public class ResearchManager {
 
     @SubscribeEvent
     public void onJoin(EntityJoinWorldEvent event) {
-        if(event.getEntity() instanceof EntityPlayerMP && !event.getWorld().isRemote) {
-            EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+        if(event.getEntity() instanceof PlayerEntityMP && !event.getWorld().isRemote) {
+            PlayerEntityMP player = (PlayerEntityMP) event.getEntity();
             sendResearchData(player);
         }
     }
 
-    public static void sendResearchData(EntityPlayerMP player) {
+    public static void sendResearchData(PlayerEntityMP player) {
         IResearchCapability research = getPlayerResearch(player);
         if(research != null) {
             PacketHandler.INSTANCE.sendTo(new MessageResearchData(research.getCheckmarks()), player);
@@ -123,7 +123,7 @@ public class ResearchManager {
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event)
     {
-        if (event.getObject() instanceof EntityPlayer && !event.getCapabilities().containsKey(PLAYER_RESEARCH)) {
+        if (event.getObject() instanceof PlayerEntity && !event.getCapabilities().containsKey(PLAYER_RESEARCH)) {
             event.addCapability(PLAYER_RESEARCH,new ResearchCapabilityProvider(new DefaultResearchCapability()));
         }
     }
@@ -131,15 +131,15 @@ public class ResearchManager {
     @SubscribeEvent
     public void onClone(PlayerEvent.Clone event) {
         IResearchCapability oldCap = getPlayerResearch(event.getOriginal());
-        IResearchCapability newCap = getPlayerResearch(event.getEntityPlayer());
+        IResearchCapability newCap = getPlayerResearch(event.getPlayerEntity());
         if (oldCap != null && newCap != null) {
-            NBTTagCompound compound = new NBTTagCompound();
-            oldCap.writeToNBT(compound);
-            newCap.readFromNBT(compound);
+            CompoundNBT compound = new CompoundNBT();
+            oldCap.write(compound);
+            newCap.read(compound);
         }
     }
 
-    public static IResearchCapability getPlayerResearch(EntityPlayer player) {
+    public static IResearchCapability getPlayerResearch(PlayerEntity player) {
         if(player.hasCapability(ResearchCapabilityProvider.researchCapability,null)) {
             //Object o = player.getCapability(ResearchCapabilityProvider.researchCapability,null);
             return player.getCapability(ResearchCapabilityProvider.researchCapability,null);

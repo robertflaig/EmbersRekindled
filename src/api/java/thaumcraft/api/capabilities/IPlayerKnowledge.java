@@ -4,8 +4,8 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import thaumcraft.api.research.ResearchCategory;
 
@@ -18,7 +18,7 @@ import thaumcraft.api.research.ResearchCategory;
  * These methods are purely for manipulation of the players knowledge list without any checks or crosschecks.
  *
  */
-public interface IPlayerKnowledge extends INBTSerializable<NBTTagCompound>
+public interface IPlayerKnowledge extends INBTSerializable<CompoundNBT>
 {
 
     /**
@@ -146,7 +146,7 @@ public interface IPlayerKnowledge extends INBTSerializable<NBTTagCompound>
 	/**
      * @param player the player to sync
      */
-	void sync(EntityPlayerMP player);
+	void sync(PlayerEntityMP player);
    
 	public enum EnumKnowledgeType {
 		THEORY(32,true,"T"),

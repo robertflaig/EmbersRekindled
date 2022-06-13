@@ -6,9 +6,9 @@ import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApi.EntityTagsNBT;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -76,10 +76,10 @@ public class AspectHelper {
 	public static AspectList getEntityAspects(Entity entity) { 		
 		AspectList tags = null;               
 		String entityString = EntityList.getEntityString(entity);
-	    if (entity instanceof EntityPlayer) {
+	    if (entity instanceof PlayerEntity) {
 	    	tags = new AspectList();
 	    	tags.add(Aspect.MAN, 4);        	
-			Random rand = new Random(((EntityPlayer)entity).getName().hashCode());
+			Random rand = new Random(((PlayerEntity)entity).getName().hashCode());
 	    	Aspect[] posa = Aspect.aspects.values().toArray(new Aspect[]{});
 			tags.add(posa[rand.nextInt(posa.length)], 15);
 	    	tags.add(posa[rand.nextInt(posa.length)], 15);
@@ -91,10 +91,10 @@ public class AspectHelper {
 				if (et.nbts==null || et.nbts.length==0) {
 					tags = et.aspects;
 				} else {
-					NBTTagCompound tc = new NBTTagCompound();
-					entity.writeToNBT(tc);
+					CompoundNBT tc = new CompoundNBT();
+					entity.write(tc);
 					for (EntityTagsNBT nbt:et.nbts) {
-						if (tc.hasKey(nbt.name)) {
+						if (tc.contains(nbt.name)) {
 							if (!ThaumcraftApiHelper.getNBTDataFromId(tc, tc.getTagId(nbt.name), nbt.name).equals(nbt.value)) continue f1; 
 						} else {
 							continue f1;

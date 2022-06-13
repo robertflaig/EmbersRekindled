@@ -1,7 +1,7 @@
 package thaumcraft.api.research;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.ThaumcraftApiHelper;
 
@@ -16,7 +16,7 @@ public class ScanItem implements IScanThing {
 	}
 
 	@Override
-	public boolean checkThing(EntityPlayer player, Object obj) {	
+	public boolean checkThing(PlayerEntity player, Object obj) {
 		if (obj == null) return false;
 		
 		ItemStack is = null;
@@ -30,7 +30,7 @@ public class ScanItem implements IScanThing {
 	}
 
 	@Override
-	public String getResearchKey(EntityPlayer player, Object object) {
+	public String getResearchKey(PlayerEntity player, Object object) {
 		return research;
 	}
 	

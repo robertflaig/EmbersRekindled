@@ -2,7 +2,7 @@ package teamroots.embers.api.upgrades;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -11,13 +11,13 @@ import teamroots.embers.api.event.UpgradeEvent;
 import java.util.List;
 
 public interface IUpgradeUtil {
-    List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, EnumFacing[] facings);
+    List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, Direction[] facings);
 
-    List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, EnumFacing[] facings);
+    List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, Direction[] facings);
 
-    void getUpgrades(World world, BlockPos pos, EnumFacing[] facings, List<IUpgradeProvider> upgrades);
+    void getUpgrades(World world, BlockPos pos, Direction[] facings, List<IUpgradeProvider> upgrades);
 
-    void collectUpgrades(World world, BlockPos pos, EnumFacing side, List<IUpgradeProvider> upgrades);
+    void collectUpgrades(World world, BlockPos pos, Direction side, List<IUpgradeProvider> upgrades);
 
     void verifyUpgrades(TileEntity tile, List<IUpgradeProvider> list);
 

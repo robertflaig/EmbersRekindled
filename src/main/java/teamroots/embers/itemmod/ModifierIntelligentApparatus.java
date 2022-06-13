@@ -1,6 +1,6 @@
 package teamroots.embers.itemmod;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -22,7 +22,7 @@ public class ModifierIntelligentApparatus extends ModifierBase {
     @SubscribeEvent
     public void onXPDrop(LivingExperienceDropEvent event) {
         if (event.getAttackingPlayer() != null) {
-            EntityPlayer player = event.getAttackingPlayer();
+            PlayerEntity player = event.getAttackingPlayer();
             int level = ItemModUtil.getArmorModifierLevel(player, EmbersAPI.INTELLIGENT_APPARATUS);
             if (level > 0 && EmberInventoryUtil.getEmberTotal(player) >= cost) {
                 EmberInventoryUtil.removeEmber(player, cost);

@@ -1,6 +1,6 @@
 package thaumcraft.api.internal;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,13 +16,13 @@ import thaumcraft.api.research.ResearchCategory;
 public class DummyInternalMethodHandler implements IInternalMethodHandler {
 	
 	@Override
-	public boolean completeResearch(EntityPlayer player, String researchkey) {
+	public boolean completeResearch(PlayerEntity player, String researchkey) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void addWarpToPlayer(EntityPlayer player, int amount, EnumWarpType type) {
+	public void addWarpToPlayer(PlayerEntity player, int amount, EnumWarpType type) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -112,7 +112,7 @@ public class DummyInternalMethodHandler implements IInternalMethodHandler {
 	}
 
 	@Override
-	public boolean shouldPreserveAura(World world, EntityPlayer player,
+	public boolean shouldPreserveAura(World world, PlayerEntity player,
 			BlockPos pos) {
 		// TODO Auto-generated method stub
 		return false;
@@ -125,25 +125,25 @@ public class DummyInternalMethodHandler implements IInternalMethodHandler {
 	}
 
 	@Override
-	public boolean doesPlayerHaveRequisites(EntityPlayer player, String researchkey) {
+	public boolean doesPlayerHaveRequisites(PlayerEntity player, String researchkey) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean addKnowledge(EntityPlayer player, EnumKnowledgeType type, ResearchCategory field, int amount) {
+	public boolean addKnowledge(PlayerEntity player, EnumKnowledgeType type, ResearchCategory field, int amount) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean progressResearch(EntityPlayer player, String researchkey) {
+	public boolean progressResearch(PlayerEntity player, String researchkey) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int getActualWarp(EntityPlayer player) {
+	public int getActualWarp(PlayerEntity player) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

@@ -2,9 +2,9 @@ package thaumcraft.api.research.theorycraft;
 
 import java.util.Arrays;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 /**
  * See CardAnalyze for an example
@@ -31,7 +31,7 @@ public abstract class TheorycraftCard {
 	 * @param data
 	 * @return if the card can not be initialized for some reason it will be discarded and a new one created.
 	 */
-	public boolean initialize(EntityPlayer player, ResearchTableData data) { 
+	public boolean initialize(PlayerEntity player, ResearchTableData data) { 
 		return true;
 	}
 
@@ -103,7 +103,7 @@ public abstract class TheorycraftCard {
 	 * @param data
 	 * @return if the action was successful
 	 */
-	public abstract boolean activate(EntityPlayer player, ResearchTableData data);
+	public abstract boolean activate(PlayerEntity player, ResearchTableData data);
 	
 	
 	/**
@@ -118,8 +118,8 @@ public abstract class TheorycraftCard {
 	 * Called when card is saved
 	 * @return
 	 */
-	public NBTTagCompound serialize() {
-		NBTTagCompound nbt = new NBTTagCompound();		
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = new CompoundNBT();		
 		nbt.setLong("seed", seed);
 		return nbt;
 	}
@@ -128,7 +128,7 @@ public abstract class TheorycraftCard {
 	 * Called when card is loaded
 	 * @param nbt
 	 */
-	public void deserialize(NBTTagCompound nbt) {	
+	public void deserialize(CompoundNBT nbt) {	
 		if (nbt == null) return;	
 		seed = nbt.getLong("seed");		
 	}

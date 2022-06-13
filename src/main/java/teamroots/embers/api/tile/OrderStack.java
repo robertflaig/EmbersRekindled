@@ -1,7 +1,7 @@
 package teamroots.embers.api.tile;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,8 +22,8 @@ public class OrderStack {
         this.size = size;
     }
 
-    public OrderStack(NBTTagCompound tag) {
-        readFromNBT(tag);
+    public OrderStack(CompoundNBT tag) {
+        read(tag);
     }
 
     public BlockPos getPos() {
@@ -63,16 +63,16 @@ public class OrderStack {
         size += n;
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+    public CompoundNBT write(CompoundNBT tag) {
         tag.setInteger("x",pos.getX());
         tag.setInteger("y",pos.getY());
         tag.setInteger("z",pos.getZ());
-        tag.setTag("filter", filter.writeToNBT(new NBTTagCompound()));
+        tag.setTag("filter", filter.write(new CompoundNBT()));
         tag.setInteger("size", size);
         return tag;
     }
 
-    public void readFromNBT(NBTTagCompound tag) {
+    public void read(CompoundNBT tag) {
         pos = new BlockPos(tag.getInteger("x"),tag.getInteger("y"),tag.getInteger("z"));
         filter = FilterUtil.deserializeFilter(tag.getCompoundTag("filter"));
         size = tag.getInteger("size");

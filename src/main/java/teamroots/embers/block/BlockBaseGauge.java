@@ -4,10 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -45,21 +45,21 @@ public abstract class BlockBaseGauge extends BlockTEBase implements teamroots.em
 
     @Override
     public IBlockState getStateFromMeta(int meta){
-        return getDefaultState().withProperty(facing, EnumFacing.getFront(meta));
+        return getDefaultState().withProperty(facing, Direction.getFront(meta));
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
+    public IBlockState getStateForPlacement(World world, BlockPos pos, Direction face, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
         return getDefaultState().withProperty(facing, face);
     }
 
     @Override
-    public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+    public boolean isSideSolid(BlockState state, IBlockAccess world, BlockPos pos, Direction side){
         return false;
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
         if (world.isAirBlock(pos.offset(state.getValue(facing),-1))){
             world.setBlockToAir(pos);
             this.dropBlockAsItem(world, pos, state, 0);
@@ -67,7 +67,7 @@ public abstract class BlockBaseGauge extends BlockTEBase implements teamroots.em
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+    public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
         switch (state.getValue(facing)){
             case UP:
                 return new AxisAlignedBB(0.3125,0,0.3125,0.6875,0.125,0.6875);
@@ -88,7 +88,7 @@ public abstract class BlockBaseGauge extends BlockTEBase implements teamroots.em
     @Override
     public List<String> getDisplayInfo(World world, BlockPos pos, IBlockState state) {
         ArrayList<String> text = new ArrayList<>();
-        EnumFacing facing = state.getValue(BlockBaseGauge.facing);
+        Direction facing = state.getValue(BlockBaseGauge.facing);
         TileEntity tileEntity = world.getTileEntity(pos.offset(facing.getOpposite()));
         if (tileEntity != null){
             getTEData(facing, text, tileEntity);
@@ -98,10 +98,10 @@ public abstract class BlockBaseGauge extends BlockTEBase implements teamroots.em
         return text;
     }
 
-    protected abstract void getTEData(EnumFacing facing, ArrayList<String> text, TileEntity tileEntity);
+    protected abstract void getTEData(Direction facing, ArrayList<String> text, TileEntity tileEntity);
 
     @Override
-    public void updateTEData(World world, IBlockState state, BlockPos pos) {
+    public void updateTEData(World world, BlockState state, BlockPos pos) {
         BlockPos tilePos = pos.offset(state.getValue(facing).getOpposite());
         TileEntity tile = world.getTileEntity(tilePos);
         if (tile != null){

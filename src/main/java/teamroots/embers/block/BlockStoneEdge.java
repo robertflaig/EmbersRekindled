@@ -3,10 +3,10 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -39,7 +39,7 @@ public class BlockStoneEdge extends BlockBase {
 	public static final AxisAlignedBB AABB_NXNZCORNER = new AxisAlignedBB(0.25,0,0.25,1,1,1);
 	
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		if (state.getValue(BlockStoneEdge.state) == 9 || state.getValue(BlockStoneEdge.state) == 4){
 			return AABB_ZFACE;
 		}
@@ -62,7 +62,7 @@ public class BlockStoneEdge extends BlockBase {
 	}
 
     @Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean b)
+	public void addCollisionBoxToList(BlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean b)
     {
 		if (state.getValue(BlockStoneEdge.state) == 9 || state.getValue(BlockStoneEdge.state) == 4){
 	        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_ZFACE);
@@ -93,7 +93,7 @@ public class BlockStoneEdge extends BlockBase {
 	}
 	
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		List<ItemStack> list =  new ArrayList<ItemStack>();
 		if (state.getValue(BlockStoneEdge.state) == 8){
 			list.add(new ItemStack(this,1));
@@ -116,9 +116,9 @@ public class BlockStoneEdge extends BlockBase {
 		return getDefaultState().withProperty(state,meta);
 	}
 	
-	public void breakBlockSafe(World world, BlockPos pos, EntityPlayer player){
+	public void breakBlockSafe(World world, BlockPos pos, PlayerEntity player){
 		if (world.getTileEntity(pos) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world, pos, world.getBlockState(pos), player);
+			((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world, pos, world.getBlockState(pos), player);
 		}
 		if (world.getBlockState(pos).getBlock() == this){
 			if (world.getBlockState(pos).getValue(BlockStoneEdge.state) == 8){
@@ -138,7 +138,7 @@ public class BlockStoneEdge extends BlockBase {
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		if (state.getValue(BlockStoneEdge.state) == 9){
 			breakBlockSafe(world,pos.south(),player);
 			breakBlockSafe(world,pos.south(2),player);

@@ -1,17 +1,17 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,7 +32,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEntityBase, ITickable, IExtraCapabilityInformation {
+public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEntityBase, ITickableTileEntity, IExtraCapabilityInformation {
 	public static int capacity = Fluid.BUCKET_VOLUME*4;
 	public double angle = 0;
 	int ticksExisted = 0;
@@ -58,7 +58,7 @@ public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEnt
 			public int fill(FluidStack resource, boolean doFill) {
 				if(Misc.isGaseousFluid(resource)) {
 					setEscapedFluid(resource);
-					return resource.amount;
+					return resource.getAmount();
 				}
 				return super.fill(resource, doFill);
 			}
@@ -69,39 +69,39 @@ public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEnt
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
 		tag.setTag("inventory", inventory.serializeNBT());
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
-		if (tag.hasKey("inventory")){
+	public void read(CompoundNBT tag){
+		super.read(tag);
+		if (tag.contains("inventory")){
 			inventory.deserializeNBT(tag.getCompoundTag("inventory"));
 		}
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = player.getHeldItem(hand);
 		if (!heldItem.isEmpty()){
 			boolean didFill = FluidUtil.interactWithFluidHandler(player, hand, this.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side));
@@ -159,14 +159,14 @@ public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEnt
 
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		Misc.spawnInventoryInWorld(world, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, inventory);
 		world.setTileEntity(pos, null);
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return true;
 		}
@@ -174,7 +174,7 @@ public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEnt
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return (T)this.inventory;
 		}
@@ -182,7 +182,7 @@ public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEnt
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		angle ++;
 		ticksExisted ++;
 		if (ticksExisted % 10 == 0){
@@ -220,7 +220,7 @@ public class TileEntityFurnaceTop extends TileEntityOpenTank implements ITileEnt
 	}
 
 	@Override
-	public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+	public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.INPUT,"embers.tooltip.goggles.item", null));
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)

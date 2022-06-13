@@ -2,9 +2,9 @@ package teamroots.embers.apiimpl;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import teamroots.embers.api.itemmod.IItemModUtil;
@@ -44,12 +44,12 @@ class ItemModUtilImpl implements IItemModUtil {
 
     @Override
     public List<ModifierBase> getModifiers(ItemStack stack) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTagCompound();
             NBTTagList tagModifiers = tagCompound.getCompoundTag(IItemModUtil.HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
             if (tagModifiers.tagCount() > 0) {
                 List<ModifierBase> results = new ArrayList<>();
                 for (int i = 0; i < tagModifiers.tagCount(); i++) {
-                    NBTTagCompound tagModifier = tagModifiers.getCompoundTagAt(i);
+                    CompoundNBT tagModifier = tagModifiers.getCompoundTagAt(i);
                     String name = tagModifier.getString("name");
                     ModifierBase modifier = getModifier(name);
                     if(modifier != null)
@@ -77,14 +77,14 @@ class ItemModUtilImpl implements IItemModUtil {
 
     @Override
     public List<ItemStack> removeAllModifiers(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTagCompound();
         NBTTagList tagModifiers = tagCompound.getCompoundTag(IItemModUtil.HEAT_TAG).getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
         if (tagModifiers.tagCount() > 0){ //TODO: cleanup
             List<ItemStack> results = new ArrayList<>();
             NBTTagList remainingModifiers = new NBTTagList();
             List<ModifierBase> removedModifiers = new ArrayList<>();
             for (int i = 0; i < tagModifiers.tagCount(); i ++){
-                NBTTagCompound tagModifier = tagModifiers.getCompoundTagAt(i);
+                CompoundNBT tagModifier = tagModifiers.getCompoundTagAt(i);
                 ItemStack s = new ItemStack(tagModifier.getCompoundTag("item"));
                 ModifierBase modifier = getModifier(s);
                 if (modifier != null){

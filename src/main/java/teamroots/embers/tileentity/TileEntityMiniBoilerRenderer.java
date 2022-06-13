@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -35,7 +35,7 @@ public class TileEntityMiniBoilerRenderer extends TileEntitySpecialRenderer<Tile
             Tessellator tess = Tessellator.getInstance();
             BufferBuilder buffer = tess.getBuffer();
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-			for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+			for (Direction facing : Direction.HORIZONTALS) {
 				if(shouldRenderPipe(tile, facing))
 					PipeRenderUtil.addPipe(buffer, x, y, z, facing);
 				if(shouldRenderLip(tile, facing))
@@ -46,7 +46,7 @@ public class TileEntityMiniBoilerRenderer extends TileEntitySpecialRenderer<Tile
         }
 	}
 
-	private EnumPipeConnection getPipeConnection(World world, BlockPos pos, EnumFacing facing) {
+	private EnumPipeConnection getPipeConnection(World world, BlockPos pos, Direction facing) {
 		TileEntity tile = world.getTileEntity(pos.offset(facing));
 		if (tile instanceof IFluidPipeConnectable) {
 			return ((IFluidPipeConnectable) tile).getConnection(facing.getOpposite());
@@ -56,12 +56,12 @@ public class TileEntityMiniBoilerRenderer extends TileEntitySpecialRenderer<Tile
 		return EnumPipeConnection.NONE;
 	}
 
-	private boolean shouldRenderLip(TileEntityMiniBoiler pipe, EnumFacing facing) {
+	private boolean shouldRenderLip(TileEntityMiniBoiler pipe, Direction facing) {
 		EnumPipeConnection connection = getPipeConnection(pipe.getWorld(), pipe.getPos(), facing);
 		return connection == EnumPipeConnection.BLOCK || connection == EnumPipeConnection.LEVER;
 	}
 
-	private boolean shouldRenderPipe(TileEntityMiniBoiler pipe, EnumFacing facing) {
+	private boolean shouldRenderPipe(TileEntityMiniBoiler pipe, Direction facing) {
 		EnumPipeConnection connection = getPipeConnection(pipe.getWorld(), pipe.getPos(), facing);
 		return connection == EnumPipeConnection.PIPE || shouldRenderLip(pipe,facing);
 	}

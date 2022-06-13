@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import teamroots.embers.Embers;
@@ -31,7 +31,7 @@ public class TileEntityEmberPipeRenderer extends TileEntitySpecialRenderer<TileE
             Tessellator tess = Tessellator.getInstance();
             BufferBuilder buffer = tess.getBuffer();
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-			for (EnumFacing facing : EnumFacing.VALUES) {
+			for (Direction facing : Direction.VALUES) {
 				if(shouldRenderPipe(tile, facing))
 					PipeRenderUtil.addPipe(buffer, x, y, z, facing);
 				if(shouldRenderLip(tile, facing))
@@ -42,12 +42,12 @@ public class TileEntityEmberPipeRenderer extends TileEntitySpecialRenderer<TileE
         }
 	}
 
-	private boolean shouldRenderLip(TileEntityEmberPipe pipe, EnumFacing facing) {
+	private boolean shouldRenderLip(TileEntityEmberPipe pipe, Direction facing) {
 		EnumPipeConnection connection = pipe.getInternalConnection(facing);
 		return connection == EnumPipeConnection.BLOCK || connection == EnumPipeConnection.LEVER;
 	}
 
-	private boolean shouldRenderPipe(TileEntityEmberPipe pipe, EnumFacing facing) {
+	private boolean shouldRenderPipe(TileEntityEmberPipe pipe, Direction facing) {
 		EnumPipeConnection connection = pipe.getInternalConnection(facing);
 		return connection == EnumPipeConnection.PIPE || shouldRenderLip(pipe,facing);
 	}

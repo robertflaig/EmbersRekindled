@@ -1,7 +1,7 @@
 package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -41,7 +41,7 @@ public class MessageResearchTick implements IMessage {
     public static class MessageHolder implements IMessageHandler<MessageResearchTick, IMessage> {
         @Override
         public IMessage onMessage(final MessageResearchTick message, final MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
+            PlayerEntityMP player = ctx.getServerHandler().player;
             WorldServer world = player.getServerWorld();
             world.addScheduledTask(() -> {
                 IResearchCapability research = ResearchManager.getPlayerResearch(player);

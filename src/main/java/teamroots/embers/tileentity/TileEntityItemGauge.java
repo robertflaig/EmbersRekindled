@@ -2,7 +2,7 @@ package teamroots.embers.tileentity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -11,7 +11,7 @@ import teamroots.embers.block.BlockItemGauge;
 
 public class TileEntityItemGauge extends TileEntityBaseGauge {
     @Override
-    public int calculateComparatorValue(TileEntity tileEntity, EnumFacing facing) {
+    public int calculateComparatorValue(TileEntity tileEntity, Direction facing) {
         int comparatorValue = 0;
         if(tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,facing)) {
             IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,facing);

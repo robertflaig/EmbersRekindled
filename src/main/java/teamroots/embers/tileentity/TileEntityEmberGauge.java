@@ -1,7 +1,7 @@
 package teamroots.embers.tileentity;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import teamroots.embers.api.capabilities.EmbersCapabilities;
 import teamroots.embers.api.power.IEmberCapability;
 import teamroots.embers.api.tile.IExtraDialInformation;
@@ -9,7 +9,7 @@ import teamroots.embers.block.BlockEmberGauge;
 
 public class TileEntityEmberGauge extends TileEntityBaseGauge {
     @Override
-    public int calculateComparatorValue(TileEntity tileEntity, EnumFacing facing) {
+    public int calculateComparatorValue(TileEntity tileEntity, Direction facing) {
         int comparatorValue = 0;
         if(tileEntity.hasCapability(EmbersCapabilities.EMBER_CAPABILITY,facing)) {
             IEmberCapability capability = tileEntity.getCapability(EmbersCapabilities.EMBER_CAPABILITY,facing);

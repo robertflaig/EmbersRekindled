@@ -2,7 +2,7 @@ package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -45,7 +45,7 @@ public class MessagePlayerJetFX implements IMessage {
         public IMessage onMessage(final MessagePlayerJetFX message, final MessageContext ctx) {
     		World world = Minecraft.getMinecraft().world;
 			Minecraft.getMinecraft().addScheduledTask(()-> {
-				EntityPlayer p = world.getPlayerEntityByUUID(message.id);
+				PlayerEntity p = world.getPlayerEntityByUUID(message.id);
 				if (p != null) {
 					for (int i = 0; i < 40; i++) {
 						ParticleUtil.spawnParticleSmoke(world, (float) p.posX - (float) p.motionX - (float) p.getLookVec().x * 0.5f, (float) p.posY + p.height / 4.0f, (float) p.posZ - (float) p.motionZ - (float) p.getLookVec().z * 0.5f, -(float) p.motionX + 0.25f * (random.nextFloat() - 0.5f), -(float) p.motionY + 0.25f * (random.nextFloat() - 0.5f), -(float) p.motionZ + 0.25f * (random.nextFloat() - 0.5f), 80, 80, 80, 0.25f + 0.25f * random.nextFloat(), 4.0f + random.nextFloat() * 20.0f, 80);

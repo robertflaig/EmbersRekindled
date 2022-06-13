@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -191,7 +191,7 @@ public class ModifierShiftingScales extends ModifierBase {
             scales -= absorbed;
             damage -= absorbed;
             if ((int) scales < (int) prevScales) {
-                entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundManager.SHIFTING_SCALES_BREAK, entity instanceof EntityPlayer ? SoundCategory.PLAYERS : SoundCategory.HOSTILE, 10.0f, 1.0f);
+                entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundManager.SHIFTING_SCALES_BREAK, entity instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE, 10.0f, 1.0f);
             }
             EmbersAPI.setScales(entity, scales);
             event.setAmount((float) ((damage == 0 ? 0 : damage / multiplier) + extraDamage));
@@ -204,7 +204,7 @@ public class ModifierShiftingScales extends ModifierBase {
         ScaledResolution resolution = event.getResolution();
         if (event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
             Minecraft mc = Minecraft.getMinecraft();
-            EntityPlayer player = mc.player;
+            PlayerEntity player = mc.player;
             mc.renderEngine.bindTexture(TEXTURE_HUD);
             int x = getBarX(resolution);
             int y = getBarY(resolution);
@@ -258,7 +258,7 @@ public class ModifierShiftingScales extends ModifierBase {
     public void onDrawScreenPost(RenderGameOverlayEvent.Post event) {
         ScaledResolution resolution = event.getResolution();
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.player;
+        PlayerEntity player = mc.player;
         mc.renderEngine.bindTexture(TEXTURE_HUD);
         Iterator<ShardParticle> iterator = shards.iterator();
         GlStateManager.enableAlpha();

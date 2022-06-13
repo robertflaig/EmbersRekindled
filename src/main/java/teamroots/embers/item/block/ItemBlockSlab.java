@@ -2,16 +2,16 @@ package teamroots.embers.item.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -42,11 +42,11 @@ public class ItemBlockSlab extends ItemBlock implements IModeledItem {
 		return tab;
 	}
 	
-	public void decrementHeldStack(EntityPlayer player, ItemStack stack, EnumHand hand){
+	public void decrementHeldStack(PlayerEntity player, ItemStack stack, Hand hand){
 		if (!player.capabilities.isCreativeMode){
 			stack.shrink(1);
 			if (stack.getCount() == 0){
-				player.setItemStackToSlot(hand == EnumHand.MAIN_HAND ? EntityEquipmentSlot.MAINHAND : EntityEquipmentSlot.OFFHAND, ItemStack.EMPTY);
+				player.setItemStackToSlot(hand == Hand.MAIN_HAND ? EntityEquipmentSlot.MAINHAND : EntityEquipmentSlot.OFFHAND, ItemStack.EMPTY);
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class ItemBlockSlab extends ItemBlock implements IModeledItem {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+	public EnumActionResult onItemUse(PlayerEntity playerIn, World worldIn, BlockPos pos, Hand hand, Direction side, float hitX, float hitY, float hitZ)
 	{
 		ItemStack stack = playerIn.getHeldItem(hand);
 		if (stack.getCount() == 0)
@@ -77,8 +77,8 @@ public class ItemBlockSlab extends ItemBlock implements IModeledItem {
 			{
 				BlockSlab.EnumBlockHalf enumblockhalf = iblockstate.getValue(BlockSlab.HALF);
 
-				if ((side == EnumFacing.UP && enumblockhalf == BlockSlab.EnumBlockHalf.BOTTOM
-					     || side == EnumFacing.DOWN && enumblockhalf == BlockSlab.EnumBlockHalf.TOP))
+				if ((side == Direction.UP && enumblockhalf == BlockSlab.EnumBlockHalf.BOTTOM
+					     || side == Direction.DOWN && enumblockhalf == BlockSlab.EnumBlockHalf.TOP))
 				{
 					IBlockState iblockstate1 = this.doubleSlab.getDefaultState();
 
@@ -109,7 +109,7 @@ public class ItemBlockSlab extends ItemBlock implements IModeledItem {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean canPlaceBlockOnSide(World worldIn, BlockPos p_179222_2_, EnumFacing p_179222_3_, EntityPlayer p_179222_4_, ItemStack p_179222_5_)
+	public boolean canPlaceBlockOnSide(World worldIn, BlockPos p_179222_2_, Direction p_179222_3_, PlayerEntity p_179222_4_, ItemStack p_179222_5_)
 	{
 		BlockPos blockpos1 = p_179222_2_;
 		IBlockState iblockstate = worldIn.getBlockState(p_179222_2_);
@@ -118,7 +118,7 @@ public class ItemBlockSlab extends ItemBlock implements IModeledItem {
 		{
 			boolean flag = iblockstate.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP;
 
-			if ((p_179222_3_ == EnumFacing.UP && !flag || p_179222_3_ == EnumFacing.DOWN && flag))
+			if ((p_179222_3_ == Direction.UP && !flag || p_179222_3_ == Direction.DOWN && flag))
 			{
 				return true;
 			}

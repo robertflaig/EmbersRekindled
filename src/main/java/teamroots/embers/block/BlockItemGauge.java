@@ -1,11 +1,11 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -24,7 +24,7 @@ public class BlockItemGauge extends BlockBaseGauge {
 	}
 
 	@Override
-	protected void getTEData(EnumFacing facing, ArrayList<String> text, TileEntity tileEntity) {
+	protected void getTEData(Direction facing, ArrayList<String> text, TileEntity tileEntity) {
 		if (tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)){
 			IItemHandler handler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
 			if (handler != null){

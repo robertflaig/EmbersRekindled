@@ -1,7 +1,7 @@
 package teamroots.embers.api.filter;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 
@@ -18,7 +18,7 @@ public interface IFilter {
 
     String formatFilter();
 
-    NBTTagCompound writeToNBT(NBTTagCompound tag);
+    CompoundNBT write(CompoundNBT tag);
 
-    void readFromNBT(NBTTagCompound tag);
+    void read(CompoundNBT tag);
 }

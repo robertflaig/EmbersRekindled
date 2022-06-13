@@ -2,7 +2,7 @@ package thaumcraft.api.crafting;
 
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
@@ -55,7 +55,7 @@ public class InfusionRecipe implements IThaumcraftRecipe
      * Used to check if a recipe matches current crafting inventory
      * @param player 
      */
-	public boolean matches(List<ItemStack> input, ItemStack central, World world, EntityPlayer player) {
+	public boolean matches(List<ItemStack> input, ItemStack central, World world, PlayerEntity player) {
 		if (getRecipeInput()==null) return false;			
 		if (!ThaumcraftCapabilities.getKnowledge(player).isResearchKnown(research)) {
     		return false;
@@ -84,15 +84,15 @@ public class InfusionRecipe implements IThaumcraftRecipe
 		return aspects;
 	}			
 	
-	public Object getRecipeOutput(EntityPlayer player, ItemStack input, List<ItemStack> comps ) {
+	public Object getRecipeOutput(PlayerEntity player, ItemStack input, List<ItemStack> comps ) {
 		return recipeOutput;
     }
     
-    public AspectList getAspects(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
+    public AspectList getAspects(PlayerEntity player, ItemStack input, List<ItemStack> comps) {
 		return aspects;
     }
     
-    public int getInstability(EntityPlayer player, ItemStack input, List<ItemStack> comps) {
+    public int getInstability(PlayerEntity player, ItemStack input, List<ItemStack> comps) {
 		return instability;
     }
     

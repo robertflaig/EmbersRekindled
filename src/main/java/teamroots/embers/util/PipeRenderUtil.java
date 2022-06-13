@@ -1,7 +1,7 @@
 package teamroots.embers.util;
 
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 //TODO: maybe switch this over to models
 public class PipeRenderUtil {
@@ -18,7 +18,7 @@ public class PipeRenderUtil {
     public static StructBox westEnd = new StructBox(0.25,0.3125,0.3125,0,0.6875,0.6875,new StructUV[]{new StructUV(0,6,6,10,16,16),new StructUV(0,6,6,10,16,16),new StructUV(6,6,10,0,16,16),new StructUV(6,6,10,0,16,16),new StructUV(0,0,6,6,16,16),new StructUV(0,0,6,6,16,16)});
     public static StructBox eastEnd = new StructBox(0.75,0.3125,0.3125,1.0,0.6875,0.6875,new StructUV[]{new StructUV(0,6,6,10,16,16),new StructUV(0,6,6,10,16,16),new StructUV(6,6,10,0,16,16),new StructUV(6,6,10,0,16,16),new StructUV(0,0,6,6,16,16),new StructUV(0,0,6,6,16,16)});
 
-    private static StructBox getPipe(EnumFacing facing) {
+    private static StructBox getPipe(Direction facing) {
         switch (facing) {
             case DOWN:
                 return down;
@@ -37,7 +37,7 @@ public class PipeRenderUtil {
         }
     }
 
-    private static StructBox getPipeEnd(EnumFacing facing) {
+    private static StructBox getPipeEnd(Direction facing) {
         switch (facing) {
             case DOWN:
                 return downEnd;
@@ -56,7 +56,7 @@ public class PipeRenderUtil {
         }
     }
 
-    private static int[] getInversions(EnumFacing facing) {
+    private static int[] getInversions(Direction facing) {
         switch (facing) {
             case DOWN:
                 return new int[]{-1,-1,1,1,1,1};
@@ -75,20 +75,20 @@ public class PipeRenderUtil {
         }
     }
 
-    public static void addPipePart(BufferBuilder buffer, StructBox box, double x, double y, double z, EnumFacing facing) {
+    public static void addPipePart(BufferBuilder buffer, StructBox box, double x, double y, double z, Direction facing) {
         int[] inversions = getInversions(facing);
         RenderUtil.addBox(buffer, x + box.x1, y + box.y1, z + box.z1, x + box.x2, y + box.y2, z + box.z2, box.textures, inversions);
     }
 
-    public static void addPipe(BufferBuilder buffer, double x, double y, double z, EnumFacing facing) {
+    public static void addPipe(BufferBuilder buffer, double x, double y, double z, Direction facing) {
         addPipePart(buffer, getPipe(facing), x, y, z, facing);
     }
 
-    public static void addPipeLip(BufferBuilder buffer, double x, double y, double z, EnumFacing facing) {
+    public static void addPipeLip(BufferBuilder buffer, double x, double y, double z, Direction facing) {
         addPipePart(buffer, getPipeEnd(facing), x, y, z, facing);
     }
 
-    public static void addPipeEnd(BufferBuilder buffer, double x, double y, double z, EnumFacing facing) {
+    public static void addPipeEnd(BufferBuilder buffer, double x, double y, double z, Direction facing) {
         addPipePart(buffer, getPipe(facing), x, y, z, facing);
         addPipePart(buffer, getPipeEnd(facing), x, y, z, facing);
     }

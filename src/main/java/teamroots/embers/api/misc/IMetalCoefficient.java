@@ -1,6 +1,6 @@
 package teamroots.embers.api.misc;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 public interface IMetalCoefficient {
     boolean matches(IBlockState state);

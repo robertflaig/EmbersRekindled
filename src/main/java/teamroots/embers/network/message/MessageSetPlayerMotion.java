@@ -2,7 +2,7 @@ package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -54,7 +54,7 @@ public class MessageSetPlayerMotion implements IMessage {
         public IMessage onMessage(final MessageSetPlayerMotion message, final MessageContext ctx) {
     		World world = Minecraft.getMinecraft().world;
 			Minecraft.getMinecraft().addScheduledTask(()-> {
-				EntityPlayer p = world.getPlayerEntityByUUID(message.id);
+				PlayerEntity p = world.getPlayerEntityByUUID(message.id);
 				if (p != null) {
 					p.motionX = message.posX;
 					p.motionY = message.posY;

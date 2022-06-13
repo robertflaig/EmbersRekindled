@@ -3,13 +3,13 @@ package teamroots.embers.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -28,7 +28,7 @@ public class BlockFieldChart extends BlockTEBase {
 	public static final AxisAlignedBB AABB_BASE = new AxisAlignedBB(0,0,0,1,0.375f,1);
 	
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return AABB_BASE;
 	}
 	
@@ -37,12 +37,12 @@ public class BlockFieldChart extends BlockTEBase {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ){
 		return false;
 	}
 	
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		List<ItemStack> list =  new ArrayList<ItemStack>();
 		if (state.getValue(BlockFieldChart.state) == 8){
 			list.add(new ItemStack(this,1));
@@ -65,9 +65,9 @@ public class BlockFieldChart extends BlockTEBase {
 		return getDefaultState().withProperty(state,meta);
 	}
 	
-	public void breakBlockSafe(World world, BlockPos pos, EntityPlayer player){
+	public void breakBlockSafe(World world, BlockPos pos, PlayerEntity player){
 		if (world.getTileEntity(pos) instanceof ITileEntityBase){
-			((ITileEntityBase)world.getTileEntity(pos)).breakBlock(world, pos, world.getBlockState(pos), player);
+			((ITileEntityBase)world.getTileEntity(pos)).onHarvest(world, pos, world.getBlockState(pos), player);
 		}
 		if (world.getBlockState(pos).getBlock() == this){
 			if (world.getBlockState(pos).getValue(BlockFieldChart.state) == 8){
@@ -80,7 +80,7 @@ public class BlockFieldChart extends BlockTEBase {
 	}
 	
 	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player){
+	public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player){
 		if (state.getValue(BlockFieldChart.state) == 9){
 			breakBlockSafe(world,pos.south(),player);
 			breakBlockSafe(world,pos.south(2),player);

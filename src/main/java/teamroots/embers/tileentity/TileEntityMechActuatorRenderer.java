@@ -5,14 +5,14 @@ import mysticalmechanics.api.GearHelperTile;
 import mysticalmechanics.api.MysticalMechanicsAPI;
 import mysticalmechanics.block.BlockGearbox;
 import mysticalmechanics.tileentity.TileEntityGearbox;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import teamroots.embers.block.BlockMechActuator;
 
 public class TileEntityMechActuatorRenderer extends TileEntitySpecialRenderer<TileEntityMechActuator> {
@@ -25,11 +25,11 @@ public class TileEntityMechActuatorRenderer extends TileEntitySpecialRenderer<Ti
         if (tile != null){
             IBlockState state = tile.getWorld().getBlockState(tile.getPos());
             if (state.getBlock() instanceof BlockMechActuator){
-                EntityPlayer player = Minecraft.getMinecraft().player;
+                PlayerEntity player = Minecraft.getMinecraft().player;
                 ItemStack gearHologram = player.getHeldItemMainhand();
 
                 for (int i = 0; i < 6; i ++){
-                    EnumFacing face = EnumFacing.getFront(i);
+                    Direction face = Direction.getFront(i);
                     GearHelperTile gear = tile.gears[i];
 
                     boolean sideHit = MysticalMechanicsAPI.IMPL.isGearHit(tile, face);

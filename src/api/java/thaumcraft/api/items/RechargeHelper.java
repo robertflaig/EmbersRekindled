@@ -1,7 +1,7 @@
 package thaumcraft.api.items;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +30,7 @@ public class RechargeHelper {
 	 * @param amt
 	 * @return how much charge was actually added
 	 */
-	public static float rechargeItem(World world, ItemStack is, BlockPos pos, EntityPlayer player, int amt) {	
+	public static float rechargeItem(World world, ItemStack is, BlockPos pos, PlayerEntity player, int amt) {
 		if (is==null || is.isEmpty() || !(is.getItem() instanceof IRechargable)) return 0;		
 		IRechargable chargeItem = (IRechargable)is.getItem();		
 		if (player!=null && AuraHelper.shouldPreserveAura(world,player,pos)) return 0;				
@@ -51,7 +51,7 @@ public class RechargeHelper {
 	 * @param amt
 	 * @return how much charge was actually added
 	 */
-	public static float rechargeItemBlindly(ItemStack is, EntityPlayer player, int amt) {	
+	public static float rechargeItemBlindly(ItemStack is, PlayerEntity player, int amt) {
 		if (is==null || is.isEmpty() || !(is.getItem() instanceof IRechargable)) return 0;		
 		IRechargable chargeItem = (IRechargable)is.getItem();		
 		amt = (int) Math.min(amt, chargeItem.getMaxCharge(is,player) - getCharge(is));		
@@ -81,7 +81,7 @@ public class RechargeHelper {
 	 * @param is
 	 * @return return charge level as a float (with 1 being full)
 	 */
-	public static float getChargePercentage(ItemStack is, EntityPlayer player) {
+	public static float getChargePercentage(ItemStack is, PlayerEntity player) {
 		if (is==null || is.isEmpty() || !(is.getItem() instanceof IRechargable)) return -1;
 		float c = getCharge(is);
 		float m =  ((IRechargable)is.getItem()).getMaxCharge(is, player);

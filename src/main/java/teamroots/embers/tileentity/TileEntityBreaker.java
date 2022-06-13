@@ -5,20 +5,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockCommandBlock;
 import net.minecraft.block.BlockPistonMoving;
 import net.minecraft.block.BlockStructure;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,7 +36,7 @@ import java.lang.ref.WeakReference;
 import java.util.Random;
 import java.util.UUID;
 
-public class TileEntityBreaker extends TileEntity implements ITileEntityBase, ITickable {
+public class TileEntityBreaker extends TileEntity implements ITileEntityBase, ITickableTileEntity {
 	int ticksExisted = 0;
 	Random random = new Random();
 	WeakReference<FakePlayer> fakePlayer;
@@ -46,30 +46,30 @@ public class TileEntityBreaker extends TileEntity implements ITileEntityBase, IT
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
+	public void read(CompoundNBT tag){
+		super.read(tag);
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
@@ -91,23 +91,23 @@ public class TileEntityBreaker extends TileEntity implements ITileEntityBase, IT
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		ticksExisted ++;
 		IBlockState state = world.getBlockState(pos);
 		if (ticksExisted % 20 == 0 && isActive() && state.getBlock() instanceof BlockBreaker && !world.isRemote){
-			EnumFacing facing = getFacing();
+			Direction facing = getFacing();
 			mineBlock(pos.offset(facing));
 		}
 	}
@@ -163,13 +163,13 @@ public class TileEntityBreaker extends TileEntity implements ITileEntityBase, IT
 		return block instanceof BlockCommandBlock || block instanceof BlockStructure;
 	}
 
-	public EnumFacing getFacing() {
+	public Direction getFacing() {
 		IBlockState state = world.getBlockState(pos);
 		return state.getValue(BlockBreaker.facing);
 	}
 
 	private void collectDrops(NonNullList<ItemStack> stacks) {
-		EnumFacing facing = getFacing();
+		Direction facing = getFacing();
 		BlockPos frontPos = getPos().offset(facing);
 		BlockPos binPos = getPos().offset(facing.getOpposite());
 		TileEntity bin = getWorld().getTileEntity(binPos);

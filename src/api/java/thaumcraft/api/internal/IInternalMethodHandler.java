@@ -1,6 +1,6 @@
 package thaumcraft.api.internal;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -50,7 +50,7 @@ public interface IInternalMethodHandler {
 	 * @param amount
 	 * @return if the knowledge was added
 	 */
-	public boolean addKnowledge(EntityPlayer player, EnumKnowledgeType type, ResearchCategory category, int amount);
+	public boolean addKnowledge(PlayerEntity player, EnumKnowledgeType type, ResearchCategory category, int amount);
 	
 	/**
 	 * Progresses research with all the proper bells and whistles (popups, sounds, warp, etc)
@@ -60,7 +60,7 @@ public interface IInternalMethodHandler {
 	 * @param researchkey
 	 * @return if operation succeeded
 	 */
-	boolean progressResearch(EntityPlayer player, String researchkey);
+	boolean progressResearch(PlayerEntity player, String researchkey);
 	
 	/**
 	 * Completes research with all the proper bells and whistles (popups, sounds, warp, etc)
@@ -70,14 +70,14 @@ public interface IInternalMethodHandler {
 	 * @param researchkey
 	 * @return if operation succeeded
 	 */
-	public boolean completeResearch(EntityPlayer player, String researchkey);
+	public boolean completeResearch(PlayerEntity player, String researchkey);
 	
 	/**
 	 * @param player 
 	 * @param researchkey the key of the research you want to check
 	 * @return does the player have all the required knowledge to complete the passed researchkey
 	 */
-	boolean doesPlayerHaveRequisites(EntityPlayer player, String researchkey);
+	boolean doesPlayerHaveRequisites(PlayerEntity player, String researchkey);
 	
 	/**
 	 * Adds warp with all the proper bells and whistles (text, sounds, etc)
@@ -85,14 +85,14 @@ public interface IInternalMethodHandler {
 	 * @param researchkey
 	 * @return
 	 */
-	public void addWarpToPlayer(EntityPlayer player, int amount, EnumWarpType type);
+	public void addWarpToPlayer(PlayerEntity player, int amount, EnumWarpType type);
 	
 	/**
 	 * The total of the players normal + permanent warp. NOT temporary warp.
 	 * @param player
 	 * @return
 	 */
-	public int getActualWarp(EntityPlayer player);
+	public int getActualWarp(PlayerEntity player);
 
 	public AspectList getObjectAspects(ItemStack is);
 	public AspectList generateTags(ItemStack is);
@@ -117,7 +117,7 @@ public interface IInternalMethodHandler {
 	public ISeal getSeal(String key);
 	public ISealEntity getSealEntity(int dim, SealPos pos);
 	public void addGolemTask(int dim, Task task);
-	public boolean shouldPreserveAura(World world, EntityPlayer player, BlockPos pos);
+	public boolean shouldPreserveAura(World world, PlayerEntity player, BlockPos pos);
 	public ItemStack getSealStack(String key);
 
 	

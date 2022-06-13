@@ -2,17 +2,17 @@ package teamroots.embers.tileentity;
 
 import mysticalmechanics.api.*;
 import mysticalmechanics.tileentity.TileEntityMergebox;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityMechActuator extends TileEntity implements ITickable, ITileEntityBase, IGearbox, IExtraCapabilityInformation {
+public class TileEntityMechActuator extends TileEntity implements ITickableTileEntity, ITileEntityBase, IGearbox, IExtraCapabilityInformation {
     public UpgradeActuator upgrade;
     public GearHelperTile[] gears = new mysticalmechanics.api.GearHelperTile[6];
 
@@ -43,7 +43,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
         }
 
         @Override
-        public double getVisualPower(EnumFacing from) {
+        public double getVisualPower(Direction from) {
             GearHelper gearHelper = getGearHelper(from);
             if (gearHelper != null && gearHelper.isEmpty()) {
                 return 0;
@@ -59,7 +59,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
         }
 
         @Override
-        public double getPower(EnumFacing from) {
+        public double getPower(Direction from) {
             GearHelper gearHelper = getGearHelper(from);
             if (gearHelper != null && gearHelper.isEmpty()) {
                 return 0;
@@ -68,7 +68,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
         }
 
         @Override
-        public void setPower(double value, EnumFacing from) {
+        public void setPower(double value, Direction from) {
             GearHelper gearHelper = getGearHelper(from);
             if (isInput(from) && gearHelper.isEmpty()) {
                 super.setPower(0, from);
@@ -84,12 +84,12 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
         }
 
         @Override
-        public boolean isInput(EnumFacing from) {
+        public boolean isInput(Direction from) {
             return canAttachGear(from);
         }
     };
 
-    private GearHelper getGearHelper(EnumFacing facing) {
+    private GearHelper getGearHelper(Direction facing) {
         if (facing == null)
             return null;
         return gears[facing.getIndex()];
@@ -98,24 +98,24 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     public TileEntityMechActuator() {
         upgrade = new UpgradeActuator(this);
         for(int i = 0; i < gears.length; i++)
-            gears[i] = new GearHelperTile(this, EnumFacing.getFront(i));
+            gears[i] = new GearHelperTile(this, Direction.getFront(i));
         capability.setAdditive(true); //Possible balance mistake but we shall see
     }
 
     public void updateNeighbors() {
-        for (EnumFacing f : EnumFacing.VALUES) {
+        for (Direction f : Direction.VALUES) {
             MysticalMechanicsAPI.IMPL.pullPower(this, f, capability, !getGear(f).isEmpty());
         }
         markDirty();
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-        super.writeToNBT(tag);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
         for (int i = 0; i < 6; i++) {
-            tag.setTag("side" + i, gears[i].writeToNBT(new NBTTagCompound()));
+            tag.setTag("side" + i, gears[i].write(new CompoundNBT()));
         }
-        capability.writeToNBT(tag);
+        capability.write(tag);
         for (int i = 0; i < 6; i++) {
             tag.setDouble("mech_power" + i, capability.power[i]);
         }
@@ -123,43 +123,43 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
-        super.readFromNBT(tag);
+    public void read(CompoundNBT tag) {
+        super.read(tag);
         for (int i = 0; i < 6; i++) {
-            gears[i].readFromNBT(tag.getCompoundTag("side" + i));
+            gears[i].read(tag.getCompoundTag("side" + i));
         }
         readLegacyGears(tag);
         for (int i = 0; i < 6; i++) {
             capability.power[i] = tag.getDouble("mech_power" + i);
         }
-        capability.readFromNBT(tag);
+        capability.read(tag);
         capability.markDirty();
     }
 
-    private void readLegacyGears(NBTTagCompound tag) {
+    private void readLegacyGears(CompoundNBT tag) {
         for (int i = 0; i < 6; i++) {
-            if(tag.hasKey("gear"+i))
+            if(tag.contains("gear"+i))
                 gears[i].setGear(new ItemStack(tag.getCompoundTag("gear" + i)));
         }
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
+    public CompoundNBT getUpdateTag() {
+        return write(new CompoundNBT());
     }
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtCompound());
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        read(pkt.getNbtCompound());
     }
 
-    public EnumFacing getFacing() {
+    public Direction getFacing() {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockMechActuator)
             return state.getValue(BlockMechActuator.facing);
@@ -167,7 +167,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY)
             return getFacing().getOpposite() == facing;
         if (capability == MysticalMechanicsAPI.MECH_CAPABILITY)
@@ -177,7 +177,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
         if (capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && getFacing().getOpposite() == facing)
             return (T) upgrade;
         if (capability == MysticalMechanicsAPI.MECH_CAPABILITY && (facing == null || canAttachGear(facing)))
@@ -185,11 +185,11 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
         return super.getCapability(capability, facing);
     }
 
-    private double getGearInPower(EnumFacing facing) {
+    private double getGearInPower(Direction facing) {
         return capability.getExternalPower(facing);
     }
 
-    private double getGearOutPower(EnumFacing facing) {
+    private double getGearOutPower(Direction facing) {
         return capability.getInternalPower(facing);
     }
 
@@ -199,7 +199,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
             updateNeighbors();
             shouldUpdate = false;
         }
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (Direction facing : Direction.VALUES) {
             int i = facing.getIndex();
             if (world.isRemote) {
                 gears[i].visualUpdate(getGearInPower(facing), capability.getVisualPower(facing));
@@ -211,7 +211,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!heldItem.isEmpty() && canAttachGear(side, heldItem)) {
             if (getGear(side).isEmpty() && MysticalMechanicsAPI.IMPL.isValidGear(heldItem)) {
@@ -237,7 +237,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         for (int i = 0; i < 6; i++) {
             ItemStack stack = gears[i].detach(player);
             if (!world.isRemote) {
@@ -255,7 +255,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public void attachGear(EnumFacing facing, ItemStack stack, @Nullable EntityPlayer player) {
+    public void attachGear(Direction facing, ItemStack stack, @Nullable PlayerEntity player) {
         if (!canAttachGear(facing))
             return;
         gears[facing.getIndex()].attach(player, stack);
@@ -263,7 +263,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public ItemStack detachGear(EnumFacing facing, @Nullable EntityPlayer player) {
+    public ItemStack detachGear(Direction facing, @Nullable PlayerEntity player) {
         if (!canAttachGear(facing))
             return ItemStack.EMPTY;
         ItemStack stack = gears[facing.getIndex()].detach(player);
@@ -271,19 +271,19 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
         return stack;
     }
 
-    public ItemStack getGear(EnumFacing facing) {
+    public ItemStack getGear(Direction facing) {
         if (!canAttachGear(facing))
             return ItemStack.EMPTY;
         return gears[facing.getIndex()].getGear();
     }
 
     @Override
-    public boolean canAttachGear(EnumFacing facing, ItemStack stack) {
+    public boolean canAttachGear(Direction facing, ItemStack stack) {
         return canAttachGear(facing);
     }
 
     @Override
-    public boolean canAttachGear(EnumFacing facing) {
+    public boolean canAttachGear(Direction facing) {
         return facing != null && getFacing().getAxis() != facing.getAxis();
     }
 
@@ -298,7 +298,7 @@ public class TileEntityMechActuator extends TileEntity implements ITickable, ITi
     }
 
     @Override
-    public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+    public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
         //NOOP
     }
 }

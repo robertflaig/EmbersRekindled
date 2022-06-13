@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import teamroots.embers.Embers;
@@ -36,22 +36,22 @@ public class TileEntityBreakerRenderer extends TileEntitySpecialRenderer<TileEnt
             Tessellator tess = Tessellator.getInstance();
             BufferBuilder buffer = tess.getBuffer();
             GlStateManager.translate(x, y, z);
-            EnumFacing facing = tile.getWorld().getBlockState(tile.getPos()).getValue(BlockAutoHammer.facing);
+            Direction facing = tile.getWorld().getBlockState(tile.getPos()).getValue(BlockAutoHammer.facing);
             float angle = 0;
             float pitch = -90;
-            if (facing == EnumFacing.SOUTH){
+            if (facing == Direction.SOUTH){
             	angle = 180;
             }
-            if (facing == EnumFacing.EAST){
+            if (facing == Direction.EAST){
             	angle = 270;
             }
-            if (facing == EnumFacing.WEST){
+            if (facing == Direction.WEST){
             	angle = 90;
             }
-            if (facing == EnumFacing.UP){
+            if (facing == Direction.UP){
             	pitch = 0;
             }
-            if (facing == EnumFacing.DOWN){
+            if (facing == Direction.DOWN){
             	pitch = 180;
             }
             /*float hammerAngle = -45.0f;

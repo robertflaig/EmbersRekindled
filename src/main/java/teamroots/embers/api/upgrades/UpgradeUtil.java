@@ -2,7 +2,7 @@ package teamroots.embers.api.upgrades;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,20 +13,20 @@ import java.util.List;
 public class UpgradeUtil {
     public static IUpgradeUtil IMPL;
 
-    public static List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, EnumFacing[] facings) {
+    public static List<IUpgradeProvider> getUpgrades(World world, BlockPos pos, Direction[] facings) {
         return IMPL.getUpgrades(world, pos, facings);
     }
 
     @Deprecated
-    public static List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, EnumFacing[] facings) {
+    public static List<IUpgradeProvider> getUpgradesForMultiblock(World world, BlockPos pos, Direction[] facings) {
         return IMPL.getUpgradesForMultiblock(world, pos, facings);
     }
 
-    public static void getUpgrades(World world, BlockPos pos, EnumFacing[] facings, List<IUpgradeProvider> upgrades) {
+    public static void getUpgrades(World world, BlockPos pos, Direction[] facings, List<IUpgradeProvider> upgrades) {
         IMPL.getUpgrades(world, pos, facings, upgrades);
     }
 
-    public static void collectUpgrades(World world, BlockPos pos, EnumFacing side, List<IUpgradeProvider> upgrades) {
+    public static void collectUpgrades(World world, BlockPos pos, Direction side, List<IUpgradeProvider> upgrades) {
         IMPL.collectUpgrades(world, pos, side, upgrades);
     }
 

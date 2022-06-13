@@ -1,15 +1,15 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityActivatorTop extends TileEntity implements ITileEntityBase, ITickable, ISoundController, IExtraCapabilityInformation {
+public class TileEntityActivatorTop extends TileEntity implements ITileEntityBase, ITickableTileEntity, ISoundController, IExtraCapabilityInformation {
 	public IEmberCapability capability = new DefaultEmberCapability() {
 		@Override
 		public void onContentsChanged() {
@@ -52,31 +52,31 @@ public class TileEntityActivatorTop extends TileEntity implements ITileEntityBas
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
-		capability.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
+		capability.write(tag);
 		tag.setInteger("progress", progress);
 		return tag;
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
-		capability.readFromNBT(tag);
-		if (tag.hasKey("progress")){
+	public void read(CompoundNBT tag){
+		super.read(tag);
+		capability.read(tag);
+		if (tag.contains("progress")){
 			progress = tag.getInteger("progress");
 		}
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
@@ -86,24 +86,24 @@ public class TileEntityActivatorTop extends TileEntity implements ITileEntityBas
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return true;
 		}
@@ -111,7 +111,7 @@ public class TileEntityActivatorTop extends TileEntity implements ITileEntityBas
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		if (capability == EmbersCapabilities.EMBER_CAPABILITY){
 			return (T)this.capability;
 		}
@@ -119,7 +119,7 @@ public class TileEntityActivatorTop extends TileEntity implements ITileEntityBas
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		if(getWorld().isRemote)
 			handleSound();
 		if (this.capability.getEmber() > 0 && getWorld().isRemote){
@@ -165,7 +165,7 @@ public class TileEntityActivatorTop extends TileEntity implements ITileEntityBas
 	}
 
 	@Override
-	public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+	public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
 		if(capability == EmbersCapabilities.EMBER_CAPABILITY)
 			strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.OUTPUT,"embers.tooltip.goggles.ember",null));
 	}

@@ -1,10 +1,10 @@
 package teamroots.embers.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -39,7 +39,7 @@ public class BlockClockworkAttenuator extends BlockBaseGauge {
     }
 
     @Override
-    protected void getTEData(EnumFacing facing, ArrayList<String> text, TileEntity tileEntity) {
+    protected void getTEData(Direction facing, ArrayList<String> text, TileEntity tileEntity) {
 
     }
 

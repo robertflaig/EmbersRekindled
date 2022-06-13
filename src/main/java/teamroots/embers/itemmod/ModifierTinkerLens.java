@@ -1,6 +1,6 @@
 package teamroots.embers.itemmod;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,7 +32,7 @@ public class ModifierTinkerLens extends ModifierBase {
 
     @SubscribeEvent
     public void shouldShowInfo(InfoGogglesEvent event) {
-        EntityPlayer player = event.getPlayer();
+        PlayerEntity player = event.getPlayer();
         int level = ItemModUtil.getArmorModifierLevel(player, this);
         if (level > 0)
             event.setShouldDisplay(!inverted);

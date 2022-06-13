@@ -1,14 +1,14 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,77 +34,77 @@ public class TileEntityMechCore extends TileEntity implements ITileEntityBase, I
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		return super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		return super.write(tag);
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
+	public void read(CompoundNBT tag){
+		super.read(tag);
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	public TileEntity getAttachedMultiblock() {
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.DOWN)) instanceof IMultiblockMachine){
-			return getWorld().getTileEntity(getPos().offset(EnumFacing.DOWN));
+		if (getWorld().getTileEntity(getPos().offset(Direction.DOWN)) instanceof IMultiblockMachine){
+			return getWorld().getTileEntity(getPos().offset(Direction.DOWN));
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.UP)) instanceof IMultiblockMachine){
-			return getWorld().getTileEntity(getPos().offset(EnumFacing.UP));
+		if (getWorld().getTileEntity(getPos().offset(Direction.UP)) instanceof IMultiblockMachine){
+			return getWorld().getTileEntity(getPos().offset(Direction.UP));
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.WEST)) instanceof IMultiblockMachine){
-			return getWorld().getTileEntity(getPos().offset(EnumFacing.WEST));
+		if (getWorld().getTileEntity(getPos().offset(Direction.WEST)) instanceof IMultiblockMachine){
+			return getWorld().getTileEntity(getPos().offset(Direction.WEST));
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.EAST)) instanceof IMultiblockMachine){
-			return getWorld().getTileEntity(getPos().offset(EnumFacing.EAST));
+		if (getWorld().getTileEntity(getPos().offset(Direction.EAST)) instanceof IMultiblockMachine){
+			return getWorld().getTileEntity(getPos().offset(Direction.EAST));
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.NORTH)) instanceof IMultiblockMachine){
-			return getWorld().getTileEntity(getPos().offset(EnumFacing.NORTH));
+		if (getWorld().getTileEntity(getPos().offset(Direction.NORTH)) instanceof IMultiblockMachine){
+			return getWorld().getTileEntity(getPos().offset(Direction.NORTH));
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.SOUTH)) instanceof IMultiblockMachine){
-			return getWorld().getTileEntity(getPos().offset(EnumFacing.SOUTH));
+		if (getWorld().getTileEntity(getPos().offset(Direction.SOUTH)) instanceof IMultiblockMachine){
+			return getWorld().getTileEntity(getPos().offset(Direction.SOUTH));
 		}
 		return null;
 	}
 
-	public EnumFacing getAttachedSide() {
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.DOWN)) instanceof IMultiblockMachine){
-			return EnumFacing.DOWN;
+	public Direction getAttachedSide() {
+		if (getWorld().getTileEntity(getPos().offset(Direction.DOWN)) instanceof IMultiblockMachine){
+			return Direction.DOWN;
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.UP)) instanceof IMultiblockMachine){
-			return EnumFacing.UP;
+		if (getWorld().getTileEntity(getPos().offset(Direction.UP)) instanceof IMultiblockMachine){
+			return Direction.UP;
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.WEST)) instanceof IMultiblockMachine){
-			return EnumFacing.WEST;
+		if (getWorld().getTileEntity(getPos().offset(Direction.WEST)) instanceof IMultiblockMachine){
+			return Direction.WEST;
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.EAST)) instanceof IMultiblockMachine){
-			return EnumFacing.EAST;
+		if (getWorld().getTileEntity(getPos().offset(Direction.EAST)) instanceof IMultiblockMachine){
+			return Direction.EAST;
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.NORTH)) instanceof IMultiblockMachine){
-			return EnumFacing.NORTH;
+		if (getWorld().getTileEntity(getPos().offset(Direction.NORTH)) instanceof IMultiblockMachine){
+			return Direction.NORTH;
 		}
-		if (getWorld().getTileEntity(getPos().offset(EnumFacing.SOUTH)) instanceof IMultiblockMachine){
-			return EnumFacing.SOUTH;
+		if (getWorld().getTileEntity(getPos().offset(Direction.SOUTH)) instanceof IMultiblockMachine){
+			return Direction.SOUTH;
 		}
 		return null;
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, Direction facing){
 		TileEntity multiblock = getAttachedMultiblock();
 		if(multiblock != null)
 			return multiblock.hasCapability(capability, facing);
@@ -112,7 +112,7 @@ public class TileEntityMechCore extends TileEntity implements ITileEntityBase, I
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+	public <T> T getCapability(Capability<T> capability, Direction facing){
 		TileEntity multiblock = getAttachedMultiblock();
 		if(multiblock != null)
 			return multiblock.getCapability(capability, facing);
@@ -120,14 +120,14 @@ public class TileEntityMechCore extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 
@@ -138,7 +138,7 @@ public class TileEntityMechCore extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
-	public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
+	public void addDialInformation(Direction facing, List<String> information, String dialType) {
 		TileEntity multiblock = getAttachedMultiblock();
 		if(multiblock instanceof IExtraDialInformation)
 			((IExtraDialInformation) multiblock).addDialInformation(facing,information,dialType);
@@ -153,14 +153,14 @@ public class TileEntityMechCore extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
-	public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
+	public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
 		TileEntity multiblock = getAttachedMultiblock();
 		if(multiblock instanceof IExtraCapabilityInformation)
 			((IExtraCapabilityInformation) multiblock).addCapabilityDescription(strings,capability,facing);
 	}
 
 	@Override
-	public void addOtherDescription(List<String> strings, EnumFacing facing) {
+	public void addOtherDescription(List<String> strings, Direction facing) {
 		TileEntity multiblock = getAttachedMultiblock();
 		if(multiblock instanceof IExtraCapabilityInformation)
 			((IExtraCapabilityInformation) multiblock).addOtherDescription(strings,facing);
@@ -168,21 +168,21 @@ public class TileEntityMechCore extends TileEntity implements ITileEntityBase, I
 
 	@Override
 	public void collectUpgrades(List<IUpgradeProvider> upgrades) {
-		for (EnumFacing facing : EnumFacing.VALUES) {
+		for (Direction facing : Direction.VALUES) {
 			if(isSocket(facing))
 				UpgradeUtil.collectUpgrades(world,pos.offset(facing),facing.getOpposite(),upgrades);
 		}
 	}
 
 	@Override
-	public boolean isSocket(EnumFacing facing) {
-		EnumFacing attachedSide = getAttachedSide();
+	public boolean isSocket(Direction facing) {
+		Direction attachedSide = getAttachedSide();
 		return facing != attachedSide;
 	}
 
 	@Override
-	public boolean isProvider(EnumFacing facing) {
-		EnumFacing attachedSide = getAttachedSide();
+	public boolean isProvider(Direction facing) {
+		Direction attachedSide = getAttachedSide();
 		return facing == attachedSide;
 	}
 }

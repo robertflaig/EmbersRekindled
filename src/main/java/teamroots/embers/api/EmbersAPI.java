@@ -1,8 +1,8 @@
 package teamroots.embers.api;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -164,15 +164,15 @@ public class EmbersAPI {
         return IMPL.getSteamEngineFuel(fluidstack);
     }
 
-    public static double getEmberTotal(EntityPlayer player){
+    public static double getEmberTotal(PlayerEntity player){
         return IMPL.getEmberTotal(player);
     }
 
-    public static double getEmberCapacityTotal(EntityPlayer player){
+    public static double getEmberCapacityTotal(PlayerEntity player){
         return IMPL.getEmberCapacityTotal(player);
     }
 
-    public static void removeEmber(EntityPlayer player, double amount){
+    public static void removeEmber(PlayerEntity player, double amount){
         IMPL.removeEmber(player, amount);
     }
 

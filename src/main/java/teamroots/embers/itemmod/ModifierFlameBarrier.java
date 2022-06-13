@@ -1,7 +1,7 @@
 package teamroots.embers.itemmod;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -26,12 +26,12 @@ public class ModifierFlameBarrier extends ModifierBase {
 	
 	@SubscribeEvent
 	public void onHit(LivingHurtEvent event){
-		if (event.getEntity() instanceof EntityPlayer && event.getSource().getTrueSource() instanceof EntityLivingBase){
-			int blastingLevel = ItemModUtil.getArmorModifierLevel((EntityPlayer) event.getEntity(), EmbersAPI.FLAME_BARRIER);
+		if (event.getEntity() instanceof PlayerEntity && event.getSource().getTrueSource() instanceof EntityLivingBase){
+			int blastingLevel = ItemModUtil.getArmorModifierLevel((PlayerEntity) event.getEntity(), EmbersAPI.FLAME_BARRIER);
 
 			float strength = (float)(2.0*(Math.atan(0.6*(blastingLevel))/(Math.PI)));
-			if (blastingLevel > 0 && EmberInventoryUtil.getEmberTotal(((EntityPlayer)event.getEntity())) >= cost){
-				EmberInventoryUtil.removeEmber(((EntityPlayer)event.getEntity()), cost);
+			if (blastingLevel > 0 && EmberInventoryUtil.getEmberTotal(((PlayerEntity)event.getEntity())) >= cost){
+				EmberInventoryUtil.removeEmber(((PlayerEntity)event.getEntity()), cost);
 				event.getSource().getTrueSource().attackEntityFrom(RegistryManager.damage_ember, strength*event.getAmount()*0.5f);
 				event.getSource().getTrueSource().setFire(blastingLevel+1);
 				event.getEntity().playSound(SoundManager.FIREBALL_HIT,1.0f,1.0f);

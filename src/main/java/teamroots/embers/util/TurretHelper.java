@@ -1,6 +1,6 @@
 package teamroots.embers.util;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.util.vector.Quaternion;
@@ -74,21 +74,21 @@ public class TurretHelper {
         slide = Math.min(slide + speed, 1);
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setTag("angleStart", writeQuat(angleStart));
-        compound.setTag("angleEnd", writeQuat(angleEnd));
+    public CompoundNBT write(CompoundNBT compound) {
+        compound.put("angleStart", writeQuat(angleStart));
+        compound.put("angleEnd", writeQuat(angleEnd));
         compound.setFloat("slide", slide);
         return compound;
     }
 
-    public void readFromNBT(NBTTagCompound compound) {
+    public void read(CompoundNBT compound) {
         angleStart = readQuat(compound.getCompoundTag("angleStart"));
         angleEnd = readQuat(compound.getCompoundTag("angleEnd"));
         slide = compound.getFloat("slide");
     }
 
-    public static NBTTagCompound writeQuat(Quaternion quaternion) {
-        NBTTagCompound compound = new NBTTagCompound();
+    public static CompoundNBT writeQuat(Quaternion quaternion) {
+        CompoundNBT compound = new CompoundNBT();
         compound.setFloat("x", quaternion.x);
         compound.setFloat("y", quaternion.y);
         compound.setFloat("z", quaternion.z);
@@ -96,7 +96,7 @@ public class TurretHelper {
         return compound;
     }
 
-    public static Quaternion readQuat(NBTTagCompound compound) {
+    public static Quaternion readQuat(CompoundNBT compound) {
         return new Quaternion(compound.getFloat("x"), compound.getFloat("y"), compound.getFloat("z"), compound.getFloat("w"));
     }
 }

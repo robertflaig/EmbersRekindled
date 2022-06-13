@@ -3,7 +3,7 @@ package teamroots.embers.item;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,8 +34,8 @@ public class ItemAlchemicWaste extends ItemBase {
 	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag advanced){
 		if (stack.hasTagCompound()){
 			AspectList inaccuracies;
-			NBTTagCompound tagCompound = stack.getTagCompound();
-			if (tagCompound.hasKey(TAG_INACCURACY)) {
+			CompoundNBT tagCompound = stack.getTagCompound();
+			if (tagCompound.contains(TAG_INACCURACY)) {
 				inaccuracies = new AspectList();
 				inaccuracies.deserializeNBT(tagCompound.getCompoundTag(TAG_INACCURACY));
 			} else { //Legacy handling
@@ -62,8 +62,8 @@ public class ItemAlchemicWaste extends ItemBase {
 
 	public static ItemStack create(AspectList inaccuracies) {
 		ItemStack stack = new ItemStack(RegistryManager.alchemic_waste,1);
-		NBTTagCompound tagCompound = new NBTTagCompound();
-		tagCompound.setTag(TAG_INACCURACY,inaccuracies.serializeNBT());
+		CompoundNBT tagCompound = new CompoundNBT();
+		tagcompound.put(TAG_INACCURACY,inaccuracies.serializeNBT());
 		tagCompound.setInteger(TAG_TOTAL_ASH,inaccuracies.getTotal());
 		stack.setTagCompound(tagCompound);
 		return stack;

@@ -1,6 +1,6 @@
 package teamroots.embers.heat;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import teamroots.embers.Embers;
 
 public class DefaultHeatCapability implements IHeatCapability {
@@ -57,17 +57,17 @@ public class DefaultHeatCapability implements IHeatCapability {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public void write(CompoundNBT tag) {
 		tag.setDouble(Embers.MODID+":heat", heat);
 		tag.setDouble(Embers.MODID+":heatCapacity", capacity);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		if (tag.hasKey(Embers.MODID+":heat")){
+	public void read(CompoundNBT tag) {
+		if (tag.contains(Embers.MODID+":heat")){
 			heat = tag.getDouble(Embers.MODID+":heat");
 		}
-		if (tag.hasKey(Embers.MODID+":heatCapacity")){
+		if (tag.contains(Embers.MODID+":heatCapacity")){
 			capacity = tag.getDouble(Embers.MODID+":heatCapacity");
 		}
 	}

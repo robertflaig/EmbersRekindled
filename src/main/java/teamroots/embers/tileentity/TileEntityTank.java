@@ -1,15 +1,15 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Random;
 
-public class TileEntityTank extends TileEntityOpenTank implements ITileEntityBase, ITickable {
+public class TileEntityTank extends TileEntityOpenTank implements ITileEntityBase, ITickableTileEntity {
 	public static int capacity = Fluid.BUCKET_VOLUME*16;
 
 
@@ -43,7 +43,7 @@ public class TileEntityTank extends TileEntityOpenTank implements ITileEntityBas
 			public int fill(FluidStack resource, boolean doFill) {
 				if(Misc.isGaseousFluid(resource)) {
 					setEscapedFluid(resource);
-					return resource.amount;
+					return resource.getAmount();
 				}
 				return super.fill(resource, doFill);
 			}
@@ -54,7 +54,7 @@ public class TileEntityTank extends TileEntityOpenTank implements ITileEntityBas
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		if (world.isRemote && shouldEmitParticles())
 			updateEscapeParticles();
 	}
@@ -73,24 +73,24 @@ public class TileEntityTank extends TileEntityOpenTank implements ITileEntityBas
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = player.getHeldItem(hand);
 		if (!heldItem.isEmpty()){
 			boolean didFill = FluidUtil.interactWithFluidHandler(player, hand, world, pos, side);
@@ -124,13 +124,13 @@ public class TileEntityTank extends TileEntityOpenTank implements ITileEntityBas
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		if (!world.isRemote && (player == null || !player.capabilities.isCreativeMode)){
 			ItemStack toDrop = new ItemStack(RegistryManager.block_tank,1);
 			if (getTank().getFluidAmount() > 0){
-				NBTTagCompound tag = new NBTTagCompound();
-				getTank().writeToNBT(tag);
+				CompoundNBT tag = new CompoundNBT();
+				getTank().write(tag);
 				toDrop.setTagCompound(tag);
 			}
 			world.spawnEntity(new EntityItem(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,toDrop));

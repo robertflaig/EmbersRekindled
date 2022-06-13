@@ -9,7 +9,7 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.HandSide;
 
 public class ModelArmorBase extends ModelBiped {
 	
@@ -159,7 +159,7 @@ public class ModelArmorBase extends ModelBiped {
 					ItemStack stack = ((EntityLivingBase)entity).getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 					if (stack.hasTagCompound()){
 						for (int i = 1; i < 8; i ++){
-							this.cape.childModels.get(i+2).showModel = slot == EntityEquipmentSlot.CHEST && stack.getTagCompound().hasKey("gem"+i);
+							this.cape.childModels.get(i+2).showModel = slot == EntityEquipmentSlot.CHEST && stack.getTagCompound().contains("gem"+i);
 						}
 					}
 				}
@@ -233,8 +233,8 @@ public class ModelArmorBase extends ModelBiped {
 	}
 	
 	public void setChestRotation(Entity e){
-		/*if (e instanceof EntityPlayer){
-			((EntityPlayer)e).get
+		/*if (e instanceof PlayerEntity){
+			((PlayerEntity)e).get
 		}*/
 		chest.rotationPointX = bipedBody.rotationPointX;
 		chest.rotationPointY = bipedBody.rotationPointY-1;
@@ -320,7 +320,7 @@ public class ModelArmorBase extends ModelBiped {
 				}
 			}
 
-			if(living.getPrimaryHand() == EnumHandSide.RIGHT) {
+			if(living.getPrimaryHand() == HandSide.RIGHT) {
 				rightArmPose = mainPose;
 				leftArmPose = offPose;
 			} else {

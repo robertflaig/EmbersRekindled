@@ -17,7 +17,7 @@ public class FluidReactionRecipe {
     }
 
     public boolean matches(FluidStack test) {
-        return test != null && FluidUtil.areFluidsEqual(test.getFluid(), input.getFluid()) && test.amount >= input.amount;
+        return test != null && FluidUtil.areFluidsEqual(test.getFluid(), input.getFluid()) && test.amount >= input.getAmount();
     }
 
     public int getTimes(FluidStack input, FluidStack output) {
@@ -26,7 +26,7 @@ public class FluidReactionRecipe {
 
     public FluidStack getResult(FluidStack input) {
         FluidStack copy = output.copy();
-        copy.amount *= input.amount;
+        copy.amount *= input.getAmount();
         return copy;
     }
 

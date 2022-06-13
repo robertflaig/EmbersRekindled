@@ -17,7 +17,7 @@ public class DecimalFormats implements IResourceManagerReloadListener {
     public static DecimalFormat getDecimalFormat(String key) {
         DecimalFormat format = decimalFormats.get(key);
         if(format == null) {
-            if(I18n.hasKey(key))
+            if(I18n.contains(key))
                 format = new DecimalFormat(I18n.format(key));
             else
                 format = new DecimalFormat("0.#######");

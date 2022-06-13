@@ -1,11 +1,11 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -47,7 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase, ISoundController, ITickable, IExtraDialInformation, IExtraCapabilityInformation, IFluidPipeConnectable {
+public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase, ISoundController, ITickableTileEntity, IExtraDialInformation, IExtraCapabilityInformation, IFluidPipeConnectable {
 
 	public static final int SOUND_SLOW = 1;
 	public static final int SOUND_MEDIUM = 2;
@@ -74,44 +74,44 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag)
+	public void read(CompoundNBT tag)
 	{
-		super.readFromNBT(tag);
-		fluidTank.readFromNBT(tag.getCompoundTag("fluidTank"));
-		gasTank.readFromNBT(tag.getCompoundTag("gasTank"));
+		super.read(tag);
+		fluidTank.read(tag.getCompoundTag("fluidTank"));
+		gasTank.read(tag.getCompoundTag("gasTank"));
 		lastBoil = tag.getInteger("lastBoil");
 		boilTime = tag.getInteger("boilTime");
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag)
+	public CompoundNBT write(CompoundNBT tag)
 	{
-		tag = super.writeToNBT(tag);
-		tag.setTag("fluidTank",fluidTank.writeToNBT(new NBTTagCompound()));
-		tag.setTag("gasTank",gasTank.writeToNBT(new NBTTagCompound()));
+		tag = super.write(tag);
+		tag.setTag("fluidTank",fluidTank.write(new CompoundNBT()));
+		tag.setTag("gasTank",gasTank.write(new CompoundNBT()));
 		tag.setInteger("lastBoil",lastBoil);
 		tag.setInteger("boilTime",boilTime);
 		return tag;
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+	public boolean hasCapability(Capability<?> capability, @Nullable Direction facing)
 	{
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return facing != null && facing != getFacing();
@@ -124,11 +124,11 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 
 	@Override
 	@Nullable
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+	public <T> T getCapability(Capability<T> capability, @Nullable Direction facing)
 	{
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			if(facing == EnumFacing.DOWN || (facing != null && facing != getFacing() && facing.getAxis() != EnumFacing.Axis.Y)) return (T) fluidTank;
-			if(facing == EnumFacing.UP) return (T) gasTank;
+			if(facing == Direction.DOWN || (facing != null && facing != getFacing() && facing.getAxis() != Direction.Axis.Y)) return (T) fluidTank;
+			if(facing == Direction.UP) return (T) gasTank;
 		}
 		if(capability == EmbersCapabilities.UPGRADE_PROVIDER_CAPABILITY && facing == getFacing()) {
 			return (T) upgrade;
@@ -137,12 +137,12 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
 
-	public EnumFacing getFacing() {
+	public Direction getFacing() {
 		IBlockState state = world.getBlockState(pos);
 		return state.getValue(BlockMiniBoiler.facing);
 	}
@@ -231,8 +231,8 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		world.setTileEntity(pos, null);
 	}
 
@@ -243,8 +243,8 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void addDialInformation(EnumFacing facing, List<String> information, String dialType) {
-		if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != EnumFacing.Axis.Y) {
+	public void addDialInformation(Direction facing, List<String> information, String dialType) {
+		if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != Direction.Axis.Y) {
 			String gasFormat = "";
 			if(getGasAmount() > getCapacity() * 0.8)
 				gasFormat = TextFormatting.RED.toString()+" ";
@@ -256,8 +256,8 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public int getComparatorData(EnumFacing facing, int data, String dialType) {
-		if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != EnumFacing.Axis.Y) {
+	public int getComparatorData(Direction facing, int data, String dialType) {
+		if(BlockFluidGauge.DIAL_TYPE.equals(dialType) && facing.getAxis() != Direction.Axis.Y) {
 			double fill = getGasAmount() / (double)getCapacity();
 			return fill > 0 ? (int) (1 + fill * 14) : 0;
 		}
@@ -265,7 +265,7 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		if(world.isRemote) {
 			handleSound();
 			spawnParticles();
@@ -361,18 +361,18 @@ public class TileEntityMiniBoiler extends TileEntity implements ITileEntityBase,
 	}
 
 	@Override
-	public void addCapabilityDescription(List<String> strings, Capability<?> capability, EnumFacing facing) {
-		if(facing == EnumFacing.DOWN || (facing != null && facing.getAxis() != EnumFacing.Axis.Y && facing != getFacing()))
+	public void addCapabilityDescription(List<String> strings, Capability<?> capability, Direction facing) {
+		if(facing == Direction.DOWN || (facing != null && facing.getAxis() != Direction.Axis.Y && facing != getFacing()))
 			strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.INPUT,"embers.tooltip.goggles.fluid",I18n.format("embers.tooltip.goggles.fluid.water")));
-		if(facing == EnumFacing.UP)
+		if(facing == Direction.UP)
 			strings.add(IExtraCapabilityInformation.formatCapability(EnumIOType.OUTPUT,"embers.tooltip.goggles.fluid",I18n.format("embers.tooltip.goggles.fluid.steam")));
 	}
 
 	@Override
-	public EnumPipeConnection getConnection(EnumFacing facing) {
+	public EnumPipeConnection getConnection(Direction facing) {
 		if(facing == getFacing())
 			return EnumPipeConnection.NONE;
-		else if(facing.getAxis() == EnumFacing.Axis.Y)
+		else if(facing.getAxis() == Direction.Axis.Y)
 			return EnumPipeConnection.BLOCK;
 		else
 			return EnumPipeConnection.PIPE;

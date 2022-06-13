@@ -1,14 +1,14 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -20,7 +20,7 @@ import teamroots.embers.util.Misc;
 
 import javax.annotation.Nullable;
 
-public class TileEntityInfernoForgeOpening extends TileEntity implements ITileEntityBase, ITickable {
+public class TileEntityInfernoForgeOpening extends TileEntity implements ITileEntityBase, ITickableTileEntity {
 	public boolean isOpen;
 	public boolean prevState;
 	public float openAmount;
@@ -31,8 +31,8 @@ public class TileEntityInfernoForgeOpening extends TileEntity implements ITileEn
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag){
-		super.writeToNBT(tag);
+	public CompoundNBT write(CompoundNBT tag){
+		super.write(tag);
 		tag.setBoolean("isOpen", isOpen);
 		tag.setBoolean("prevState", prevState);
 		tag.setFloat("openAmount", openAmount);
@@ -40,27 +40,27 @@ public class TileEntityInfernoForgeOpening extends TileEntity implements ITileEn
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag){
-		super.readFromNBT(tag);
+	public void read(CompoundNBT tag){
+		super.read(tag);
 		isOpen = tag.getBoolean("isOpen");
 		prevState = tag.getBoolean("prevState");
 		openAmount = tag.getFloat("openAmount");
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+	public CompoundNBT getUpdateTag() {
+		return write(new CompoundNBT());
 	}
 
 	@Nullable
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
+	public SUpdateTileEntityPacket getUpdatePacket() {
+		return new SUpdateTileEntityPacket(getPos(), 0, getUpdateTag());
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
+	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+		read(pkt.getNbtCompound());
 	}
 
 	@Override
@@ -91,8 +91,8 @@ public class TileEntityInfernoForgeOpening extends TileEntity implements ITileEn
 	}
 
 	@Override
-	public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand,
+			Direction side, float hitX, float hitY, float hitZ) {
 		if (!player.isSneaking()){
 			if (world.getTileEntity(pos.down()) instanceof TileEntityInfernoForge){
 				TileEntityInfernoForge forge = getForge(world, pos);
@@ -116,14 +116,14 @@ public class TileEntityInfernoForgeOpening extends TileEntity implements ITileEn
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-		this.invalidate();
+	public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+		this.remove();
 		BlockInfernoForgeEdge.breakBlockSafe(world, pos.down(), player);
 		world.setTileEntity(pos, null);
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		lastOpenAmount = openAmount;
 		if (isOpen && !prevState && openAmount < 1.0f){
 			openAmount = 0.5f+0.5f*openAmount;

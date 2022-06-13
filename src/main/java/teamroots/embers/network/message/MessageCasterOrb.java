@@ -1,9 +1,9 @@
 package teamroots.embers.network.message;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
@@ -61,7 +61,7 @@ public class MessageCasterOrb implements IMessage {
     public static class MessageHolder implements IMessageHandler<MessageCasterOrb, IMessage> {
         @Override
         public IMessage onMessage(final MessageCasterOrb message, final MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().player;
+            PlayerEntity player = ctx.getServerHandler().player;
             WorldServer world = ctx.getServerHandler().player.getServerWorld();
             world.addScheduledTask(() -> {
                 ItemStack heldStack = player.getHeldItemMainhand();
@@ -69,7 +69,7 @@ public class MessageCasterOrb implements IMessage {
                     int level = ItemModUtil.getModifierLevel(heldStack, EmbersAPI.CASTER_ORB);
                     UUID uuid = player.getUniqueID();
                     if (level > 0 && EmberInventoryUtil.getEmberTotal(player) > EmbersAPI.CASTER_ORB.cost && !ModifierCasterOrb.hasCooldown(uuid)) {
-                        float handmod = player.getPrimaryHand() == EnumHandSide.RIGHT ? 1.0f : -1.0f;
+                        float handmod = player.getPrimaryHand() == HandSide.RIGHT ? 1.0f : -1.0f;
                         float offX = handmod * 0.5f * (float) Math.sin(Math.toRadians(-player.rotationYaw - 90));
                         float offZ = handmod * 0.5f * (float) Math.cos(Math.toRadians(-player.rotationYaw - 90));
                         EmberInventoryUtil.removeEmber(player, EmbersAPI.CASTER_ORB.cost);

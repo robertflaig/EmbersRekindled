@@ -7,16 +7,16 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -93,11 +93,11 @@ public class ThaumcraftApiHelper {
     	if (recipeItem.getTagCompound()!=null && slotItem.getTagCompound()==null ) return false;
     	if (recipeItem.getTagCompound()==null ) return true;
     	
-    	Iterator iterator = recipeItem.getTagCompound().getKeySet().iterator();
+    	Iterator iterator = recipeItem.getTagCompound().keySet().iterator();
         while (iterator.hasNext())
         {
             String s = (String)iterator.next();
-            if (slotItem.getTagCompound().hasKey(s)) {
+            if (slotItem.getTagCompound().contains(s)) {
             	if (!slotItem.getTagCompound().getTag(s).toString().equals(
             			recipeItem.getTagCompound().getTag(s).toString())) {
             		return false;
@@ -111,7 +111,7 @@ public class ThaumcraftApiHelper {
     }
    
     
-    public static TileEntity getConnectableTile(World world, BlockPos pos, EnumFacing face) {
+    public static TileEntity getConnectableTile(World world, BlockPos pos, Direction face) {
 		TileEntity te = world.getTileEntity(pos.offset(face));
 		if (te instanceof IEssentiaTransport && ((IEssentiaTransport)te).isConnectable(face.getOpposite())) 
 			return te;
@@ -119,7 +119,7 @@ public class ThaumcraftApiHelper {
 			return null;
 	}
     
-    public static TileEntity getConnectableTile(IBlockAccess world, BlockPos pos, EnumFacing face) {
+    public static TileEntity getConnectableTile(IBlockAccess world, BlockPos pos, Direction face) {
 		TileEntity te = world.getTileEntity(pos.offset(face));
 		if (te instanceof IEssentiaTransport && ((IEssentiaTransport)te).isConnectable(face.getOpposite())) 
 			return te;
@@ -240,27 +240,27 @@ public class ThaumcraftApiHelper {
                         d5 = -1.0E-4D;
                     }
 	
-	                EnumFacing enumfacing;
+	                Direction Direction;
 
                     if (d3 < d4 && d3 < d5)
                     {
-                        enumfacing = i > l ? EnumFacing.WEST : EnumFacing.EAST;
+                        Direction = i > l ? Direction.WEST : Direction.EAST;
                         v1 = new Vec3d(d0, v1.y + d7 * d3, v1.z + d8 * d3);
                     }
                     else if (d4 < d5)
                     {
-                        enumfacing = j > i1 ? EnumFacing.DOWN : EnumFacing.UP;
+                        Direction = j > i1 ? Direction.DOWN : Direction.UP;
                         v1 = new Vec3d(v1.x + d6 * d4, d1, v1.z + d8 * d4);
                     }
                     else
                     {
-                        enumfacing = k > j1 ? EnumFacing.NORTH : EnumFacing.SOUTH;
+                        Direction = k > j1 ? Direction.NORTH : Direction.SOUTH;
                         v1 = new Vec3d(v1.x + d6 * d5, v1.y + d7 * d5, d2);
                     }
 
-                    l = MathHelper.floor(v1.x) - (enumfacing == EnumFacing.EAST ? 1 : 0);
-                    i1 = MathHelper.floor(v1.y) - (enumfacing == EnumFacing.UP ? 1 : 0);
-                    j1 = MathHelper.floor(v1.z) - (enumfacing == EnumFacing.SOUTH ? 1 : 0);
+                    l = MathHelper.floor(v1.x) - (Direction == Direction.EAST ? 1 : 0);
+                    i1 = MathHelper.floor(v1.y) - (Direction == Direction.UP ? 1 : 0);
+                    j1 = MathHelper.floor(v1.z) - (Direction == Direction.SOUTH ? 1 : 0);
 	
 	                IBlockState block1 = world.getBlockState(new BlockPos(l, i1, j1));
 	
@@ -277,7 +277,7 @@ public class ThaumcraftApiHelper {
 	                    }
 	                    else
 	                    {
-	                        rayTraceResult2 = new RayTraceResult(RayTraceResult.Type.MISS, v1, enumfacing, new BlockPos(l, i1, j1));
+	                        rayTraceResult2 = new RayTraceResult(RayTraceResult.Type.MISS, v1, Direction, new BlockPos(l, i1, j1));
 	                    }
 	                }
 	            }
@@ -295,7 +295,7 @@ public class ThaumcraftApiHelper {
 	    }
 	}
 	
-	public static Object getNBTDataFromId(NBTTagCompound nbt, byte id, String key) {
+	public static Object getNBTDataFromId(CompoundNBT nbt, byte id, String key) {
 		switch (id) {
 		case 1: return nbt.getByte(key);
 		case 2: return nbt.getShort(key);
@@ -397,7 +397,7 @@ public class ThaumcraftApiHelper {
         	return CraftingHelper.getIngredient(obj);
     }
 
-	public static IItemHandler getItemHandlerAt(World world, BlockPos pos, EnumFacing side) {
+	public static IItemHandler getItemHandlerAt(World world, BlockPos pos, Direction side) {
 		Pair<IItemHandler, Object> dest = VanillaInventoryCodeHooks.getItemHandler(world, pos.getX(), pos.getY(), pos.getZ(), side);
 		if (dest!=null && dest.getLeft()!=null) {
 			return dest.getLeft();
@@ -410,7 +410,7 @@ public class ThaumcraftApiHelper {
 		return null;
 	}
 
-	public static IItemHandler wrapInventory(IInventory inventory, EnumFacing side) {
+	public static IItemHandler wrapInventory(IInventory inventory, Direction side) {
 		return inventory instanceof ISidedInventory? new SidedInvWrapper((ISidedInventory) inventory, side) : new InvWrapper((IInventory) inventory);
 	}
 
@@ -444,9 +444,9 @@ public class ThaumcraftApiHelper {
 	    }
 	}
 	
-	public static boolean compareTagsRelaxed(NBTTagCompound prime, NBTTagCompound other) {
-		for (String key : prime.getKeySet()) {			
-			if (!other.hasKey(key) || !prime.getTag(key).equals(other.getTag(key))) {
+	public static boolean compareTagsRelaxed(CompoundNBT prime, CompoundNBT other) {
+		for (String key : prime.keySet()) {			
+			if (!other.contains(key) || !prime.getTag(key).equals(other.getTag(key))) {
 				return false;
 			}
 		}		

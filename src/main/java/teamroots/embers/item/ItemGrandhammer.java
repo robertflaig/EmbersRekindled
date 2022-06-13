@@ -2,18 +2,18 @@ package teamroots.embers.item;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -81,12 +81,12 @@ public class ItemGrandhammer extends ItemTool implements IModeledItem, IEmberCha
 	}
 	
 	@Override
-	public boolean canHarvestBlock(IBlockState state, ItemStack stack){
+	public boolean canHarvestBlock(BlockState state, ItemStack stack){
 		return state.getBlock().getHarvestLevel(state) < 1;
 	}
 	
 	@Override
-	public boolean onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase living){
+	public boolean onBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, EntityLivingBase living){
 		stack.getTagCompound().setBoolean("didUse", true);
 		return true;
 	}
@@ -110,7 +110,7 @@ public class ItemGrandhammer extends ItemTool implements IModeledItem, IEmberCha
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
 		if (!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
+			stack.setTagCompound(new CompoundNBT());
 			stack.getTagCompound().setInteger("tickCount", 0);
 			stack.getTagCompound().setBoolean("poweredOn", false);
 			stack.getTagCompound().setBoolean("didUse", false);
@@ -120,11 +120,11 @@ public class ItemGrandhammer extends ItemTool implements IModeledItem, IEmberCha
 			if (stack.getTagCompound().getInteger("cooldown") > 0){
 				stack.getTagCompound().setInteger("cooldown", stack.getTagCompound().getInteger("cooldown")-1);
 			}
-			if (entity instanceof EntityPlayer){
+			if (entity instanceof PlayerEntity){
 				stack.getTagCompound().setInteger("tickCount", stack.getTagCompound().getInteger("tickCount")+1);
 				if (stack.getTagCompound().getInteger("tickCount") >= 5){
 					stack.getTagCompound().setInteger("tickCount", 0);
-					if (EmberInventoryUtil.getEmberTotal(((EntityPlayer)entity)) > 5.0){
+					if (EmberInventoryUtil.getEmberTotal(((PlayerEntity)entity)) > 5.0){
 						if (!stack.getTagCompound().getBoolean("poweredOn")){
 							stack.getTagCompound().setBoolean("poweredOn", true);
 						}
@@ -137,8 +137,8 @@ public class ItemGrandhammer extends ItemTool implements IModeledItem, IEmberCha
 				}
 				if (stack.getTagCompound().getBoolean("didUse")){
 					stack.getTagCompound().setBoolean("didUse", false);
-					EmberInventoryUtil.removeEmber(((EntityPlayer)entity), 5.0);
-					if (EmberInventoryUtil.getEmberTotal((EntityPlayer)entity) < 5.0){
+					EmberInventoryUtil.removeEmber(((PlayerEntity)entity), 5.0);
+					if (EmberInventoryUtil.getEmberTotal((PlayerEntity)entity) < 5.0){
 						stack.getTagCompound().setBoolean("poweredOn", false);
 					}
 				}

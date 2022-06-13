@@ -1,8 +1,8 @@
 package thaumcraft.api.golems.seals;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,7 +24,7 @@ public interface ISeal {
 	 */
 	public String getKey();	
 	
-	public boolean canPlaceAt(World world, BlockPos pos, EnumFacing side);
+	public boolean canPlaceAt(World world, BlockPos pos, Direction side);
 	
 	public void tickSeal(World world, ISealEntity seal);		
 	
@@ -36,9 +36,9 @@ public interface ISeal {
 	
 	public boolean canGolemPerformTask(IGolemAPI golem, Task task);
 	
-	public void readCustomNBT(NBTTagCompound nbt);
+	public void readCustomNBT(CompoundNBT nbt);
 	
-	public void writeCustomNBT(NBTTagCompound nbt);
+	public void writeCustomNBT(CompoundNBT nbt);
 	
 	/**
 	 * @return icon used to render the seal in world. Usually the same as your seal placer item icon.
@@ -46,12 +46,12 @@ public interface ISeal {
 	 */
 	public ResourceLocation getSealIcon();
 
-	public void onRemoval(World world, BlockPos pos, EnumFacing side);	
+	public void onRemoval(World world, BlockPos pos, Direction side);	
 	
-	public Object returnContainer(World world, EntityPlayer player, BlockPos pos, EnumFacing side, ISealEntity seal);
+	public Object returnContainer(World world, PlayerEntity player, BlockPos pos, Direction side, ISealEntity seal);
 	
 	@SideOnly(Side.CLIENT)
-	public Object returnGui(World world, EntityPlayer player, BlockPos pos, EnumFacing side, ISealEntity seal);
+	public Object returnGui(World world, PlayerEntity player, BlockPos pos, Direction side, ISealEntity seal);
 	
 	public EnumGolemTrait[] getRequiredTags();
 	

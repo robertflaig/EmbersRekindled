@@ -5,11 +5,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -70,14 +70,14 @@ public class ItemAshenCloak extends ItemArmorBase implements IInflictorGemHolder
 	@Override
 	public void attachGem(ItemStack holder, ItemStack gem, int slot) {
 		if (!holder.hasTagCompound()) {
-			holder.setTagCompound(new NBTTagCompound());
+			holder.setTagCompound(new CompoundNBT());
 		}
-		holder.getTagCompound().setTag("gem"+slot, gem.writeToNBT(new NBTTagCompound()));
+		holder.getTagCompound().setTag("gem"+slot, gem.write(new CompoundNBT()));
 	}
 
 	@Override
 	public ItemStack detachGem(ItemStack holder, int slot) {
-		if (holder.hasTagCompound() && holder.getTagCompound().hasKey("gem"+slot)) {
+		if (holder.hasTagCompound() && holder.getTagCompound().contains("gem"+slot)) {
 			ItemStack gem = new ItemStack(holder.getTagCompound().getCompoundTag("gem"+slot));
 			holder.getTagCompound().removeTag("gem"+slot);
 			return gem;
@@ -87,11 +87,11 @@ public class ItemAshenCloak extends ItemArmorBase implements IInflictorGemHolder
 
 	@Override
 	public void clearGems(ItemStack holder) {
-		NBTTagCompound tagCompound = holder.getTagCompound();
+		CompoundNBT tagCompound = holder.getTagCompound();
 		if(tagCompound == null)
 			return;
 		for (int i = 1; i <= getGemSlots(holder); i ++){
-			if (tagCompound.hasKey("gem"+i)){
+			if (tagCompound.contains("gem"+i)){
 				tagCompound.removeTag("gem"+i);
 			}
 		}
@@ -148,7 +148,7 @@ public class ItemAshenCloak extends ItemArmorBase implements IInflictorGemHolder
 	}
 
 	@Override
-	public boolean shouldDisplayInfo(EntityPlayer player, ItemStack stack, EntityEquipmentSlot slot) {
+	public boolean shouldDisplayInfo(PlayerEntity player, ItemStack stack, EntityEquipmentSlot slot) {
 		return slot == EntityEquipmentSlot.HEAD;
 	}
 
@@ -163,7 +163,7 @@ public class ItemAshenCloak extends ItemArmorBase implements IInflictorGemHolder
 	}
 
 	@Override
-	public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
+	public int getArmorDisplay(PlayerEntity player, @Nonnull ItemStack armor, int slot) {
 		return 0; //Unchanged from vanilla
 	}
 

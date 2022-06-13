@@ -1,6 +1,6 @@
 package teamroots.embers.item;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import teamroots.embers.api.item.IInfoGoggles;
@@ -11,7 +11,7 @@ public class ItemTinkerLens extends ItemBase implements IInfoGoggles {
     }
 
     @Override
-    public boolean shouldDisplayInfo(EntityPlayer player, ItemStack stack, EntityEquipmentSlot slot) {
+    public boolean shouldDisplayInfo(PlayerEntity player, ItemStack stack, EntityEquipmentSlot slot) {
         return true;
     }
 }

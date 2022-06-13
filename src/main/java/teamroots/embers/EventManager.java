@@ -1,7 +1,7 @@
 package teamroots.embers;
 
 import com.google.common.collect.*;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,7 +16,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -133,7 +133,7 @@ public class EventManager {
     public static float frameTime = 0;
     public static float frameCounter = 0;
     public static long prevTime = 0;
-    public static EnumHand lastHand = EnumHand.MAIN_HAND;
+    public static Hand lastHand = Hand.MAIN_HAND;
     public static float starlightRed = 255;
     public static float starlightGreen = 32;
     public static float starlightBlue = 255;
@@ -149,7 +149,7 @@ public class EventManager {
     //public static Map<BlockPos, TileEntity> toUpdate = new HashMap<BlockPos, TileEntity>();
     //public static Map<BlockPos, TileEntity> overflow = new HashMap<BlockPos, TileEntity>();
 
-    static EntityPlayer clientPlayer = null;
+    static PlayerEntity clientPlayer = null;
 
 	/*public static void markTEForUpdate(BlockPos pos, TileEntity tile){
         if (!tile.getWorld().isRemote && acceptUpdates){
@@ -283,7 +283,7 @@ public class EventManager {
     public void onLivingDamage(LivingHurtEvent event) {
         EntityLivingBase entityLiving = event.getEntityLiving();
         DamageSource source = event.getSource();
-        if (entityLiving instanceof EntityPlayer) {
+        if (entityLiving instanceof PlayerEntity) {
             attuneInflictorGem(entityLiving, source, entityLiving.getHeldItemMainhand());
             attuneInflictorGem(entityLiving, source, entityLiving.getHeldItemOffhand());
         }
@@ -296,8 +296,8 @@ public class EventManager {
                 addHeat(entityLiving, s, 5.0f);
             }
         }
-        if (source.getTrueSource() instanceof EntityPlayer) {
-            EntityPlayer damager = (EntityPlayer) source.getTrueSource();
+        if (source.getTrueSource() instanceof PlayerEntity) {
+            PlayerEntity damager = (PlayerEntity) source.getTrueSource();
             ItemStack s = damager.getHeldItemMainhand();
             if (!s.isEmpty()) {
                 addHeat(entityLiving, s, 1.0f);
@@ -343,7 +343,7 @@ public class EventManager {
             EventManager.frameTime = (System.nanoTime() - prevTime) / 1000000000.0f;
             EventManager.prevTime = System.nanoTime();
 
-            EntityPlayer player = Minecraft.getMinecraft().player;
+            PlayerEntity player = Minecraft.getMinecraft().player;
             boolean showBar = false;
 
             int w = e.getResolution().getScaledWidth();
@@ -412,7 +412,7 @@ public class EventManager {
             if (result != null) {
                 if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
                     IBlockState state = world.getBlockState(result.getBlockPos());
-                    EnumFacing facing = result.sideHit;
+                    Direction facing = result.sideHit;
                     List<String> text = Lists.newArrayList();
                     if (state.getBlock() instanceof IDial) {
                         text.addAll(((IDial) state.getBlock()).getDisplayInfo(world, result.getBlockPos(), state));
@@ -434,7 +434,7 @@ public class EventManager {
         GlStateManager.enableDepth();
     }
 
-    private void addCapabilityInformation(List<String> text, TileEntity tile, EnumFacing facing) {
+    private void addCapabilityInformation(List<String> text, TileEntity tile, Direction facing) {
         addCapabilityItemDescription(text, tile, facing);
         addCapabilityFluidDescription(text, tile, facing);
         addCapabilityEmberDescription(text, tile, facing);
@@ -450,7 +450,7 @@ public class EventManager {
             ((IExtraCapabilityInformation) tile).addOtherDescription(text, facing);
     }
 
-    public static void addCapabilityItemDescription(List<String> text, TileEntity tile, EnumFacing facing) {
+    public static void addCapabilityItemDescription(List<String> text, TileEntity tile, Direction facing) {
         Capability<IItemHandler> capability = CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
         if (tile.hasCapability(capability, facing)) {
             IExtraCapabilityInformation.EnumIOType ioType = IExtraCapabilityInformation.EnumIOType.BOTH;
@@ -463,7 +463,7 @@ public class EventManager {
         }
     }
 
-    public static void addCapabilityFluidDescription(List<String> text, TileEntity tile, EnumFacing facing) {
+    public static void addCapabilityFluidDescription(List<String> text, TileEntity tile, Direction facing) {
         Capability<IFluidHandler> capability = CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
         if (tile.hasCapability(capability, facing)) {
             IExtraCapabilityInformation.EnumIOType ioType = IExtraCapabilityInformation.EnumIOType.BOTH;
@@ -488,7 +488,7 @@ public class EventManager {
         }
     }
 
-    public static void addCapabilityEmberDescription(List<String> text, TileEntity tile, EnumFacing facing) {
+    public static void addCapabilityEmberDescription(List<String> text, TileEntity tile, Direction facing) {
         Capability<IEmberCapability> capability = EmbersCapabilities.EMBER_CAPABILITY;
         if (tile.hasCapability(capability, facing)) {
             IExtraCapabilityInformation.EnumIOType ioType = IExtraCapabilityInformation.EnumIOType.BOTH;
@@ -508,7 +508,7 @@ public class EventManager {
             if(!Minecraft.getMinecraft().isGamePaused())
                 ClientProxy.particleRenderer.updateParticles();
 
-            EntityPlayer player = Minecraft.getMinecraft().player;
+            PlayerEntity player = Minecraft.getMinecraft().player;
             if (player != null) {
                 World world = player.getEntityWorld();
                 RayTraceResult result = player.rayTrace(6.0, Minecraft.getMinecraft().getRenderPartialTicks());
@@ -527,8 +527,8 @@ public class EventManager {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onPlayerRender(RenderPlayerEvent.Pre event) {
-        if (event.getEntityPlayer() != null) {
-            if (Minecraft.getMinecraft().inGameHasFocus || event.getEntityPlayer().getUniqueID().compareTo(Minecraft.getMinecraft().player.getUniqueID()) != 0) {
+        if (event.getPlayerEntity() != null) {
+            if (Minecraft.getMinecraft().inGameHasFocus || event.getPlayerEntity().getUniqueID().compareTo(Minecraft.getMinecraft().player.getUniqueID()) != 0) {
                 event.setCanceled(!allowPlayerRenderEvent);
             }
         }
@@ -542,9 +542,9 @@ public class EventManager {
             }
         }
         final Entity trueSource = event.getSource().getTrueSource();
-        if (!(trueSource instanceof EntityPlayer))
+        if (!(trueSource instanceof PlayerEntity))
             return;
-        final EntityPlayer player = (EntityPlayer) trueSource;
+        final PlayerEntity player = (PlayerEntity) trueSource;
         final ItemStack heldStack = player.getHeldItemMainhand();
         if (heldStack.isEmpty())
             return;
@@ -569,7 +569,7 @@ public class EventManager {
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        EntityPlayer player = event.getPlayer();
+        PlayerEntity player = event.getPlayer();
         if (player != null) {
             if (!player.getHeldItemMainhand().isEmpty()) {
                 ItemStack s = player.getHeldItemMainhand();
@@ -758,7 +758,7 @@ public class EventManager {
 
     private String getFormattedModifierLevel(int level) {
         String key = "embers.tooltip.num" + level;
-        if (I18n.hasKey(key))
+        if (I18n.contains(key))
             return I18n.format(key);
         else
             return I18n.format("embers.tooltip.numstop");
@@ -822,7 +822,7 @@ public class EventManager {
 				list.appendTag(t.getUpdateTag());
 			}
 			if (!list.hasNoTags()){
-				NBTTagCompound tag = new NBTTagCompound();
+				CompoundNBT tag = new CompoundNBT();
 				tag.setTag("data", list);
 				PacketHandler.INSTANCE.sendToAll(new MessageTEUpdate(tag));
 			}

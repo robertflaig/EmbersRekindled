@@ -1,13 +1,13 @@
 package teamroots.embers.proxy;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.PlayerEntitySP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.Locale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -74,7 +74,7 @@ public class ClientProxy extends CommonProxy{
 
 	@Override
 	public boolean isPlayerWearingGoggles() {
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		PlayerEntity player = Minecraft.getMinecraft().player;
 
 		boolean shouldDisplay = isGoggles(player, EntityEquipmentSlot.HEAD) || isGoggles(player, EntityEquipmentSlot.MAINHAND) || isGoggles(player, EntityEquipmentSlot.OFFHAND);
 		InfoGogglesEvent event = new InfoGogglesEvent(player,shouldDisplay);
@@ -83,11 +83,11 @@ public class ClientProxy extends CommonProxy{
 	}
 
 	@Override
-	public EntityPlayer getClientPlayer() {
+	public PlayerEntity getClientPlayer() {
 		return Minecraft.getMinecraft().player;
 	}
 
-	private boolean isGoggles(EntityPlayer player, EntityEquipmentSlot slot) {
+	private boolean isGoggles(PlayerEntity player, EntityEquipmentSlot slot) {
 		ItemStack stack = player.getItemStackFromSlot(slot);
 		Item item = stack.getItem();
 		return item instanceof IInfoGoggles && ((IInfoGoggles) item).shouldDisplayInfo(player, stack, slot);

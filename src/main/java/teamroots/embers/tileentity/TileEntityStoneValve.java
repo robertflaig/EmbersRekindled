@@ -1,12 +1,12 @@
 package teamroots.embers.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,7 +20,7 @@ import teamroots.embers.block.BlockStoneValve;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityStoneValve extends TileEntity implements ITileEntityBase, IMultiblockMachine, ITickable {
+public class TileEntityStoneValve extends TileEntity implements ITileEntityBase, IMultiblockMachine, ITickableTileEntity {
     TileEntityLargeTank tank;
     IFluidHandler fluidHandler;
     //IItemHandler itemHandler;
@@ -92,24 +92,24 @@ public class TileEntityStoneValve extends TileEntity implements ITileEntityBase,
         return tank;
     }
 
-    public EnumFacing getFacing() {
+    public Direction getFacing() {
         IBlockState state = world.getBlockState(pos);
         switch (state.getValue(BlockStoneValve.state)) {
             case (2):
-                return EnumFacing.WEST;
+                return Direction.WEST;
             case (4):
-                return EnumFacing.SOUTH;
+                return Direction.SOUTH;
             case (6):
-                return EnumFacing.EAST;
+                return Direction.EAST;
             case (9):
-                return EnumFacing.NORTH;
+                return Direction.NORTH;
             default:
                 return null;
         }
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, @Nullable Direction facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing == getFacing()))
             return true;
         return super.hasCapability(capability, facing);
@@ -117,7 +117,7 @@ public class TileEntityStoneValve extends TileEntity implements ITileEntityBase,
 
     @Nullable
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable Direction facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing == getFacing()))
             return (T) fluidHandler;
         return super.getCapability(capability, facing);
@@ -145,14 +145,14 @@ public class TileEntityStoneValve extends TileEntity implements ITileEntityBase,
     }
 
     @Override
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         if (tank != null)
             return tank.activate(world, tank.getPos(), world.getBlockState(tank.getPos()), player, hand, side, hitX, hitY, hitZ);
         return false;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public void onHarvest(World world, BlockPos pos, BlockState state, PlayerEntity player) {
 
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import teamroots.embers.Embers;
@@ -43,58 +43,58 @@ public class TileEntityFluidExtractorRenderer extends TileEntitySpecialRenderer<
             Tessellator tess = Tessellator.getInstance();
             BufferBuilder buffer = tess.getBuffer();
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-			for (EnumFacing facing : EnumFacing.VALUES) {
+			for (Direction facing : Direction.VALUES) {
 				if(shouldRenderPipe(tile, facing))
 					PipeRenderUtil.addPipe(buffer, x, y, z, facing);
 				if(shouldRenderLip(tile, facing))
 					PipeRenderUtil.addPipeLip(buffer, x, y, z, facing);
 			}
-			/*if (shouldRenderPipe(tile,EnumFacing.UP)){
+			/*if (shouldRenderPipe(tile,Direction.UP)){
 				RenderUtil.addBox(buffer, up.x1+x, up.y1+y, up.z1+z, up.x2+x, up.y2+y, up.z2+z, up.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (shouldRenderPipe(tile,EnumFacing.DOWN)){
+			if (shouldRenderPipe(tile,Direction.DOWN)){
 				RenderUtil.addBox(buffer, down.x1+x, down.y1+y, down.z1+z, down.x2+x, down.y2+y, down.z2+z, down.textures, new int[]{-1,-1,1,1,1,1});
 			}
-			if (shouldRenderPipe(tile,EnumFacing.NORTH)){
+			if (shouldRenderPipe(tile,Direction.NORTH)){
 				RenderUtil.addBox(buffer, north.x1+x, north.y1+y, north.z1+z, north.x2+x, north.y2+y, north.z2+z, north.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (shouldRenderPipe(tile,EnumFacing.SOUTH)){
+			if (shouldRenderPipe(tile,Direction.SOUTH)){
 				RenderUtil.addBox(buffer, south.x1+x, south.y1+y, south.z1+z, south.x2+x, south.y2+y, south.z2+z, south.textures, new int[]{1,1,-1,-1,1,1});
 			}
-			if (shouldRenderPipe(tile,EnumFacing.WEST)){
+			if (shouldRenderPipe(tile,Direction.WEST)){
 				RenderUtil.addBox(buffer, west.x1+x, west.y1+y, west.z1+z, west.x2+x, west.y2+y, west.z2+z, west.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (shouldRenderPipe(tile,EnumFacing.EAST)){
+			if (shouldRenderPipe(tile,Direction.EAST)){
 				RenderUtil.addBox(buffer, east.x1+x, east.y1+y, east.z1+z, east.x2+x, east.y2+y, east.z2+z, east.textures, new int[]{1,1,1,1,-1,-1});
 			}
-			if (shouldRenderLip(tile,EnumFacing.UP)){
+			if (shouldRenderLip(tile,Direction.UP)){
 				RenderUtil.addBox(buffer, upEnd.x1+x, upEnd.y1+y, upEnd.z1+z, upEnd.x2+x, upEnd.y2+y, upEnd.z2+z, upEnd.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (shouldRenderLip(tile,EnumFacing.DOWN)){
+			if (shouldRenderLip(tile,Direction.DOWN)){
 				RenderUtil.addBox(buffer, downEnd.x1+x, downEnd.y1+y, downEnd.z1+z, downEnd.x2+x, downEnd.y2+y, downEnd.z2+z, downEnd.textures, new int[]{-1,-1,1,1,1,1});
 			}
-			if (shouldRenderLip(tile,EnumFacing.NORTH)){
+			if (shouldRenderLip(tile,Direction.NORTH)){
 				RenderUtil.addBox(buffer, northEnd.x1+x, northEnd.y1+y, northEnd.z1+z, northEnd.x2+x, northEnd.y2+y, northEnd.z2+z, northEnd.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (shouldRenderLip(tile,EnumFacing.SOUTH)){
+			if (shouldRenderLip(tile,Direction.SOUTH)){
 				RenderUtil.addBox(buffer, southEnd.x1+x, southEnd.y1+y, southEnd.z1+z, southEnd.x2+x, southEnd.y2+y, southEnd.z2+z, southEnd.textures, new int[]{1,1,-1,-1,1,1});
 			}
-			if (shouldRenderLip(tile,EnumFacing.WEST)){
+			if (shouldRenderLip(tile,Direction.WEST)){
 				RenderUtil.addBox(buffer, westEnd.x1+x, westEnd.y1+y, westEnd.z1+z, westEnd.x2+x, westEnd.y2+y, westEnd.z2+z, westEnd.textures, new int[]{1,1,1,1,1,1});
 			}
-			if (shouldRenderLip(tile,EnumFacing.EAST)){
+			if (shouldRenderLip(tile,Direction.EAST)){
 				RenderUtil.addBox(buffer, eastEnd.x1+x, eastEnd.y1+y, eastEnd.z1+z, eastEnd.x2+x, eastEnd.y2+y, eastEnd.z2+z, eastEnd.textures, new int[]{1,1,1,1,-1,-1});
 			}*/
             tess.draw();
         }
 	}
 
-	private boolean shouldRenderLip(TileEntityFluidPipeBase pipe, EnumFacing facing) {
+	private boolean shouldRenderLip(TileEntityFluidPipeBase pipe, Direction facing) {
 		EnumPipeConnection connection = pipe.getInternalConnection(facing);
 		return connection == EnumPipeConnection.BLOCK || connection == EnumPipeConnection.LEVER;
 	}
 
-	private boolean shouldRenderPipe(TileEntityFluidPipeBase pipe, EnumFacing facing) {
+	private boolean shouldRenderPipe(TileEntityFluidPipeBase pipe, Direction facing) {
 		EnumPipeConnection connection = pipe.getInternalConnection(facing);
 		return connection == EnumPipeConnection.PIPE || shouldRenderLip(pipe,facing);
 	}

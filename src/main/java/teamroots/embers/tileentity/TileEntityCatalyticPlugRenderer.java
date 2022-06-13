@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
@@ -20,12 +20,12 @@ public class TileEntityCatalyticPlugRenderer extends TileEntitySpecialRenderer<T
     @Override
     public void render(TileEntityCatalyticPlug tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if(tile != null && tile.getWorld().getBlockState(tile.getPos()).getBlock() instanceof BlockCatalyticPlug) {
-            EnumFacing facing = tile.getWorld().getBlockState(tile.getPos()).getValue(BlockCatalyticPlug.FACING);
+            Direction facing = tile.getWorld().getBlockState(tile.getPos()).getValue(BlockCatalyticPlug.FACING);
             FluidStack fluidStack = tile.getFluidStack();
             int capacity = tile.getCapacity();
             if (fluidStack != null){
                 Fluid fluid = fluidStack.getFluid();
-                int amount = fluidStack.amount;
+                int amount = fluidStack.getAmount();
                 int c = fluid.getColor(fluidStack);
                 int blue = c & 0xFF;
                 int green = (c >> 8) & 0xFF;

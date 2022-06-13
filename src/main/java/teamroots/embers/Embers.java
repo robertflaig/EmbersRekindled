@@ -15,7 +15,9 @@ import teamroots.embers.proxy.CommonProxy;
 import teamroots.embers.recipe.RecipeRegistry;
 import teamroots.embers.research.ResearchManager;
 
-@Mod(modid = Embers.MODID, name = Embers.MODNAME, dependencies = Embers.DEPENDENCIES,  guiFactory = Embers.GUI_FACTORY)
+//@Mod(modid = Embers.MODID, name = Embers.MODNAME, dependencies = Embers.DEPENDENCIES,  guiFactory = Embers.GUI_FACTORY)
+
+@Mod()
 public class Embers {
 	public static final String MODID = "embers";
 	public static final String MODNAME = "Embers";

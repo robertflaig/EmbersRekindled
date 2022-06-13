@@ -1,9 +1,9 @@
 package teamroots.embers.itemmod;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -30,9 +30,9 @@ public class ModifierSuperheater extends ModifierBase {
 	
 	@SubscribeEvent
 	public void onDrops(HarvestDropsEvent event){
-		if (event.getHarvester() instanceof EntityPlayer){
-			if (!event.getHarvester().getHeldItem(EnumHand.MAIN_HAND).isEmpty()){
-				ItemStack s = event.getHarvester().getHeldItem(EnumHand.MAIN_HAND);
+		if (event.getHarvester() instanceof PlayerEntity){
+			if (!event.getHarvester().getHeldItem(Hand.MAIN_HAND).isEmpty()){
+				ItemStack s = event.getHarvester().getHeldItem(Hand.MAIN_HAND);
 				if (ItemModUtil.hasHeat(s)){
 					if (ItemModUtil.getModifierLevel(s, EmbersAPI.SUPERHEATER) > 0 && EmberInventoryUtil.getEmberTotal(event.getHarvester()) >= cost){
 						if (!event.getWorld().isRemote){
@@ -70,8 +70,8 @@ public class ModifierSuperheater extends ModifierBase {
 	
 	@SubscribeEvent
 	public void onHit(LivingHurtEvent event){
-		if (event.getSource().getTrueSource() instanceof EntityPlayer){
-			EntityPlayer damager = (EntityPlayer)event.getSource().getTrueSource();
+		if (event.getSource().getTrueSource() instanceof PlayerEntity){
+			PlayerEntity damager = (PlayerEntity)event.getSource().getTrueSource();
 			ItemStack s = damager.getHeldItemMainhand();
 			if (!s.isEmpty()){
 				if (ItemModUtil.hasHeat(s)){

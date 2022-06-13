@@ -1,13 +1,13 @@
 package teamroots.embers.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -258,7 +258,7 @@ public class OreTransmutationUtil {
             else
                 PacketHandler.INSTANCE.sendToAll(new MessageMetallurgicDustFX(visit.getX(),visit.getY(),visit.getZ()));
             visitedPositions.add(visit);
-            for (EnumFacing facing : EnumFacing.VALUES) {
+            for (Direction facing : Direction.VALUES) {
                 BlockPos neighbor = visit.offset(facing);
                 if (!visitedPositions.contains(neighbor))
                     toVisit.add(neighbor);
