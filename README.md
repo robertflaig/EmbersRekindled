@@ -16,3 +16,6 @@ You can also contact us on our discord here. https://discord.gg/J4bn3FG
 - Just Enough Items (from maven)
 - Crafttweaker (from maven)
 - Mystical Mechanics (from cursegradle) (https://minecraft.curseforge.com/projects/mysticalmechanics/files)
+
+## Fork Notes
+This fork is a push to get EmbersRekindled to work on new versions of Minecraft and as such there are currently many errors in most of the files. If you want to contribute to this fork feel free to reach out to me. I have set up a Project Board that has a general plan to clear out errors in the Project, it will need to be expanded greatly. Once this Mod is working on 1.15.2 the plan is to move it to newer versions of Minecraft/Forge as well as newer Java versions. This will most likley require moving the mappings again to the offical channel, which should be easier with the MCPConfig tool once this project is updated to the 60-1.15 mappings that came out just before the move to the offical mappings.
